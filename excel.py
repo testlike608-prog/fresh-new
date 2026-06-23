@@ -32,10 +32,10 @@ def _resolve_folder(folder):
 
 def _get_images_folder():
     """ترجع فولدر صور النتيجة من config (قابل للتعديل من الـ GUI)."""
-    folder = "result_images"
+    folder = "results"
     try:
         from config import config as _cfg
-        folder = _cfg.get("result_images_folder", "result_images") or "result_images"
+        folder = _cfg.get("result_images_folder", "results") or "results"
     except Exception:
         pass
     return _resolve_folder(folder)
@@ -208,7 +208,7 @@ def result_reporting(ID, result, file_path=None):
             pil = PILImage.open(str(img_path)).convert("RGB")
             pil.thumbnail((IMG_W, IMG_H), PILImage.LANCZOS)
             buf = io.BytesIO()
-            pil.save(buf, format="JPG")
+            pil.save(buf, format="JPEG")
             buf.seek(0)
             _alive_bufs.append(buf)          # منع garbage collection
 
@@ -279,7 +279,7 @@ def _prepare_xl_image(img_path: Path, w: int, h: int) -> XLImage:
     pil.thumbnail((w, h), PILImage.LANCZOS)
 
     buf = io.BytesIO()
-    pil.save(buf, format="JPG")
+    pil.save(buf, format="JPEG")
     buf.seek(0)
 
     xl = XLImage(buf)

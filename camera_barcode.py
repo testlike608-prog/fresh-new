@@ -37,14 +37,22 @@ DECODE_FPS  = 10
 
 
 # ─── Decode loop ──────────────────────────────────────────────────────────────
+DEBUG_FRAME_PATH    = "./result/test.jpg"   # الصورة اللي بنحفظها للتشخيص
+DEBUG_SAVE_INTERVAL = 2.0                   # احفظ كل 2 ثانية
+
+
 def _decode_loop(stop_event: threading.Event):
     """
     يقرأ الفريمات من camera_hub ويحاول يكشف الباركود فيها.
     """
     frame_interval       = 1.0 / DECODE_FPS
     last_decode_at       = 0.0
+    last_debug_save_at   = 0.0
     _last_queued_barcode = None
-    _none_warn_at        = 0.0   # عشان ما نكررش الـ warning كل 50ms
+    _none_warn_at        = 0.0
+
+    import os
+    os.makedirs(os.path.dirname(DEBUG_FRAME_PATH), exist_ok=True)
 
     log.info("[CameraScanner] في انتظار باركود... (يقرأ من camera_hub)")
 
@@ -52,13 +60,19 @@ def _decode_loop(stop_event: threading.Event):
         frame = camera_hub.get_frame()
         if frame is None:
             now = time.time()
-            if now - _none_warn_at > 5.0:  # warning كل 5 ثواني بس
+            if now - _none_warn_at > 5.0:
                 log.warning("[CameraScanner] camera_hub مش بابعت فريمات — استنى...")
                 _none_warn_at = now
             time.sleep(0.05)
             continue
 
         now = time.time()
+
+        # ─── حفظ debug frame كل 2 ثانية عشان نشوف الكاميرا بتشوف إيه ───
+        if now - last_debug_save_at >= DEBUG_SAVE_INTERVAL:
+            cv2.imwrite(DEBUG_FRAME_PATH, frame)
+            last_debug_save_at = now
+
         if now - last_decode_at < frame_interval:
             time.sleep(0.01)
             continue

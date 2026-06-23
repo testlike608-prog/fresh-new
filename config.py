@@ -59,11 +59,6 @@ DEFAULT_CONFIG = {
 
     # ── TCP Clients ───────────────────────────────────────────────
     "cobot_ip":         "192.168.57.2",
-    "cobot_port":       9000,
-
-    # ── TCP Server ────────────────────────────────────────────────
-    "trigger_server_ip":   "0.0.0.0",
-    "trigger_server_port": 5000,
 
     # ── File paths (نسبياً للـ working dir) ───────────────────────
     "program_mapping_file": "program_mapping.xlsx",

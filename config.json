@@ -5,16 +5,14 @@
     "modified_at": "2026-06-04T08:32:34.705095"
   },
   "password_hash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-  "cobot_ip": "127.0.0.1",
-  "cobot_port": 9000,
-  "trigger_server_ip": "0.0.0.0",
-  "trigger_server_port": 5000,
+  "cobot_ip": "192.168.57.2",
+ 
   "program_mapping_file": "program_mapping.xlsx",
   "results_report_file": "results_report.xlsx",
   "vision_test_count": 3,
-  "result_images_folder": "C:/Users/Automation_Meeserv/Desktop/FRESH/code/result_images",
+  "result_images_folder": "results",
   "result_images_backup_folders": [
-    "C:/Users/Automation_Meeserv/Desktop/FRESH/code/result_images"
+    "results"
   ],
   "scan_mode": "camera",
   "camera_index": 0,

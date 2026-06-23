@@ -28,6 +28,7 @@ from config import Config
 import camera_barcode
 import api_test as ai
 import excel as ex
+import test_local
 
 
 def _to_bytes(message, is_hex=False):   
@@ -123,90 +124,6 @@ for _i in range(1, AppStage.MAX_VISION_TESTS + 1):
     setattr(AppStage, f"VISION_TEST_{_i}", f"VISION_TEST_{_i}")
 
 
-class App():
-    def __init__(self):
-
-        pass 
-   
-
-    def check_images_status(self, images_data):
-        # المرور على جميع القيم (Values) داخل الـ JSON
-        for image_name, value in images_data.items():
-            # التحقق إذا كانت القيمة تساوي 'yes' (مع تجاهل المسافات وحالة الأحرف)
-            if str(value).strip().lower() == 'yes':
-                return "fail"
-                
-        # إذا انتهت الحلقة بدون العثور على 'yes'، يتم إرجاع 'pass'
-        return "pass"
-    
-    def capture_image_and_save(self, image_name, image_path):
-        """
-        بتاخد فريم من camera_hub وتحفظه في المسار المحدد.
-        
-        :param file_name: اسم الصورة (مثال: image.jpg)
-        :param save_dir: مسار المجلد اللي هتتحفظ فيه (الافتراضي ./result)
-        :return: True لو تم الحفظ بنجاح، False لو فشل أو مفيش فريم
-        """
-        # 1. التأكد إن المجلد (Directory) موجود، ولو مش موجود ننشئه
-        os.makedirs(image_path, exist_ok=True)
-        
-        # 2. الحصول على الفريم من الكاميرا
-        frame = camera_hub.get_frame()
-        
-        # 3. التأكد إن الفريم موجود
-        if frame is not None:
-            # تجهيز المسار الكامل للصورة
-            full_path = os.path.join(image_path, image_name)
-            
-            # حفظ الصورة باستخدام OpenCV
-            success = cv2.imwrite(full_path, frame)
-            
-            if success:
-                print(f"✅ تم حفظ الصورة بنجاح: {full_path}")
-                return True
-            else:
-                print(f"❌ فشل في حفظ الصورة في المسار: {full_path}")
-                return False
-        else:
-            print("⚠️ مفيش فريم متاح حالياً! تأكد إن الكاميرا شغالة وعملت wait_for_frame.")
-            return False
-
-    def list_images(self, images_names, images_paths):
-        # Implementation for processing images
-
-        pass
-
-    def result_judement(self, images_data):
-        # 1. لو الداتا راجعة من الـ API على هيئة نص (JSON String)، هنحولها
-        if isinstance(images_data, str):
-            try:
-                images_data = json.loads(images_data)
-            except json.JSONDecodeError:
-                return "Error: Invalid JSON format from API"
-                
-        # 2. حماية إضافية: نتأكد إن الداتا في النهاية بقت Dictionary نقدر نشتغل عليه
-        if not isinstance(images_data, dict):
-            return "Error: Data is not a dictionary"
-
-        # 3. اللوجيك الأساسي بتاعنا
-        for value in images_data.values():
-            clean_value = str(value).strip().lower()
-            if clean_value == "yes":
-                return "fail"
-                
-        return "pass"
-    
-    def start(self):
-        camera_hub.start()  # تأكد إن الكاميرا بدأت تشتغل في الخلفية
-        return True
-
-    def run(self):
-        """alias قديم - مازال يشتغل عشان الـ tests و main.py."""
-        return self.start()
-
-    def stop(self):
-        pass
-
 
 # Working App implementation used by the FastAPI WebSocket integration.
 # It intentionally keeps the same class name so old imports receive this version.
@@ -218,9 +135,23 @@ class App():
         self._robot_lock = threading.RLock()
         self._motion_lock = threading.Lock()
         self._last_images = []
+        self.barcode = None
+        self._mapping_cache_df    = None
+        self._mapping_cache_path  = None
+        self._mapping_cache_mtime = None
         #self.vision_queue = queue.Queue()
 
     def check_images_status(self, images_data):
+        # لو راجع string JSON (زي ما بترجع ai.check_multiple_images_for_water) نحوله لـ dict
+        if isinstance(images_data, str):
+            try:
+                images_data = json.loads(images_data)
+            except (json.JSONDecodeError, Exception) as e:
+                print(f"[ERROR] check_images_status: failed to parse JSON: {e}\nRaw: {images_data}")
+                return "error"
+        if not isinstance(images_data, dict):
+            print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
+            return "error"
         for image_name, value in images_data.items():
             if str(value).strip().lower() == "yes":
                 return "fail"
@@ -250,7 +181,7 @@ class App():
                 #finally:
                     #sc.queue_barcode.task_done()
 
-    def get_points_from_db(self, point_name :str):
+    def get_points_from_db(self, point_name: str):
         import sqlite3
 
         # 1. الاتصال بملف قاعدة البيانات
@@ -278,32 +209,33 @@ class App():
 
         # 5. إغلاق الاتصال
         conn.close()
-        return joint_angles if result else "Error: Point not found in database"
+        return joint_angles
 
     def program_1(self):
         homing =self.get_points_from_db("water1")
         _10kg_1 = self.get_points_from_db("10kg_1")
         _10kg_2 = self.get_points_from_db("10kg_2")
         _10kg_3 = self.get_points_from_db("10kg_3")
-        _10kg_4 = self.get_points_from_db("10kg_4")
-        _10kg_5 = self.get_points_from_db("10kg_5")
+       # _10kg_4 = self.get_points_from_db("10kg_4")
+       # _10kg_5 = self.get_points_from_db("10kg_5")
 
 
-        self.robot.MoveJ(joint_pos= _10kg_1, tool=0, user=0, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos= _10kg_1, tool=0, user=1, vel=100, acc=100)
         ct.trigger(name=self.barcode+"_0")
-        self.robot.MoveJ(joint_pos= _10kg_2, tool=0, user=0, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos= _10kg_2, tool=0, user=1, vel=100, acc=100)
         ct.trigger(name=self.barcode+"_1")
-        self.robot.MoveJ(joint_pos= _10kg_3, tool=0, user=0, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos= _10kg_3, tool=0, user=1, vel=100, acc=100)
         ct.trigger(name=self.barcode+"_2")
-        self.robot.MoveJ(joint_pos= _10kg_4, tool=0, user=0, vel=100, acc=100)
-        ct.trigger(name=self.barcode+"_3")
-        self.robot.MoveJ(joint_pos= _10kg_5, tool=0, user=0, vel=100, acc=100)
-        ct.trigger(name=self.barcode+"_4")
-        self.robot.MoveJ(joint_pos= homing, tool=0, user=0, vel=100, acc=100)
+        #self.robot.MoveJ(joint_pos= _10kg_4, tool=0, user=1, vel=100, acc=100)
+        #ct.trigger(name=self.barcode+"_3")
+        #self.robot.MoveJ(joint_pos= _10kg_5, tool=0, user=1, vel=100, acc=100)
+        #ct.trigger(name=self.barcode+"_4")
+        self.robot.MoveJ(joint_pos= homing, tool=0, user=1, vel=100, acc=100)
 
-        image_list = ["./results/"+self.barcode+"_0", "./results/"+self.barcode+"_1", "./results/"+self.barcode+"_2", "./results/"+self.barcode+"_3", "results/"+self.barcode+"_4"]
+        image_list = [f"results/{self.barcode}_0.jpg", f"results/{self.barcode}_1.jpg", f"results/{self.barcode}_2.jpg"]
 
         result = self.check_images_status(ai.check_multiple_images_for_water(image_paths=image_list))
+        #result = self.check_images_status(test_local.check_multiple_images_for_water(image_list))
         ex.result_reporting(ID =self.barcode, result= result )
         self.robot.SetDO(0,1)
         self.robot.SetDO(3,0)
@@ -329,23 +261,30 @@ class App():
         pass
 
     def start_sequence(self):
-        barcode_point = self.get_points_from_db("cam")
-        self.robot.MoveJ(barcode_point, 0, 0 , vel=100, acc=100, time=0, radius=0)
-        try:
-            self.barcode = self.get_barcode_from_scanner
-        except:
-            pass
+        barcode_point = self.get_points_from_db("CamScan")
+        self.robot.MoveJ(barcode_point, 0, 1 , vel=100, acc=100)
+        if self._cfg.get (key="scan_mode") == "camera":
+            camera_barcode.start()
+        elif self._cfg.get (key="scan_mode") == "manual":
+            sc.start_listener()
+        # انتظار الباركود — get_barcode_from_scanner بتبلوك لحد ما يجي باركود
+        self.barcode = self.get_barcode_from_scanner()   # FIX: لازم () عشان تنادي الدالة
+        if self._cfg.get (key="scan_mode") == "camera":
+            camera_barcode.stop()
+        elif self._cfg.get (key="scan_mode") == "manual":
+            sc.stop_listener()
+        print(f"[Sequence] Barcode received: {self.barcode}")
         program = self.determine_program_from_barcode(barcode=self.barcode)
 
-        if program ==  "1":
+        if program ==  1:
             self.program_1()
-        elif program ==  "2":
+        elif program ==  2:
             self.program_2()
-        elif program ==  "3":
+        elif program ==  3:
             self.program_3()    
-        elif program ==  "4":
+        elif program ==  4:
             self.program_4()
-        elif program ==  "5":
+        elif program ==  5:
             self.program_5()
 
 
@@ -372,12 +311,12 @@ class App():
             if (self._mapping_cache_df is None
                     or self._mapping_cache_path != excel_file_path
                     or self._mapping_cache_mtime != current_mtime):
-                self.cobotClient._log_add("INFO", f"Loading mapping file: {excel_file_path}")
+                print(f"[INFO] Loading mapping file: {excel_file_path}")
                 self._mapping_cache_df    = pd.read_excel(excel_file_path)
                 self._mapping_cache_path  = excel_file_path
                 self._mapping_cache_mtime = current_mtime
             else:
-                self.cobotClient._log_add("INFO", "Using cached mapping (file unchanged)")
+                print("[INFO] Using cached mapping (file unchanged)")
 
             df = self._mapping_cache_df
             char_column  = df.columns[0]
@@ -394,10 +333,10 @@ class App():
                 return "الحرف غير موجود في ملف الإكسل."
 
         except FileNotFoundError:
-            self.cobotClient._log_add("INFO", f"Excel file not found at path: {excel_file_path}")
+            print(f"[ERROR] Excel file not found: {excel_file_path}")
             return "خطأ: ملف الإكسل غير موجود في المسار المحدد."
         except Exception as e:
-            self.cobotClient._log_add("INFO", f"Unexpected error occurred with pandas: {e}")
+            print(f"[ERROR] Unexpected error occurred with pandas: {e}")
             return f"حدث خطأ غير متوقع: {e}"
     
     def start(self, camera_index=None):
@@ -406,31 +345,34 @@ class App():
 
         camera_hub.wait_for_frame(timeout=5.0)
         ct.start()
-        self.ensure_robot()
         self.robot = RPC(self.robot_ip)  
-        self.robot.SetRobotMode(1)  # وضع التشغيل العادي
-        if self._cfg.get (key="scan_mode") == "camera":
-            camera_barcode.start()
-        elif self._cfg.get (key="scan_mode") == "manual":
-            sc.start_listener()
-
-        self.robot.SetDO(0, 1)  # تفعيل مخرج رقمي
+        
+        self.robot.SetDO(0, 1)  # إشارة "جاهز" للروبوت
         last = 0
-        while self.robot.connect_to_robot():
-                DI0= self.robot.GetDI(0, 0)  # قراءة حالة مدخل رقمي للتأكد من الاتصال    
-                if DI0==1 and last == 0:  # لو DI0 عالي وكان منخفض قبل كده، يبقى الاتصال اتعمل دلوقتي
-                    
-                    
-                    self.robot.SetDO(0, 0)  # تفعيل مخرج رقمي
-                    self.robot.SetDO(3, 1)  # تفعيل مخرج رقمي
-                    self.start_sequence()  # بدء تسلسل البرامج
-                   
+        while not self._stop_app.is_set():
+                try:
+                    ret = self.robot.GetDI(0, 0)  # قراءة DI0
+                    # Fairino GetDI returns (error_code, value) or just value depending on version
+                    if isinstance(ret, (list, tuple)):
+                        DI0 = int(ret[1]) if len(ret) > 1 else int(ret[0])
+                    else:
+                        DI0 = int(ret) if ret is not None else 0
+                except Exception as e:
+                    print(f"[WARN] GetDI error: {e} — retrying...")
+                    time.sleep(1.0)
+                    continue
 
-                    print("Robot DI0 is HIGH - Connection seems good.")
-                
-                else:             
-                    print("Robot DI0 is LOW - Check robot connection or configuration.")
-                last = DI0  # تحديث الحالة الأخيرة
+                if DI0 == 1 and last == 0:  # rising edge — ابدأ الـ sequence
+                    print("Robot DI0 is HIGH — starting sequence.")
+                    self.robot.SetDO(0, 0)
+                    self.robot.SetDO(3, 1)
+                    self.start_sequence()
+                elif DI0 == 0:
+                    print("Robot DI0 is LOW - waiting for trigger...")
+
+                last = DI0
+                time.sleep(0.1)  # FIX: منع hammering الـ API (كان سبب الـ timeout)
+    
     def run(self):
         return self.start()
 
@@ -438,3 +380,9 @@ class App():
         self._stop_app.set()
         camera_hub.stop()
         camera_barcode.stop()
+
+
+if __name__=="__main__":
+
+    app =App()
+    app.start()
