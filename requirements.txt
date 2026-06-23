@@ -1,0 +1,33 @@
+# Python dependencies for the project
+
+# Web framework & server
+fastapi
+uvicorn[standard]
+python-socketio
+
+# AI / LLM clients
+openai
+google-genai
+ollama
+
+# Computer vision & image processing
+opencv-python
+Pillow
+zxingcpp
+numpy
+
+# Excel / spreadsheet
+openpyxl
+pandas
+
+# Hardware / serial / USB
+pyserial
+pyusb
+libusb
+
+# Utilities
+python-dotenv
+keyboard
+
+# Build tools (used in fairino/setup.py)
+Cython

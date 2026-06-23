@@ -301,9 +301,7 @@ class App():
         ct.trigger(name=self.barcode+"_4")
         self.robot.MoveJ(joint_pos= homing, tool=0, user=0, vel=100, acc=100)
 
-
-
-        image_list = ["results/"+self.barcode+"_0", "results/"+self.barcode+"_1", "results/"+self.barcode+"_2", "results/"+self.barcode+"_3", "results/"+self.barcode+"_4"]
+        image_list = ["./results/"+self.barcode+"_0", "./results/"+self.barcode+"_1", "./results/"+self.barcode+"_2", "./results/"+self.barcode+"_3", "results/"+self.barcode+"_4"]
 
         result = self.check_images_status(ai.check_multiple_images_for_water(image_paths=image_list))
         ex.result_reporting(ID =self.barcode, result= result )
