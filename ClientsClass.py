@@ -20,15 +20,14 @@ from openpyxl.styles import Font
 import scanner as sc
 import excel as ex
 from thread_logger import LoggedThread, get_logger as _get_thread_logger
-import camera_hub_useeplus as camera_hub
-import cv2 
+from camera_hub import CameraHub
+import cv2
 from fairino.Robot import RPC
 import capture_trigger as ct
 from config import Config
 import camera_barcode
-import api_test as ai
+from ai_vision import WaterDetector
 import excel as ex
-import test_local
 
 
 def _to_bytes(message, is_hex=False):   
@@ -139,24 +138,55 @@ class App():
         self._mapping_cache_df    = None
         self._mapping_cache_path  = None
         self._mapping_cache_mtime = None
-        #self.vision_queue = queue.Queue()
+        self._camera      = self._build_camera()
+        self._ai_provider = self._build_ai_provider()
+
+    def _build_camera(self) -> CameraHub:
+        """ينشئ CameraHub instance حسب camera_type في config."""
+        cam_type  = self._cfg.get("camera_type",  "useeplus")
+        cam_index = self._cfg.get("camera_index", 0)
+        if cam_type == "opencv":
+            return CameraHub.OpenCV(camera_index=cam_index)
+        return CameraHub.UseePlus(camera_index=cam_index)
+
+    def _build_ai_provider(self) -> WaterDetector:
+        """ينشئ WaterDetector instance حسب AI_Agent في config."""
+        agent   = self._cfg.get("AI_Agent")
+        model   = self._cfg.get("ai_model")
+        enhance = self._cfg.get("ai_enhancement", False)
+
+        if agent == "groq":
+            return WaterDetector.Groq(model=model, use_enhancement=enhance)
+        elif agent == "local_ollama":
+            return WaterDetector.Local(model=model, backend="ollama",    use_enhancement=enhance)
+        elif agent == "local_lmstudio":
+            return WaterDetector.Local(model=model, backend="lm_studio", use_enhancement=enhance)
+        else:   # "online" أو أي قيمة تانية → Gemini
+            return WaterDetector.Gemini(model=model, use_enhancement=enhance)
 
     def check_images_status(self, images_data):
-        # لو راجع string JSON (زي ما بترجع ai.check_multiple_images_for_water) نحوله لـ dict
+        # التحقق أولاً مما إذا كان النص الراجع عبارة عن رسالة خطأ من الـ API
+        if isinstance(images_data, str) and "Error:" in images_data:
+            print(f"[ERROR] check_images_status: AI connection failed with error: {images_data}")
+            return "error"
+            
+        # لو راجع string JSON نحوله لـ dict
         if isinstance(images_data, str):
             try:
                 images_data = json.loads(images_data)
             except (json.JSONDecodeError, Exception) as e:
                 print(f"[ERROR] check_images_status: failed to parse JSON: {e}\nRaw: {images_data}")
                 return "error"
+                
         if not isinstance(images_data, dict):
             print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
             return "error"
+            
         for image_name, value in images_data.items():
             if str(value).strip().lower() == "yes":
                 return "fail"
+                
         return "pass"
-
     def get_barcode_from_scanner(self):
             """
             ياخد الباركود من scanner.queue_barcode (اللي بيتعمل put فيه من thread الـ keyboard hook)
@@ -216,16 +246,21 @@ class App():
         _10kg_1 = self.get_points_from_db("10kg_1")
         _10kg_2 = self.get_points_from_db("10kg_2")
         _10kg_3 = self.get_points_from_db("10kg_3")
+        ready   = self.get_points_from_db("ready")
        # _10kg_4 = self.get_points_from_db("10kg_4")
        # _10kg_5 = self.get_points_from_db("10kg_5")
 
-
+        self.robot.MoveJ(joint_pos= ready, tool=0, user=1, vel=100, acc=100)
         self.robot.MoveJ(joint_pos= _10kg_1, tool=0, user=1, vel=100, acc=100)
         ct.trigger(name=self.barcode+"_0")
+        time.sleep(1)
         self.robot.MoveJ(joint_pos= _10kg_2, tool=0, user=1, vel=100, acc=100)
         ct.trigger(name=self.barcode+"_1")
+        time.sleep(1)
         self.robot.MoveJ(joint_pos= _10kg_3, tool=0, user=1, vel=100, acc=100)
         ct.trigger(name=self.barcode+"_2")
+        time.sleep(1)
+
         #self.robot.MoveJ(joint_pos= _10kg_4, tool=0, user=1, vel=100, acc=100)
         #ct.trigger(name=self.barcode+"_3")
         #self.robot.MoveJ(joint_pos= _10kg_5, tool=0, user=1, vel=100, acc=100)
@@ -234,9 +269,10 @@ class App():
 
         image_list = [f"results/{self.barcode}_0.jpg", f"results/{self.barcode}_1.jpg", f"results/{self.barcode}_2.jpg"]
 
-        result = self.check_images_status(ai.check_multiple_images_for_water(image_paths=image_list))
-        #result = self.check_images_status(test_local.check_multiple_images_for_water(image_list))
-        ex.result_reporting(ID =self.barcode, result= result )
+        result = self.check_images_status(
+            self._ai_provider.check_multiple_images_for_water(image_paths=image_list)
+        )
+        ex.result_reporting(ID=self.barcode, result=result)
         self.robot.SetDO(0,1)
         self.robot.SetDO(3,0)
         if result == "pass":   
@@ -264,7 +300,7 @@ class App():
         barcode_point = self.get_points_from_db("CamScan")
         self.robot.MoveJ(barcode_point, 0, 1 , vel=100, acc=100)
         if self._cfg.get (key="scan_mode") == "camera":
-            camera_barcode.start()
+            camera_barcode.start(camera=self._camera)
         elif self._cfg.get (key="scan_mode") == "manual":
             sc.start_listener()
         # انتظار الباركود — get_barcode_from_scanner بتبلوك لحد ما يجي باركود
@@ -341,11 +377,16 @@ class App():
     
     def start(self, camera_index=None):
         self._stop_app = threading.Event()
-        camera_hub.start(camera_index=camera_index)
 
-        camera_hub.wait_for_frame(timeout=5.0)
-        ct.start()
-        self.robot = RPC(self.robot_ip)  
+        # تشغيل كاميرا الـ vision (UseePlus أو OpenCV حسب config)
+        if camera_index is not None:
+            self._camera._cam_index = camera_index
+        self._camera.start()
+        self._camera.wait_for_frame(timeout=5.0)
+
+        # نمرر نفس الـ instance لـ capture_trigger عشان مايعملوش كاميرتين
+        ct.start(camera=self._camera)
+        self.robot = RPC(self.robot_ip)
         
         self.robot.SetDO(0, 1)  # إشارة "جاهز" للروبوت
         last = 0
@@ -378,7 +419,7 @@ class App():
 
     def stop(self):
         self._stop_app.set()
-        camera_hub.stop()
+        self._camera.stop()
         camera_barcode.stop()
 
 

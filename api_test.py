@@ -4,6 +4,8 @@ from google.genai import types
 import cv2
 from dotenv import load_dotenv
 from PIL import Image
+import cv2
+from pathlib import Path
 
 load_dotenv()
 API = os.getenv("GENAI_API_KEY") # تأكد إنك حطيت الـ API Key في ملف .env بالاسم ده
@@ -11,7 +13,133 @@ api_model = os.getenv("MODEL") #"gemini-3.5-flash"#os.getenv("GENAI_MODEL") # أ
 # إعداد العميل
 client = genai.Client(api_key=API)
 
-# --- دالة مساعدة لتحسين جودة الصورة ---
+
+# دالة لتحسين جودة الصورة
+import cv2
+import os
+import cv2
+import os
+from cv2 import dnn_superres
+
+import cv2
+import os
+from datetime import datetime  # إضافة مكتبة الوقت
+from cv2 import dnn_superres
+
+def optimize_image_for_gemini(img_bgr, base_image_name="image.jpg"):
+    """
+    تقوم برفع دقة الصورة للضعف (x2) وتحسين التباين لتناسب تحليل Gemini،
+    وتحفظ نسختين (قبل وبعد) للمقارنة المباشرة في مجلد enhanced_images.
+    """
+    # 1. إنشاء المجلد إذا لم يكن موجوداً
+    output_folder = "enhanced_images"
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+        print(f"تم إنشاء مجلد جديد باسم: '{output_folder}'")
+
+    if img_bgr is None:
+        print("تحذير: مصفوفة الصورة فارغة (None)")
+        return None
+
+    # 2. تجهيز الأسماء للصورة الأصلية والصورة المحسنة
+    file_name, file_extension = os.path.splitext(base_image_name)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # تحديد اسم فريد لنسخة "قبل" ونسخة "بعد"
+    name_before = f"before_{file_name}_{timestamp}{file_extension}"
+    name_after = f"after_{file_name}_{timestamp}{file_extension}"
+    
+    # تحديد المسار الكامل لكلتا الصورتين
+    path_before = os.path.join(output_folder, name_before)
+    path_after = os.path.join(output_folder, name_after)
+
+    # 3. حفظ الصورة الأصلية (قبل) فوراً
+    cv2.imwrite(path_before, img_bgr)
+    print(f"📷 تم حفظ الصورة الأصلية (قبل التحسين) في: {path_before}")
+
+    # 4. تهيئة أداة الـ Super Resolution
+    sr = dnn_superres.DnnSuperResImpl_create()
+    
+    # استخدمنا موديل x2 بدلاً من x3 لتقليل التشويش الوهمي لـ Gemini
+    model_path = "EDSR_x2.pb" 
+    
+    if not os.path.exists(model_path):
+        print(f"⚠️ خطأ: ملف الموديل '{model_path}' غير موجود. تأكد من تحميله. تم حفظ الصورة الأصلية فقط.")
+        return img_bgr 
+        
+    # 5. تحميل الموديل وتطبيق التكبير للضعف
+    sr.readModel(model_path)
+    sr.setModel("edsr", 2)
+    
+    print("جاري تكبير الصورة وتحسينها لـ Gemini...")
+    upscaled_img = sr.upsample(img_bgr)
+    
+    # 6. تحسين التباين (CLAHE) لإبراز تفاصيل المياه (الظلال والانعكاسات)
+    lab = cv2.cvtColor(upscaled_img, cv2.COLOR_BGR2LAB)
+    l_channel, a, b = cv2.split(lab)
+    
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    cl = clahe.apply(l_channel)
+    
+    limg = cv2.merge((cl,a,b))
+    final_img = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+    
+    # 7. حفظ الصورة المحسنة (بعد)
+    cv2.imwrite(path_after, final_img)
+    print(f"✨ تم حفظ الصورة المحسنة (بعد التحسين) في: {path_after}")
+    
+    return final_img
+
+def enhance_image_super_res(img_bgr, base_image_name="image.jpg"):
+    """
+    تقوم برفع دقة الصورة بالذكاء الاصطناعي وتحفظ نسختين (قبل وبعد)
+    للمقارنة المباشرة في مجلد enhanced_images.
+    """
+    # 1. إنشاء المجلد إذا لم يكن موجوداً
+    output_folder = "enhanced_images"
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+        print(f"تم إنشاء مجلد جديد باسم: '{output_folder}'")
+
+    if img_bgr is None:
+        print("تحذير: مصفوفة الصورة فارغة (None)")
+        return None
+
+    # 2. تجهيز الأسماء للصورة الأصلية والصورة المحسنة
+    file_name, file_extension = os.path.splitext(base_image_name)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # تحديد اسم فريد لنسخة "قبل" ونسخة "بعد"
+    name_before = f"before_{file_name}_{timestamp}{file_extension}"
+    name_after = f"after_{file_name}_{timestamp}{file_extension}"
+    
+    # تحديد المسار الكامل لكلتا الصورتين
+    path_before = os.path.join(output_folder, name_before)
+    path_after = os.path.join(output_folder, name_after)
+
+    # 3. حفظ الصورة الأصلية (قبل) فوراً
+    cv2.imwrite(path_before, img_bgr)
+    print(f"📷 تم حفظ الصورة الأصلية (قبل التحسين) في: {path_before}")
+
+    # 4. تهيئة أداة الـ Super Resolution
+    sr = dnn_superres.DnnSuperResImpl_create()
+    model_path = "ESPCN_x3.pb" 
+    
+    if not os.path.exists(model_path):
+        print(f"⚠️ خطأ: ملف الموديل غير موجود. تم حفظ الصورة الأصلية فقط.")
+        return img_bgr 
+        
+    # 5. تحميل الموديل وتطبيق التكبير
+    sr.readModel(model_path)
+    sr.setModel("espcn", 3)
+    
+    upscaled_img = sr.upsample(img_bgr)
+    
+    # 6. حفظ الصورة المحسنة (بعد)
+    cv2.imwrite(path_after, upscaled_img)
+    print(f"✨ تم حفظ الصورة المحسنة (بعد التحسين) في: {path_after}")
+    
+    return upscaled_img
 def enhance_image_for_ai(img_bgr):
     """
     تقوم بتحسين جودة الصورة لإظهار التفاصيل (خاصة المياه) للموديل.
@@ -76,7 +204,7 @@ def _try_check_images(image_paths: list[str]) -> str:
             if os.path.exists(path):
                 # قراءة الصورة بـ OpenCV
                 img = cv2.imread(path)
-                #img = enhance_image_for_ai(img)
+                img =optimize_image_for_gemini(img)
                 rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 
                 # التحويل إلى PIL Image عشان Gemini API يقدر يفهمها

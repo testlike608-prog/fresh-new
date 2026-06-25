@@ -21,7 +21,7 @@ import logging
 import threading
 import cv2
 
-import camera_hub_useeplus as _cam
+from camera_hub import CameraHub
 
 log = logging.getLogger("capture_trigger")
 
@@ -30,19 +30,42 @@ DEFAULT_SAVE_DIR = "./results"
 _save_dir        = DEFAULT_SAVE_DIR
 _counter         = 0
 _counter_lock    = threading.Lock()
+_cam: CameraHub | None = None   # الـ instance الداخلي للكاميرا
+
+
+def _build_camera(camera_index: int) -> CameraHub:
+    """ينشئ CameraHub instance حسب config."""
+    try:
+        from config import config as _cfg
+        cam_type = _cfg.get("camera_type", "useeplus")
+    except Exception:
+        cam_type = "useeplus"
+    if cam_type == "opencv":
+        return CameraHub.OpenCV(camera_index=camera_index)
+    return CameraHub.UseePlus(camera_index=camera_index)
+
 
 # ── تهيئة ─────────────────────────────────────────────────────────────────────
 def start(camera_index: int = 0, save_dir: str = DEFAULT_SAVE_DIR,
-          wait_timeout: float = 8.0) -> bool:
+          wait_timeout: float = 8.0, camera: CameraHub | None = None) -> bool:
     """
     يشغّل الكاميرا في الخلفية وينتظر أول فريم.
-    يرجع True لو الكاميرا جاهزة، False لو فشل.
+
+    :param camera: لو مرّرت CameraHub instance جاهز هيستخدمه مباشرة (مش هيعمل instance جديد)
+    :return: True لو الكاميرا جاهزة، False لو فشل.
     """
-    global _save_dir
+    global _save_dir, _cam
     _save_dir = save_dir
     os.makedirs(save_dir, exist_ok=True)
 
-    _cam.start(camera_index=camera_index)
+    if camera is not None:
+        _cam = camera                    # استخدم الـ instance المرسل من App
+    elif _cam is None:
+        _cam = _build_camera(camera_index)
+
+    if not _cam.is_running():
+        _cam.start(camera_index=camera_index)
+
     ready = _cam.wait_for_frame(timeout=wait_timeout)
     if ready:
         log.info(f"capture_trigger: ✅ الكاميرا جاهزة — مجلد الحفظ: {save_dir}")
@@ -53,7 +76,8 @@ def start(camera_index: int = 0, save_dir: str = DEFAULT_SAVE_DIR,
 
 def stop():
     """يوقف الكاميرا."""
-    _cam.stop()
+    if _cam is not None and _cam.is_running():
+        _cam.stop()
 
 
 # ── الـ trigger ────────────────────────────────────────────────────────────────
@@ -61,13 +85,13 @@ def trigger(save_path: str = None, name: str = "capture") -> str | None:
     """
     يلتقط الفريم الحالي ويحفظه فوراً.
 
-    :param save_path: مسار كامل للصورة — لو None يُولَّد تلقائياً باستخدام timestamp
+    :param save_path: مسار كامل للصورة — لو None يُولَّد تلقائياً
     :param name: اسم الصورة (بدون امتداد)
     :return: المسار اللي اتحفظت فيه الصورة، أو None لو فشل
     """
     global _counter
 
-    frame = _cam.get_frame()
+    frame = _cam.get_frame() if _cam is not None else None
     if frame is None:
         log.warning("capture_trigger: ⚠️ مفيش فريم — الكاميرا شغالة؟")
         return None

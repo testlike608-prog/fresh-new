@@ -16,10 +16,13 @@
   ],
   "scan_mode": "camera",
   "camera_index": 0,
-  
+  "camera_type": "useeplus",
+
   "live_camera_index": 1,
   "signal_pass_preriod": 0.5,
-  "signal_fail_preriod":0.5
+  "signal_fail_preriod": 0.5,
 
-
+  "AI_Agent": "groq",
+  "ai_model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "ai_enhancement": false
 }

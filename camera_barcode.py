@@ -23,7 +23,7 @@ import logging
 
 import scanner
 from barcode_utils import normalize_barcode
-import camera_hub_useeplus as camera_hub   # المصدر المشترك
+from camera_hub import CameraHub
 
 log = logging.getLogger("camera_barcode")
 
@@ -31,6 +31,7 @@ log = logging.getLogger("camera_barcode")
 _thread     = None
 _stop_event = threading.Event()
 _lock       = threading.Lock()
+_hub: CameraHub | None = None   # الـ instance المشترك مع App
 
 # كم decode في الثانية (ما نضغطش على المعالج)
 DECODE_FPS  = 10
@@ -41,9 +42,9 @@ DEBUG_FRAME_PATH    = "./result/test.jpg"   # الصورة اللي بنحفظه
 DEBUG_SAVE_INTERVAL = 2.0                   # احفظ كل 2 ثانية
 
 
-def _decode_loop(stop_event: threading.Event):
+def _decode_loop(stop_event: threading.Event, camera: CameraHub):
     """
-    يقرأ الفريمات من camera_hub ويحاول يكشف الباركود فيها.
+    يقرأ الفريمات من CameraHub instance ويحاول يكشف الباركود فيها.
     """
     frame_interval       = 1.0 / DECODE_FPS
     last_decode_at       = 0.0
@@ -54,10 +55,10 @@ def _decode_loop(stop_event: threading.Event):
     import os
     os.makedirs(os.path.dirname(DEBUG_FRAME_PATH), exist_ok=True)
 
-    log.info("[CameraScanner] في انتظار باركود... (يقرأ من camera_hub)")
+    log.info("[CameraScanner] في انتظار باركود... (يقرأ من CameraHub)")
 
     while not stop_event.is_set():
-        frame = camera_hub.get_frame()
+        frame = camera.get_frame()
         if frame is None:
             now = time.time()
             if now - _none_warn_at > 5.0:
@@ -123,13 +124,30 @@ def _decode_loop(stop_event: threading.Event):
 
 
 # ─── Public API ───────────────────────────────────────────────────────────────
-def start(camera_index: int = None):
+def start(camera_index: int = None, camera: CameraHub | None = None):
     """
     تشغيل الـ decode loop في ثريد خلفي.
-    camera_hub يجب أن يكون شغالاً قبل الاستدعاء.
-    camera_index محتجزة هنا للـ backward compatibility بس — مش بتُستخدم.
+
+    :param camera: CameraHub instance شغال — لو None هيبني واحد من config.
+                   الكاميرا لازم تكون شغالة (start()) قبل الاستدعاء.
+    :param camera_index: محتجز للـ backward compatibility — مش بيُستخدم.
     """
-    global _thread, _stop_event
+    global _thread, _stop_event, _hub
+
+    if camera is not None:
+        _hub = camera
+    elif _hub is None:
+        # fallback: بيبني instance جديد من config (لو مش متمررلوش instance)
+        try:
+            from config import config as _cfg
+            cam_type = _cfg.get("camera_type", "useeplus")
+            cam_idx  = camera_index if camera_index is not None else int(_cfg.get("camera_index", 0))
+        except Exception:
+            cam_type, cam_idx = "useeplus", 0
+        _hub = CameraHub.UseePlus(camera_index=cam_idx) if cam_type != "opencv" \
+               else CameraHub.OpenCV(camera_index=cam_idx)
+        if not _hub.is_running():
+            _hub.start()
 
     with _lock:
         if _thread is not None and _thread.is_alive():
@@ -139,7 +157,7 @@ def start(camera_index: int = None):
         _stop_event = threading.Event()
         _thread = threading.Thread(
             target=_decode_loop,
-            args=(_stop_event,),
+            args=(_stop_event, _hub),
             name="camera-barcode-scanner",
             daemon=True,
         )
@@ -194,11 +212,12 @@ if __name__ == "__main__":
     #print(f"✅ الكاميرات المتاحة: {cams}")
     cam_idx = 0
 
-    # لازم نشغّل الـ hub الأول
-    camera_hub.start(camera_index=cam_idx)
-    time.sleep(0.5)   # نستنى الكاميرا تفتح
+    # نشغّل الكاميرا ونمررها لـ start()
+    hub = CameraHub.UseePlus(camera_index=cam_idx)
+    hub.start()
+    hub.wait_for_frame(timeout=5.0)
 
-    start()
+    start(camera=hub)
     print("اضغط Ctrl+C للإيقاف...")
     try:
         while True:
@@ -208,4 +227,4 @@ if __name__ == "__main__":
                 print(f">>> باركود: {bc}")
     except KeyboardInterrupt:
         stop()
-        camera_hub.stop()
+        hub.stop()
