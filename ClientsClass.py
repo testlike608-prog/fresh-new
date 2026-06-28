@@ -28,7 +28,7 @@ from config import Config
 import camera_barcode
 from ai_vision import WaterDetector
 import excel as ex
-
+import asyncio
 
 def _to_bytes(message, is_hex=False):   
     """
@@ -241,7 +241,13 @@ class App():
         # 5. إغلاق الاتصال
         conn.close()
         return joint_angles
-
+   
+   
+    async def switch_camera (self):
+        self.robot.SetDO(self._cfg.get(key="Switch_camera"),1)
+        await asyncio.sleep(3)
+        self.robot.SetDO(self._cfg.get(key="Switch_camera"),0)
+        
     def program_1(self):
         homing =self.get_points_from_db("water1")
         _10kg_1 = self.get_points_from_db("10kg_1")
@@ -251,6 +257,7 @@ class App():
        # _10kg_4 = self.get_points_from_db("10kg_4")
        # _10kg_5 = self.get_points_from_db("10kg_5")
 
+        asyncio.run(self.switch_camera())
         self.robot.MoveJ(joint_pos= ready, tool=0, user=1, vel=100, acc=100)
         self.robot.MoveJ(joint_pos= _10kg_1, tool=0, user=1, vel=100, acc=100)
         ct.trigger(name=self.barcode+"_0")
@@ -258,6 +265,8 @@ class App():
         self.robot.MoveJ(joint_pos= _10kg_2, tool=0, user=1, vel=100, acc=100)
         ct.trigger(name=self.barcode+"_1")
         time.sleep(1)
+        asyncio.run(self.switch_camera())
+        self.robot.MoveJ(joint_pos= ready, tool=0, user=1, vel=100, acc=100)
         self.robot.MoveJ(joint_pos= _10kg_3, tool=0, user=1, vel=100, acc=100)
         ct.trigger(name=self.barcode+"_2")
         time.sleep(1)
@@ -274,16 +283,16 @@ class App():
             self._ai_provider.run(image_paths=image_list)
         )
         ex.result_reporting(ID=self.barcode, result=result)
-        self.robot.SetDO(0,1)
-        self.robot.SetDO(3,0)
+        self.robot.SetDO(self._cfg.get(key="test_done"),1)
+        self.robot.SetDO(self._cfg.get(key="yellow_led"),0)
         if result == "pass":   
-            self.robot.SetDO(1,1)
+            self.robot.SetDO(self._cfg.get(key="test_pass"),1)
             time.sleep(self._cfg.get(key="signal_pass_preriod"))
-            self.robot.SetDO(1,0)
+            self.robot.SetDO(self._cfg.get(key="test_pass"),0)
         elif result == "fail":
-            self.robot.SetDO(2,1)
+            self.robot.SetDO(self._cfg.get(key="test_fail"),1)
             time.sleep(self._cfg.get(key="signal_fail_preriod"))
-            self.robot.SetDO(2,0)
+            self.robot.SetDO(self._cfg.get(key="test_fail"),0)
 
     def program_2(self):
         pass
@@ -391,11 +400,11 @@ class App():
         homing =self.get_points_from_db("water1")
         self.robot.MoveJ(joint_pos= homing, tool=0, user=1, vel=100, acc=100)
 
-        self.robot.SetDO(0, 1)  # إشارة "جاهز" للروبوت
+        self.robot.SetDO(self._cfg.get(key="test_done"), 1)  # إشارة "جاهز" للروبوت
         last = 0
         while not self._stop_app.is_set():
                 try:
-                    ret = self.robot.GetDI(0, 0)  # قراءة DI0
+                    ret = self.robot.GetDI(self._cfg.get(key="input_trigger"), 0)  # قراءة DI0
                     # Fairino GetDI returns (error_code, value) or just value depending on version
                     if isinstance(ret, (list, tuple)):
                         DI0 = int(ret[1]) if len(ret) > 1 else int(ret[0])
@@ -408,8 +417,8 @@ class App():
 
                 if DI0 == 1 and last == 0:  # rising edge — ابدأ الـ sequence
                     print("Robot DI0 is HIGH — starting sequence.")
-                    self.robot.SetDO(0, 0)
-                    self.robot.SetDO(3, 1)
+                    self.robot.SetDO(self._cfg.get(key="test_done"), 0)
+                    self.robot.SetDO(self._cfg.get(key="yellow_led"), 1)
                     self.start_sequence()
                 elif DI0 == 0:
                     print("Robot DI0 is LOW - waiting for trigger...")

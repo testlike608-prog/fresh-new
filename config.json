@@ -24,5 +24,14 @@
 
   "AI_Agent": "groq",
   "ai_model": "meta-llama/llama-4-scout-17b-16e-instruct",
-  "ai_enhancement": true
+  "ai_enhancement": true,
+  
+  
+  "input_trigger": 0,
+
+  "test_done":0,
+  "test_pass":1,
+  "test_fail":2,
+  "yellow_led":3,
+  "Switch_camera":4
 }

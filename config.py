@@ -87,7 +87,18 @@ DEFAULT_CONFIG = {
     # ── TCP timeouts ──────────────────────────────────────────────
     
     "signal_pass_preriod": 0.5,
-    "signal_fail_preriod":0.5
+    "signal_fail_preriod":0.5,
+
+
+
+    "input_trigger": 0,
+
+
+    "test_done":0,
+    "test_pass":1,
+    "test_fail":2,
+    "yellow_led":3,
+    "Switch_camera":4
 }
 
 
