@@ -187,6 +187,7 @@ class App():
                 return "fail"
                 
         return "pass"
+    
     def get_barcode_from_scanner(self):
             """
             ياخد الباركود من scanner.queue_barcode (اللي بيتعمل put فيه من thread الـ keyboard hook)
@@ -270,7 +271,7 @@ class App():
         image_list = [f"results/{self.barcode}_0.jpg", f"results/{self.barcode}_1.jpg", f"results/{self.barcode}_2.jpg"]
 
         result = self.check_images_status(
-            self._ai_provider.check_multiple_images_for_water(image_paths=image_list)
+            self._ai_provider.run(image_paths=image_list)
         )
         ex.result_reporting(ID=self.barcode, result=result)
         self.robot.SetDO(0,1)
@@ -387,7 +388,9 @@ class App():
         # نمرر نفس الـ instance لـ capture_trigger عشان مايعملوش كاميرتين
         ct.start(camera=self._camera)
         self.robot = RPC(self.robot_ip)
-        
+        homing =self.get_points_from_db("water1")
+        self.robot.MoveJ(joint_pos= homing, tool=0, user=1, vel=100, acc=100)
+
         self.robot.SetDO(0, 1)  # إشارة "جاهز" للروبوت
         last = 0
         while not self._stop_app.is_set():

@@ -6232,3 +6232,35 @@
 2026-06-25 11:06:30.719 [INFO    ] [MainThread tid=21420] Logger initialised — log file: d:\motion\fresh-new\logs\threads.log
 2026-06-25 11:06:30.719 [INFO    ] [MainThread tid=21420] Python 3.12.10 on win32
 2026-06-25 11:06:30.719 [INFO    ] [MainThread tid=21420] ======================================================================
+2026-06-25 13:12:37.102 [INFO    ] [MainThread tid=17800] ======================================================================
+2026-06-25 13:12:37.102 [INFO    ] [MainThread tid=17800] Logger initialised — log file: d:\motion\fresh-new\logs\threads.log
+2026-06-25 13:12:37.102 [INFO    ] [MainThread tid=17800] Python 3.12.10 on win32
+2026-06-25 13:12:37.102 [INFO    ] [MainThread tid=17800] ======================================================================
+2026-06-28 12:55:38.723 [INFO    ] [MainThread tid=11420] ======================================================================
+2026-06-28 12:55:38.723 [INFO    ] [MainThread tid=11420] Logger initialised — log file: d:\motion\fresh-new\logs\threads.log
+2026-06-28 12:55:38.723 [INFO    ] [MainThread tid=11420] Python 3.12.10 on win32
+2026-06-28 12:55:38.723 [INFO    ] [MainThread tid=11420] ======================================================================
+2026-06-28 12:55:39.236 [INFO    ] [MainThread tid=11420] Barcode not received within timeout period
+2026-06-28 12:55:39.738 [INFO    ] [MainThread tid=11420] Barcode not received within timeout period
+2026-06-28 12:55:40.242 [INFO    ] [MainThread tid=11420] Barcode not received within timeout period
+2026-06-28 12:55:40.749 [INFO    ] [MainThread tid=11420] Barcode not received within timeout period
+2026-06-28 12:55:41.250 [INFO    ] [MainThread tid=11420] Barcode not received within timeout period
+2026-06-28 12:55:41.756 [INFO    ] [MainThread tid=11420] Barcode not received within timeout period
+2026-06-28 12:55:42.258 [INFO    ] [MainThread tid=11420] Barcode not received within timeout period
+2026-06-28 13:00:52.719 [INFO    ] [MainThread tid=14412] ======================================================================
+2026-06-28 13:00:52.719 [INFO    ] [MainThread tid=14412] Logger initialised — log file: d:\motion\fresh-new\logs\threads.log
+2026-06-28 13:00:52.729 [INFO    ] [MainThread tid=14412] Python 3.12.10 on win32
+2026-06-28 13:00:52.729 [INFO    ] [MainThread tid=14412] ======================================================================
+2026-06-28 13:00:53.237 [INFO    ] [MainThread tid=14412] Barcode not received within timeout period
+2026-06-28 13:00:53.743 [INFO    ] [MainThread tid=14412] Barcode not received within timeout period
+2026-06-28 13:00:54.247 [INFO    ] [MainThread tid=14412] Barcode not received within timeout period
+2026-06-28 13:00:54.749 [INFO    ] [MainThread tid=14412] Barcode not received within timeout period
+2026-06-28 13:00:55.259 [INFO    ] [MainThread tid=14412] Barcode not received within timeout period
+2026-06-28 13:00:55.762 [INFO    ] [MainThread tid=14412] Barcode not received within timeout period
+2026-06-28 13:00:56.266 [INFO    ] [MainThread tid=14412] Barcode not received within timeout period
+2026-06-28 13:02:59.301 [INFO    ] [MainThread tid=16008] ======================================================================
+2026-06-28 13:02:59.301 [INFO    ] [MainThread tid=16008] Logger initialised — log file: d:\motion\fresh-new\logs\threads.log
+2026-06-28 13:02:59.301 [INFO    ] [MainThread tid=16008] Python 3.12.10 on win32
+2026-06-28 13:02:59.301 [INFO    ] [MainThread tid=16008] ======================================================================
+2026-06-28 13:02:59.811 [INFO    ] [MainThread tid=16008] Barcode not received within timeout period
+2026-06-28 13:03:00.315 [INFO    ] [MainThread tid=16008] Barcode not received within timeout period
