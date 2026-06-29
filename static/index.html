@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Test Station Controller</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════
+   CSS Variables
+═══════════════════════════════════════════════════════ */
+:root {
+  --bg:       #0F172A;
+  --bg2:      #1E293B;
+  --bg3:      #334155;
+  --border:   #334155;
+  --border2:  #475569;
+  --text:     #E5E7EB;
+  --text2:    #94A3B8;
+  --text3:    #64748B;
+  --accent:   #3B82F6;
+  --accent-h: #2563EB;
+  --success:  #10B981;
+  --warning:  #F59E0B;
+  --danger:   #EF4444;
+  --sidebar-w:220px;
+  --radius:   10px;
+}
+body.light {
+  --bg:#F8FAFC; --bg2:#FFFFFF; --bg3:#F1F5F9;
+  --border:#E2E8F0; --border2:#CBD5E1;
+  --text:#0F172A; --text2:#64748B; --text3:#94A3B8;
+}
+/* ═══════════════════════════════════════════════════════
+   Reset & Base
+═══════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;overflow:hidden}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+/* ═══════════════════════════════════════════════════════
+   Desktop layout
+═══════════════════════════════════════════════════════ */
+#sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;z-index:10}
+#content{flex:1;overflow:hidden;position:relative}
+.page{position:absolute;inset:0;overflow-y:auto;padding:24px 28px;display:none}
+.page.active{display:block}
+/* ═══════════════════════════════════════════════════════
+   Mobile top bar + bottom nav
+═══════════════════════════════════════════════════════ */
+#mobile-topbar{display:none;height:52px;min-height:52px;background:var(--bg2);border-bottom:1px solid var(--border);align-items:center;padding:0 16px;gap:10px;position:sticky;top:0;z-index:20}
+#mobile-topbar .mob-title{font-size:16px;font-weight:700;flex:1}
+#mobile-topbar .mob-ws{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+#mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--bg2);border-top:1px solid var(--border);z-index:20;padding-bottom:env(safe-area-inset-bottom)}
+#mobile-nav .mob-nav-inner{display:flex;height:60px}
+.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;transition:color .15s;padding:0}
+.mob-nav-btn .icon{font-size:20px}
+.mob-nav-btn.active{color:var(--accent)}
+/* ═══════════════════════════════════════════════════════
+   Sidebar
+═══════════════════════════════════════════════════════ */
+.sidebar-brand{padding:20px 16px 4px;font-size:18px;font-weight:700}
+.sidebar-sub{padding:2px 16px 16px;font-size:11px;color:var(--text2);letter-spacing:1px;text-transform:uppercase}
+.sidebar-sep{height:1px;background:var(--border);margin:0 16px 8px}
+.nav-btn{display:block;width:100%;padding:12px 18px 12px 21px;background:transparent;border:none;border-right:3px solid transparent;color:var(--text2);font-size:14px;font-weight:500;text-align:right;transition:background .15s,color .15s}
+.nav-btn:hover{background:var(--bg3);color:var(--text)}
+.nav-btn.active{background:rgba(59,130,246,.12);color:#60A5FA;border-right-color:var(--accent);font-weight:600}
+.sidebar-spacer{flex:1}
+.sidebar-bottom{padding:12px 14px 16px}
+.theme-btn{width:100%;padding:7px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:13px;transition:all .15s}
+.theme-btn:hover{color:var(--text);border-color:var(--border2)}
+.conn-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);display:inline-block;margin-left:6px;vertical-align:middle;transition:background .3s}
+.conn-dot.ok{background:var(--success)}
+/* ═══════════════════════════════════════════════════════
+   Page headers
+═══════════════════════════════════════════════════════ */
+.page-title{font-size:22px;font-weight:700}
+.page-sub{font-size:13px;color:var(--text2);margin-top:2px;margin-bottom:18px}
+/* ═══════════════════════════════════════════════════════
+   Cards
+═══════════════════════════════════════════════════════ */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
+.card-title{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.card-value{font-size:22px;font-weight:700;line-height:1.2}
+.card-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.section-label{font-size:13px;font-weight:600;margin:14px 0 8px}
+/* ═══════════════════════════════════════════════════════
+   Buttons
+═══════════════════════════════════════════════════════ */
+.btn{padding:8px 14px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;white-space:nowrap}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--accent-h)}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover:not(:disabled){background:#059669}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover:not(:disabled){background:#DC2626}
+.btn-secondary{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-secondary:hover:not(:disabled){background:var(--bg3);color:var(--text)}
+/* ═══════════════════════════════════════════════════════
+   Badges
+═══════════════════════════════════════════════════════ */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:14px;font-size:12px;font-weight:700;letter-spacing:.5px}
+.badge-running{background:rgba(16,185,129,.12);color:var(--success);border:1px solid var(--success)}
+.badge-stopped{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid var(--danger)}
+/* ═══════════════════════════════════════════════════════
+   Connection cards
+═══════════════════════════════════════════════════════ */
+.conn-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.conn-card-header{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.conn-led{width:10px;height:10px;border-radius:50%;background:var(--danger);flex-shrink:0;transition:background .3s;box-shadow:0 0 0 2px rgba(255,255,255,.08)}
+.conn-led.ok{background:var(--success);box-shadow:0 0 6px rgba(16,185,129,.4)}
+.conn-name{font-size:13px;font-weight:600;flex:1;min-width:0}
+.conn-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:.4px;white-space:nowrap}
+.conn-pill.ok{background:rgba(16,185,129,.12);color:var(--success)}
+.conn-pill.bad{background:rgba(239,68,68,.12);color:var(--danger)}
+.conn-endpoint{font-size:11px;color:var(--text3);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* ═══════════════════════════════════════════════════════
+   Stage progress
+═══════════════════════════════════════════════════════ */
+.stage-label{font-size:16px;font-weight:600;margin-bottom:4px}
+.stage-sub{font-size:12px;color:var(--text2);margin-bottom:10px}
+.progress-bar{height:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:10px}
+.progress-fill{height:100%;background:var(--accent);border-radius:5px;transition:width .4s ease}
+.stage-dots{display:flex;gap:4px;flex-wrap:wrap}
+.stage-dot{font-size:14px;color:var(--bg3)}
+.stage-dot.active{color:var(--accent)}
+.stage-dot.done{color:var(--success)}
+.stage-dot.error{color:var(--danger)}
+/* ═══════════════════════════════════════════════════════
+   Camera
+═══════════════════════════════════════════════════════ */
+.camera-box{width:320px;max-width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;position:relative}
+.camera-box img{width:100%;display:block;min-height:160px;background:#000}
+.camera-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;color:var(--text3);font-size:12px;text-align:center;pointer-events:none}
+.camera-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.cam-live-dot{width:8px;height:8px;border-radius:50%;background:var(--text3)}
+.cam-live-dot.live{background:var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* ═══════════════════════════════════════════════════════
+   Logs
+═══════════════════════════════════════════════════════ */
+#log-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.form-control{background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 10px;font-size:13px;outline:none;transition:border .15s}
+.form-control:focus{border-color:var(--accent)}
+#log-search{flex:1;min-width:120px}
+#log-view{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'Consolas','Courier New',monospace;font-size:12px;overflow-y:auto;height:calc(100vh - 220px);white-space:pre-wrap;word-break:break-all}
+.log-DEBUG{color:#64748B}
+.log-INFO{color:var(--text)}
+.log-WARNING{color:var(--warning);font-weight:600}
+.log-ERROR{color:var(--danger);font-weight:600}
+.log-CRITICAL{color:#FCA5A5;font-weight:700}
+body.light .log-DEBUG{color:#94A3B8}
+body.light .log-INFO{color:#1E293B}
+.log-count{font-size:11px;color:var(--text3);margin-top:6px}
+/* ═══════════════════════════════════════════════════════
+   Settings
+═══════════════════════════════════════════════════════ */
+.field-row{display:flex;align-items:center;gap:10px;padding:6px 0}
+.field-label{min-width:200px;font-size:13px;font-weight:500}
+.field-input{flex:1;max-width:300px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 10px;font-size:13px;outline:none;transition:border .15s}
+.field-input:focus{border-color:var(--accent)}
+.field-input:disabled{opacity:.5;cursor:not-allowed}
+select.field-input{cursor:pointer}
+.field-hint{font-size:11px;color:var(--text3);margin-top:2px}
+/* ═══════════════════════════════════════════════════════
+   Header row
+═══════════════════════════════════════════════════════ */
+.hdr-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.hdr-title-box{flex:1;min-width:0}
+.hdr-buttons{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hdr-sep{width:1px;height:28px;background:var(--border)}
+/* ═══════════════════════════════════════════════════════
+   Modals
+═══════════════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;width:380px;max-width:100%}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px}
+.modal-error{color:var(--danger);font-size:12px;margin-top:4px;display:none}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+/* Scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+/* ═══════════════════════════════════════════════════════
+   Responsive — Tablet
+═══════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .grid-4{grid-template-columns:1fr 1fr}
+}
+/* ═══════════════════════════════════════════════════════
+   Responsive — Mobile
+═══════════════════════════════════════════════════════ */
+@media(max-width:640px){
+  body{flex-direction:column;overflow:hidden}
+  #sidebar{display:none}
+  #mobile-topbar{display:flex}
+  #mobile-nav{display:block}
+  #content{flex:1;min-height:0}
+  .page{top:0;bottom:60px;padding:14px 14px 10px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  .grid-4{grid-template-columns:1fr 1fr;gap:8px}
+  .grid-2{grid-template-columns:1fr 1fr;gap:8px}
+  .camera-box{width:100%}
+  .page-title{font-size:18px}
+  .page-sub{font-size:12px;margin-bottom:12px}
+  .card-value{font-size:18px}
+  .card{padding:12px 14px}
+  .stage-label{font-size:15px}
+  .field-row{flex-direction:column;align-items:flex-start;gap:4px}
+  .field-label{min-width:unset;font-size:12px}
+  .field-input{max-width:100%;width:100%}
+  .btn{padding:10px 14px;font-size:13px}
+  .hdr-row{gap:8px;margin-bottom:12px}
+  .hdr-sep{display:none}
+  #log-view{height:calc(100dvh - 230px);font-size:11px}
+  .conn-pill{display:none}
+}
+@media(max-width:380px){
+  .grid-4{grid-template-columns:1fr 1fr;gap:6px}
+  .card-value{font-size:16px}
+  #log-view{font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ MOBILE TOP BAR ════════════ -->
+<div id="mobile-topbar">
+  <span class="mob-title">⬢ TestStation</span>
+  <div class="mob-ws">WS <span class="conn-dot" id="ws-dot-mob"></span></div>
+  <button class="btn btn-secondary" style="padding:5px 10px;font-size:12px" onclick="toggleTheme()">🌙</button>
+</div>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<div id="sidebar">
+  <div class="sidebar-brand">⬢ TestStation</div>
+  <div class="sidebar-sub">CONTROL PANEL</div>
+  <div class="sidebar-sep"></div>
+  <button class="nav-btn active" onclick="showPage('status')">📊&nbsp; Status</button>
+  <button class="nav-btn"        onclick="showPage('logs')">📜&nbsp; Logs</button>
+  <button class="nav-btn"        onclick="showPage('settings')">⚙️&nbsp; Settings</button>
+  <div class="sidebar-spacer"></div>
+  <div style="padding:0 14px 10px;font-size:11px;color:var(--text3)">
+    WS&nbsp;<span class="conn-dot" id="ws-dot"></span>
+  </div>
+  <div class="sidebar-bottom">
+    <button class="theme-btn" onclick="toggleTheme()">🌙 Dark Mode</button>
+  </div>
+</div>
+
+<!-- ════════════ PAGES ════════════ -->
+<div id="content">
+
+<!-- ──────────── STATUS ──────────── -->
+<div id="page-status" class="page active">
+  <div class="hdr-row">
+    <div class="hdr-title-box">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="page-title">Status</span>
+        <span class="badge badge-stopped" id="running-badge">⏹ STOPPED</span>
+      </div>
+      <div class="page-sub" id="running-sub">البرنامج متوقف</div>
+    </div>
+    <div class="hdr-buttons">
+      <button class="btn btn-success"   id="btn-start" onclick="doStart()">▶ Start</button>
+      <button class="btn btn-danger"    id="btn-stop"  onclick="doStop()" disabled>■ Stop</button>
+      <div class="hdr-sep"></div>
+      <button class="btn btn-secondary" onclick="openResultsFile()">📊 التقرير</button>
+    </div>
+  </div>
+
+  <!-- Stage card -->
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-title">المرحلة الحالية</div>
+    <div class="stage-label" id="stage-label">في الانتظار</div>
+    <div class="stage-sub"   id="stage-sub">جاهز لاستقبال إشارة DI0</div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="stage-dots"  id="stage-dots"></div>
+  </div>
+
+  <!-- Camera -->
+  <div style="margin-bottom:10px">
+    <div class="camera-header">
+      <span class="cam-live-dot" id="cam-dot"></span>
+      <span style="font-size:13px;font-weight:600">📷 Live Camera</span>
+    </div>
+    <div class="camera-box">
+      <img id="cam-img" src="" alt="" style="display:none"/>
+      <div class="camera-overlay" id="cam-overlay">
+        <div>📷</div><div>الكاميرا غير متصلة أو متوقفة</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connections -->
+  <div class="section-label">الاتصالات</div>
+  <div class="grid-2" style="margin-bottom:10px">
+
+    <div class="conn-card">
+      <div class="conn-card-header">
+        <div class="conn-led" id="led-robot"></div>
+        <div class="conn-name">🤖 Robot</div>
+        <span class="conn-pill bad" id="pill-robot">DISC</span>
+      </div>
+      <div class="conn-endpoint" id="ep-robot">—</div>
+    </div>
+
+    <div class="conn-card">
+      <div class="conn-card-header">
+        <div class="conn-led" id="led-camera"></div>
+        <div class="conn-name">📷 Camera</div>
+        <span class="conn-pill bad" id="pill-camera">OFF</span>
+      </div>
+      <div class="conn-endpoint" id="ep-camera">—</div>
+    </div>
+
+    <div class="conn-card">
+      <div class="conn-card-header">
+        <div class="conn-led" id="led-ai"></div>
+        <div class="conn-name">🧠 AI Provider</div>
+        <span class="conn-pill bad" id="pill-ai">OFF</span>
+      </div>
+      <div class="conn-endpoint" id="ep-ai">—</div>
+    </div>
+
+    <div class="conn-card">
+      <div class="conn-card-header">
+        <div class="conn-led" id="led-scanner"></div>
+        <div class="conn-name">🔍 Scanner</div>
+        <span class="conn-pill bad" id="pill-scanner">OFF</span>
+      </div>
+      <div class="conn-endpoint" id="ep-scanner">—</div>
+    </div>
+
+  </div>
+
+  <!-- Stats row 1 -->
+  <div class="section-label">الإحصائيات</div>
+  <div class="grid-4" style="margin-bottom:10px">
+    <div class="card">
+      <div class="card-title">Total</div>
+      <div class="card-value" id="stat-total">0</div>
+      <div class="card-sub">إجمالي</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Pass</div>
+      <div class="card-value" id="stat-pass" style="color:var(--success)">0</div>
+      <div class="card-sub">نجح</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Fail</div>
+      <div class="card-value" id="stat-fail" style="color:var(--danger)">0</div>
+      <div class="card-sub">فشل</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Errors</div>
+      <div class="card-value" id="stat-errors" style="color:var(--warning)">0</div>
+      <div class="card-sub">أخطاء</div>
+    </div>
+  </div>
+
+  <!-- Stats row 2 -->
+  <div class="grid-4" style="margin-bottom:10px">
+    <div class="card">
+      <div class="card-title">Scanner Q</div>
+      <div class="card-value" id="stat-queue">0</div>
+      <div class="card-sub">انتظار</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Barcode</div>
+      <div class="card-value" id="stat-barcode" style="font-size:13px">—</div>
+      <div class="card-sub">آخر باركود</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Last Event</div>
+      <div class="card-value" id="stat-last-evt" style="font-size:13px">—</div>
+      <div class="card-sub">آخر حدث</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Uptime</div>
+      <div class="card-value" id="stat-uptime">0s</div>
+      <div class="card-sub">وقت التشغيل</div>
+    </div>
+  </div>
+
+  <!-- Barcode injection -->
+  <div class="card" style="margin-bottom:6px">
+    <div class="card-title">حقن باركود يدوي</div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="barcode-input" class="form-control" type="text"
+             placeholder="اكتب الباركود هنا..." style="flex:1"
+             onkeydown="if(event.key==='Enter')injectBarcode()"/>
+      <button class="btn btn-primary" onclick="injectBarcode()">إرسال</button>
+    </div>
+    <div class="field-hint">مفيد لو الـ keyboard scanner مش متصل أو في وضع manual</div>
+  </div>
+</div><!-- /page-status -->
+
+<!-- ──────────── LOGS ──────────── -->
+<div id="page-logs" class="page">
+  <div class="page-title">Logs</div>
+  <div class="page-sub">سجلات النظام المباشرة</div>
+  <div id="log-toolbar">
+    <select id="log-level" class="form-control" style="width:100px" onchange="applyLogFilter()">
+      <option value="ALL">ALL</option>
+      <option value="DEBUG">DEBUG</option>
+      <option value="INFO">INFO</option>
+      <option value="WARNING">WARNING</option>
+      <option value="ERROR">ERROR</option>
+      <option value="CRITICAL">CRITICAL</option>
+    </select>
+    <input id="log-search" class="form-control" type="text"
+           placeholder="بحث في اللوجز..." oninput="applyLogFilter()"/>
+    <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap">
+      <input type="checkbox" id="autoscroll-cb" checked onchange="autoScrollChanged()"/> Auto
+    </label>
+    <button class="btn btn-secondary" style="padding:7px 10px" onclick="clearLogs()">Clear</button>
+  </div>
+  <div id="log-view"></div>
+  <div class="log-count" id="log-count">0 entries</div>
+</div><!-- /page-logs -->
+
+<!-- ──────────── SETTINGS ──────────── -->
+<div id="page-settings" class="page">
+  <div class="hdr-row">
+    <div class="hdr-title-box">
+      <div class="page-title">Settings</div>
+      <div class="page-sub">الإعدادات قابلة للتعديل في Test Mode</div>
+    </div>
+    <span class="badge badge-stopped" id="mode-badge">🔒 Read-only</span>
+  </div>
+
+  <!-- Test Mode -->
+  <div class="card" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:160px">
+        <div style="font-size:14px;font-weight:600">Test Mode</div>
+        <div class="field-hint" id="mode-hint">ادخل Test Mode بالباسوورد عشان تعدل الإعدادات.</div>
+      </div>
+      <button class="btn btn-primary" id="mode-btn" onclick="toggleTestMode()">🔓 دخول</button>
+    </div>
+  </div>
+
+  <!-- Robot -->
+  <div class="section-label">الروبوت (Fairino)</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="field-row">
+      <span class="field-label">Cobot IP</span>
+      <input class="field-input settings-field" data-key="cobot_ip" placeholder="192.168.57.2" disabled>
+    </div>
+    <div class="field-hint" style="padding:0 0 4px">يحتاج restart بعد التغيير</div>
+  </div>
+
+  <!-- Camera -->
+  <div class="section-label">الكاميرا</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="field-row">
+      <span class="field-label">Camera type</span>
+      <select class="field-input settings-field" data-key="camera_type" disabled>
+        <option value="useeplus">UseePlus (USB endoscope)</option>
+        <option value="opencv">OpenCV (USB / webcam)</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Camera index</span>
+      <input class="field-input settings-field" data-key="camera_index" type="number" min="0" max="9" disabled>
+    </div>
+  </div>
+
+  <!-- AI Provider -->
+  <div class="section-label">الذكاء الاصطناعي (AI Provider)</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="field-row">
+      <span class="field-label">AI Agent</span>
+      <select class="field-input settings-field" data-key="AI_Agent" disabled>
+        <option value="online">🌐 Online (Gemini)</option>
+        <option value="groq">⚡ Groq</option>
+        <option value="local_ollama">🏠 Local — Ollama</option>
+        <option value="local_lmstudio">🏠 Local — LM Studio</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <span class="field-label">AI Model</span>
+      <input class="field-input settings-field" data-key="ai_model"
+             placeholder="اتركه فارغاً للنموذج الافتراضي" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">AI Enhancement</span>
+      <select class="field-input settings-field" data-key="ai_enhancement" disabled>
+        <option value="false">Disabled</option>
+        <option value="true">Enabled (تحسين الصور قبل التحليل)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Scanner -->
+  <div class="section-label">وضع قراءة الباركود</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="field-row">
+      <span class="field-label">Scan mode</span>
+      <select class="field-input settings-field" data-key="scan_mode" disabled>
+        <option value="manual">🖊 Manual (keyboard scanner)</option>
+        <option value="camera">📷 Camera (OpenCV + zxingcpp)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Files -->
+  <div class="section-label">مسارات الملفات</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="field-row">
+      <span class="field-label">Program mapping file</span>
+      <input class="field-input settings-field" data-key="program_mapping_file" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Results report file</span>
+      <input class="field-input settings-field" data-key="results_report_file" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Result images folder</span>
+      <input class="field-input settings-field" data-key="result_images_folder" disabled>
+    </div>
+  </div>
+
+  <!-- Test sequence -->
+  <div class="section-label">Test Sequence</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="field-row">
+      <span class="field-label">Vision test count</span>
+      <input class="field-input settings-field" data-key="vision_test_count"
+             type="number" min="1" max="30" disabled>
+    </div>
+    <div class="field-hint" style="padding:0 0 4px">عدد صور الفحص لكل قطعة (1–30)</div>
+  </div>
+
+  <!-- Digital I/O -->
+  <div class="section-label">Digital I/O — أرقام البورتات</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="field-row">
+      <span class="field-label">Input trigger DI</span>
+      <input class="field-input settings-field" data-key="input_trigger" type="number" min="0" max="31" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Test done DO</span>
+      <input class="field-input settings-field" data-key="test_done" type="number" min="0" max="31" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Test pass DO</span>
+      <input class="field-input settings-field" data-key="test_pass" type="number" min="0" max="31" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Test fail DO</span>
+      <input class="field-input settings-field" data-key="test_fail" type="number" min="0" max="31" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Yellow LED DO</span>
+      <input class="field-input settings-field" data-key="yellow_led" type="number" min="0" max="31" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Switch camera DO</span>
+      <input class="field-input settings-field" data-key="Switch_camera" type="number" min="0" max="31" disabled>
+    </div>
+  </div>
+
+  <!-- Timings -->
+  <div class="section-label">الفترات الزمنية (ثواني)</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="field-row">
+      <span class="field-label">Signal pass period</span>
+      <input class="field-input settings-field" data-key="signal_pass_preriod" type="number" step="0.1" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Signal fail period</span>
+      <input class="field-input settings-field" data-key="signal_fail_preriod" type="number" step="0.1" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Watchdog interval</span>
+      <input class="field-input settings-field" data-key="watchdog_interval" type="number" step="0.1" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Debug monitor interval</span>
+      <input class="field-input settings-field" data-key="debug_monitor_interval" type="number" step="0.1" disabled>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="card" style="margin-bottom:12px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span style="flex:1;font-size:12px;color:var(--warning);min-width:120px">
+        ⚠ Robot IP يحتاج restart للتطبيق
+      </span>
+      <button class="btn btn-secondary" id="btn-change-pw" onclick="openChangePw()" disabled>🔑 باسوورد</button>
+      <button class="btn btn-secondary" id="btn-reset"     onclick="resetSettings()" disabled>↺ Reset</button>
+      <button class="btn btn-primary"   id="btn-save"      onclick="saveSettings()"  disabled>💾 حفظ</button>
+    </div>
+  </div>
+
+  <!-- About -->
+  <div class="card" style="margin-bottom:80px">
+    <div class="card-title">ABOUT</div>
+    <div style="margin-top:6px;color:var(--text2);line-height:1.7;font-size:13px">
+      Industrial Test Station Controller<br>
+      Fairino Cobot &nbsp;•&nbsp; UseePlus Camera &nbsp;•&nbsp; AI Water Detection<br>
+      v1.0 &nbsp;•&nbsp; FastAPI + Socket.IO &nbsp;•&nbsp; © 2026 Meeserv
+    </div>
+  </div>
+</div><!-- /page-settings -->
+
+</div><!-- #content -->
+
+<!-- ════════════ MOBILE BOTTOM NAV ════════════ -->
+<div id="mobile-nav">
+  <div class="mob-nav-inner">
+    <button class="mob-nav-btn active" id="mobnav-status" onclick="showPage('status')">
+      <span class="icon">📊</span>Status
+    </button>
+    <button class="mob-nav-btn" id="mobnav-logs" onclick="showPage('logs')">
+      <span class="icon">📜</span>Logs
+    </button>
+    <button class="mob-nav-btn" id="mobnav-settings" onclick="showPage('settings')">
+      <span class="icon">⚙️</span>Settings
+    </button>
+  </div>
+</div>
+
+<!-- ════════════ MODALS ════════════ -->
+<div class="modal-overlay" id="modal-pw">
+  <div class="modal">
+    <div class="modal-title">🔒 Test Mode Login</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:12px">ادخل باسوورد Test Mode</div>
+    <input type="password" id="pw-input" class="form-control" style="width:100%"
+           placeholder="الباسوورد" onkeydown="if(event.key==='Enter')submitPw()"/>
+    <div class="modal-error" id="pw-error">الباسوورد غلط — حاول تاني</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-pw')">إلغاء</button>
+      <button class="btn btn-primary"   onclick="submitPw()">دخول</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-chpw">
+  <div class="modal">
+    <div class="modal-title">🔑 تغيير الباسوورد</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <input type="password" id="chpw-old"     class="form-control" placeholder="الباسوورد الحالي"/>
+      <input type="password" id="chpw-new"     class="form-control" placeholder="باسوورد جديد (4+ حروف)"/>
+      <input type="password" id="chpw-confirm" class="form-control" placeholder="تأكيد الباسوورد الجديد"/>
+    </div>
+    <div class="modal-error" id="chpw-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-chpw')">إلغاء</button>
+      <button class="btn btn-primary"   onclick="submitChangePw()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ JAVASCRIPT ════════════ -->
+<script>
+/* ─── globals ─────────────────────────────────────────────── */
+let theme = 'dark', testMode = false, lastState = {};
+let logEntries = [], logLevelFilter = 'ALL', logTextFilter = '', autoScroll = true;
+const MAX_LOG = 5000;
+
+const STAGE_MAP = {
+  IDLE:             { label:'في الانتظار',         pct:0   },
+  BARCODE_RECEIVED: { label:'استقبال الباركود',    pct:10  },
+  PROGRAM_LOOKUP:   { label:'البحث عن البرنامج',   pct:20  },
+  SENDING_PROGRAM:  { label:'إرسال للروبوت',       pct:30  },
+  REPORTING:        { label:'كتابة التقرير',       pct:95  },
+  DONE:             { label:'انتهى ✓',              pct:100 },
+  ERROR:            { label:'خطأ ✗',               pct:100 },
+};
+
+/* ─── initial stage dots ─────────────────────────────────── */
+(function(){
+  const c = document.getElementById('stage-dots');
+  ['IDLE','BARCODE_RECEIVED','PROGRAM_LOOKUP','SENDING_PROGRAM',
+   'VISION_TEST_1','VISION_TEST_2','VISION_TEST_3',
+   'REPORTING','DONE'].forEach(k => {
+    const el = document.createElement('span');
+    el.className = 'stage-dot'; el.textContent = '●';
+    el.id = `dot-${k}`; el.title = STAGE_MAP[k]?.label || k;
+    c.appendChild(el);
+  });
+})();
+
+/* ─── Socket.IO ──────────────────────────────────────────── */
+const socket = io({ transports:['websocket','polling'] });
+socket.on('connect',      () => { setWsDot(true);  addLog('INFO','[WS] Connected'); });
+socket.on('disconnect',   () => { setWsDot(false); addLog('WARNING','[WS] Disconnected'); });
+socket.on('state_update', s  => { lastState = s; renderState(s); });
+socket.on('log_entry',    e  => addLog(e.level, e.message));
+
+function setWsDot(ok) {
+  ['ws-dot','ws-dot-mob'].forEach(id =>
+    document.getElementById(id)?.classList.toggle('ok', ok)
+  );
+}
+
+/* ─── Navigation ─────────────────────────────────────────── */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${name}`).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    const txt = b.textContent.trim();
+    b.classList.toggle('active',
+      (name==='status'   && txt.startsWith('📊')) ||
+      (name==='logs'     && txt.startsWith('📜')) ||
+      (name==='settings' && txt.startsWith('⚙'))
+    );
+  });
+  ['status','logs','settings'].forEach(p =>
+    document.getElementById(`mobnav-${p}`)?.classList.toggle('active', p===name)
+  );
+  if (name === 'settings') loadConfig();
+}
+
+/* ─── Theme ──────────────────────────────────────────────── */
+function toggleTheme() {
+  theme = theme==='dark' ? 'light' : 'dark';
+  document.body.classList.toggle('light', theme==='light');
+  const txt = theme==='dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+  document.querySelectorAll('.theme-btn').forEach(b => b.textContent = txt);
+}
+
+/* ─── Start / Stop ───────────────────────────────────────── */
+async function doStart() {
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('btn-stop').disabled  = true;
+  try {
+    const r = await fetch('/api/start', {method:'POST'});
+    const d = await r.json();
+    if (!d.ok && !d.msg) alert('فشل التشغيل — راجع الـ logs');
+  } catch(e) { alert('خطأ: ' + e); }
+}
+async function doStop() {
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('btn-stop').disabled  = true;
+  try { await fetch('/api/stop', {method:'POST'}); } catch(e){}
+}
+
+/* ─── Barcode injection ──────────────────────────────────── */
+async function injectBarcode() {
+  const inp = document.getElementById('barcode-input');
+  const bc  = inp.value.trim();
+  if (!bc) return;
+  const r = await fetch('/api/barcode', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({barcode: bc}),
+  });
+  const d = await r.json();
+  if (d.ok) { inp.value=''; addLog('INFO',`[UI] Injected: ${bc}`); }
+  else alert(d.detail || 'خطأ في الإرسال');
+}
+function openResultsFile() { window.open('/api/reports/file','_blank'); }
+
+/* ─── Render state ───────────────────────────────────────── */
+function renderState(s) {
+  const running = !!s.is_running;
+
+  // Running badge
+  const badge = document.getElementById('running-badge');
+  const sub   = document.getElementById('running-sub');
+  badge.className  = running ? 'badge badge-running' : 'badge badge-stopped';
+  badge.textContent= running ? '▶ RUNNING' : '⏹ STOPPED';
+  sub.style.color  = running ? 'var(--success)' : 'var(--danger)';
+  sub.textContent  = running ? 'شغّال — ينتظر إشارة DI0' : 'متوقف — اضغط Start';
+  document.getElementById('btn-start').disabled = running;
+  document.getElementById('btn-stop').disabled  = !running;
+
+  // Connections
+  const conns    = s.connections || {};
+  const connMeta = {
+    robot:   { off:'DISC' },
+    camera:  { off:'OFF'  },
+    ai:      { off:'OFF'  },
+    scanner: { off:'OFF'  },
+  };
+  Object.keys(connMeta).forEach(k => {
+    const ok = !!conns[k];
+    document.getElementById(`led-${k}`)?.classList.toggle('ok', ok);
+    const pill = document.getElementById(`pill-${k}`);
+    if (pill) {
+      pill.textContent = ok ? 'OK' : connMeta[k].off;
+      pill.className   = `conn-pill ${ok ? 'ok' : 'bad'}`;
+    }
+  });
+
+  // Stage
+  renderStage(s.stage||'IDLE', s.barcode, s.program, s.step||0, s.vision_test_count||3);
+
+  // Stats
+  const st = s.stats || {};
+  document.getElementById('stat-total').textContent  = st.total  || 0;
+  document.getElementById('stat-pass').textContent   = st.pass   || 0;
+  document.getElementById('stat-fail').textContent   = st.fail   || 0;
+  document.getElementById('stat-errors').textContent = st.errors || 0;
+
+  const qs = s.queue_sizes || {};
+  document.getElementById('stat-queue').textContent    = qs.scanner_queue || 0;
+  document.getElementById('stat-barcode').textContent  = s.barcode || '—';
+  document.getElementById('stat-last-evt').textContent = fmtTimeAgo(s.last_event_time);
+  document.getElementById('stat-uptime').textContent   = fmtDuration(s.uptime);
+}
+
+/* ─── Stage renderer ─────────────────────────────────────── */
+function renderStage(stageName, barcode, program, step, totalSteps) {
+  let label, pct;
+  if (STAGE_MAP[stageName]) {
+    label = STAGE_MAP[stageName].label;
+    pct   = STAGE_MAP[stageName].pct;
+  } else if (stageName.startsWith('VISION_TEST')) {
+    const n = parseInt(stageName.split('_').pop()) || 1;
+    label   = `Vision test ${step || n} / ${totalSteps}`;
+    pct     = 30 + Math.round((Math.min(step, totalSteps) / Math.max(1, totalSteps)) * 60);
+  } else {
+    label = stageName; pct = 0;
+  }
+
+  document.getElementById('stage-label').textContent  = label;
+  document.getElementById('stage-label').style.color  = stageName==='ERROR' ? 'var(--danger)' : '';
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  const parts = [];
+  if (barcode)  parts.push(`باركود: ${barcode}`);
+  if (program != null) parts.push(`برنامج: ${program}`);
+  if (stageName.startsWith('VISION_TEST') && step) parts.push(`Step ${step}/${totalSteps}`);
+  document.getElementById('stage-sub').textContent =
+    parts.length ? parts.join('  •  ') : 'ينتظر إشارة DI0 من الروبوت';
+
+  // Ensure vision dots exist
+  const c = document.getElementById('stage-dots');
+  for (let i = 1; i <= Math.min(totalSteps, 30); i++) {
+    const key = `VISION_TEST_${i}`;
+    if (!document.getElementById(`dot-${key}`)) {
+      const el = document.createElement('span');
+      el.className = 'stage-dot'; el.textContent = '●';
+      el.id = `dot-${key}`; el.title = `Vision ${i}`;
+      c.appendChild(el);
+    }
+  }
+  for (let i = totalSteps + 1; i <= 30; i++) {
+    const d = document.getElementById(`dot-VISION_TEST_${i}`);
+    if (d) d.style.display = 'none';
+  }
+  for (let i = 1; i <= totalSteps; i++) {
+    const d = document.getElementById(`dot-VISION_TEST_${i}`);
+    if (d) d.style.display = '';
+  }
+
+  // Colour dots
+  const baseOrder = ['IDLE','BARCODE_RECEIVED','PROGRAM_LOOKUP','SENDING_PROGRAM'];
+  const vis = []; for (let i = 1; i <= Math.min(totalSteps, 30); i++) vis.push(`VISION_TEST_${i}`);
+  const order = [...baseOrder, ...vis, 'REPORTING', 'DONE'];
+  let passed = true;
+  order.forEach(k => {
+    const dot = document.getElementById(`dot-${k}`);
+    if (!dot) return;
+    if (k === stageName) {
+      dot.className = stageName==='ERROR' ? 'stage-dot error' : 'stage-dot active';
+      passed = false;
+    } else if (passed) { dot.className = 'stage-dot done'; }
+    else               { dot.className = 'stage-dot'; }
+  });
+}
+
+/* ─── Camera ─────────────────────────────────────────────── */
+let camFailing = 0;
+function refreshCamera() {
+  const img = document.getElementById('cam-img');
+  const ov  = document.getElementById('cam-overlay');
+  const dot = document.getElementById('cam-dot');
+  const tmp = new Image();
+  tmp.onload = () => {
+    img.src = tmp.src; img.style.display = 'block';
+    ov.style.display = 'none'; dot.classList.add('live'); camFailing = 0;
+  };
+  tmp.onerror = () => {
+    camFailing++;
+    if (camFailing > 2) {
+      img.style.display = 'none'; ov.style.display = '';
+      dot.classList.remove('live');
+    }
+  };
+  tmp.src = `/api/camera/frame.jpg?t=${Date.now()}`;
+}
+setInterval(refreshCamera, 250);
+
+/* ─── Config endpoints display ───────────────────────────── */
+async function loadConnEndpoints() {
+  try {
+    const r = await fetch('/api/config'); if (!r.ok) return;
+    const c = await r.json();
+    document.getElementById('ep-robot').textContent   = c.cobot_ip || '—';
+    document.getElementById('ep-camera').textContent  =
+      `${c.camera_type || 'useeplus'} · #${c.camera_index ?? 0}`;
+    document.getElementById('ep-ai').textContent      =
+      `${c.AI_Agent || 'online'} · ${c.ai_model || 'default'}`;
+    document.getElementById('ep-scanner').textContent = c.scan_mode || 'manual';
+  } catch(e){}
+}
+loadConnEndpoints();
+
+/* ─── Formatters ─────────────────────────────────────────── */
+function fmtDuration(s) {
+  if (!s) return '0s'; s = Math.floor(s);
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+  if (h) return `${h}h ${m}m`; if (m) return `${m}m ${sec}s`; return `${sec}s`;
+}
+function fmtTimeAgo(ts) {
+  if (!ts) return '—';
+  const d = (Date.now()/1000) - ts;
+  if (d < 1)    return 'الآن';
+  if (d < 60)   return `${Math.floor(d)}ث`;
+  if (d < 3600) return `${Math.floor(d/60)}د`;
+  return `${Math.floor(d/3600)}س`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOGS
+══════════════════════════════════════════════════════════ */
+function addLog(level, message) {
+  logEntries.push({level, message});
+  if (logEntries.length > MAX_LOG) logEntries = logEntries.slice(-MAX_LOG);
+  if (passesFilter(level, message)) appendLogLine(level, message);
+  document.getElementById('log-count').textContent = `${logEntries.length} entries`;
+}
+function passesFilter(level, message) {
+  if (logLevelFilter !== 'ALL' && level !== logLevelFilter) return false;
+  if (logTextFilter && !message.toLowerCase().includes(logTextFilter)) return false;
+  return true;
+}
+function appendLogLine(level, message) {
+  const v = document.getElementById('log-view');
+  const s = document.createElement('span');
+  s.className = `log-${level}`; s.textContent = message + '\n';
+  v.appendChild(s);
+  if (autoScroll) v.scrollTop = v.scrollHeight;
+}
+function applyLogFilter() {
+  logLevelFilter = document.getElementById('log-level').value;
+  logTextFilter  = document.getElementById('log-search').value.toLowerCase();
+  const v = document.getElementById('log-view'); v.innerHTML = '';
+  logEntries.forEach(({level, message}) => {
+    if (passesFilter(level, message)) appendLogLine(level, message);
+  });
+}
+function clearLogs() {
+  logEntries = []; document.getElementById('log-view').innerHTML = '';
+  document.getElementById('log-count').textContent = '0 entries';
+}
+function autoScrollChanged() {
+  autoScroll = document.getElementById('autoscroll-cb').checked;
+  if (autoScroll) {
+    const v = document.getElementById('log-view'); v.scrollTop = v.scrollHeight;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════════════════════════ */
+let currentConfig = {};
+
+async function loadConfig() {
+  try {
+    const r = await fetch('/api/config'); if (!r.ok) return;
+    currentConfig = await r.json();
+    document.querySelectorAll('.settings-field').forEach(el => {
+      const k = el.dataset.key;
+      if (!(k in currentConfig)) return;
+      const val = currentConfig[k];
+      if (el.tagName === 'SELECT') {
+        el.value = String(val);          // handles true/false booleans
+      } else {
+        el.value = Array.isArray(val) ? val.join(', ') : (val ?? '');
+      }
+    });
+  } catch(e){}
+}
+
+function setTestMode(enabled) {
+  testMode = enabled;
+  document.querySelectorAll('.settings-field').forEach(el => el.disabled = !enabled);
+  document.getElementById('btn-save').disabled      = !enabled;
+  document.getElementById('btn-reset').disabled     = !enabled;
+  document.getElementById('btn-change-pw').disabled = !enabled;
+  const badge = document.getElementById('mode-badge');
+  const hint  = document.getElementById('mode-hint');
+  const btn   = document.getElementById('mode-btn');
+  if (enabled) {
+    badge.className = 'badge badge-running'; badge.textContent = '🔓 Test Mode';
+    hint.textContent = 'Test Mode مفعّل — تقدر تعدل كل الإعدادات.';
+    btn.textContent = '🔒 قفل'; btn.className = 'btn btn-secondary';
+  } else {
+    badge.className = 'badge badge-stopped'; badge.textContent = '🔒 Read-only';
+    hint.textContent = 'ادخل Test Mode بالباسوورد عشان تعدل الإعدادات.';
+    btn.textContent = '🔓 دخول'; btn.className = 'btn btn-primary';
+  }
+}
+
+function toggleTestMode() {
+  if (testMode) { setTestMode(false); return; }
+  openModal('modal-pw');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').style.display = 'none';
+  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+}
+
+async function submitPw() {
+  const pw = document.getElementById('pw-input').value;
+  try {
+    const r = await fetch('/api/config/verify_password', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password: pw}),
+    });
+    const d = await r.json();
+    if (d.ok) { closeModal('modal-pw'); setTestMode(true); }
+    else {
+      document.getElementById('pw-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  } catch(e) { document.getElementById('pw-error').style.display = 'block'; }
+}
+
+async function saveSettings() {
+  if (!testMode) return;
+  const pw = prompt('ادخل الباسوورد للحفظ:');
+  if (pw === null) return;
+  const updates = {_password: pw};
+  document.querySelectorAll('.settings-field').forEach(el => {
+    const k = el.dataset.key;
+    let v = el.value;
+    if (el.type === 'number') v = parseFloat(v);
+    else if (v === 'true')   v = true;
+    else if (v === 'false')  v = false;
+    updates[k] = v;
+  });
+  try {
+    const r = await fetch('/api/config', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(updates),
+    });
+    if (r.status === 403) { alert('الباسوورد غلط'); return; }
+    const d = await r.json();
+    alert(`✅ تم الحفظ — ${d.changed} تعديل.\nRobot IP يحتاج restart للتطبيق.`);
+    loadConnEndpoints();
+  } catch(e) { alert('خطأ: ' + e); }
+}
+
+async function resetSettings() {
+  if (!testMode) return;
+  if (!confirm('هترجع كل الإعدادات للافتراضي. متأكد؟')) return;
+  const pw = prompt('ادخل الباسوورد:');
+  if (pw === null) return;
+  const r = await fetch('/api/config/reset', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({password: pw}),
+  });
+  if (r.status === 403) { alert('الباسوورد غلط'); return; }
+  alert('✅ تمت استعادة الإعدادات الافتراضية.');
+  loadConfig();
+}
+
+function openChangePw() {
+  if (!testMode) return;
+  openModal('modal-chpw');
+  ['chpw-old','chpw-new','chpw-confirm'].forEach(id =>
+    document.getElementById(id).value = ''
+  );
+  document.getElementById('chpw-error').style.display = 'none';
+  setTimeout(() => document.getElementById('chpw-old').focus(), 100);
+}
+
+async function submitChangePw() {
+  const old = document.getElementById('chpw-old').value;
+  const nw  = document.getElementById('chpw-new').value;
+  const cf  = document.getElementById('chpw-confirm').value;
+  if (nw.length < 4) { showModalError('chpw-error','الباسوورد لازم 4 حروف على الأقل'); return; }
+  if (nw !== cf)     { showModalError('chpw-error','الباسوورد والتأكيد مش متطابقين'); return; }
+  const r = await fetch('/api/config/set_password', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({old_password: old, new_password: nw}),
+  });
+  if (r.status === 403) { showModalError('chpw-error','الباسوورد الحالي غلط'); return; }
+  const d = await r.json();
+  if (d.ok) { closeModal('modal-chpw'); alert('✅ اتغيرت الباسوورد بنجاح.'); }
+  else showModalError('chpw-error','فشل تغيير الباسوورد');
+}
+
+/* ─── Modals ─────────────────────────────────────────────── */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showModalError(id, msg) {
+  const e = document.getElementById(id);
+  e.textContent = msg; e.style.display = 'block';
+}
+document.querySelectorAll('.modal-overlay').forEach(o =>
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); })
+);
+
+/* ─── Init ───────────────────────────────────────────────── */
+fetch('/api/state').then(r => r.json()).then(d => {
+  if (d) { lastState = d; renderState(d); }
+}).catch(() => {});
+addLog('INFO','[UI] Dashboard loaded — connecting to server...');
+</script>
+</body>
+</html>

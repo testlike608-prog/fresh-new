@@ -74,9 +74,13 @@ DEFAULT_CONFIG = {
     # ── Scan input mode ───────────────────────────────────────────
     # "manual"  → سكانر كيبورد عادي
     # "camera"  → كاميرا عادية بتقرأ الباركود بـ OpenCV + zxingcpp
-    "scan_mode":    "manual",
-    "camera_index": 0,
-    "AI_Agent": "online",
+    "scan_mode":          "manual",
+    "camera_index":       0,
+    "camera_type":        "useeplus",   # "useeplus" | "opencv"
+    "live_camera_index":  0,
+    "AI_Agent":           "online",     # "online" | "groq" | "local_ollama" | "local_lmstudio"
+    "ai_model":           "",           # اتركه فارغاً للنموذج الافتراضي
+    "ai_enhancement":     False,
 
     # ── Intervals (بالثواني) ──────────────────────────────────────
     "watchdog_interval":         2.0,    # thread watchdog (thread_logger)
