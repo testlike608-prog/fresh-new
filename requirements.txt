@@ -13,7 +13,7 @@ ollama
 # Computer vision & image processing
 opencv-python
 Pillow
-zxingcpp
+zxing-cpp
 numpy
 
 # Excel / spreadsheet
