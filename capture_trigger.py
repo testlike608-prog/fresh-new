@@ -64,7 +64,9 @@ def start(camera_index: int = 0, save_dir: str = DEFAULT_SAVE_DIR,
         _cam = _build_camera(camera_index)
 
     if not _cam.is_running():
-        _cam.start(camera_index=camera_index)
+        # BUG-038: استخدم الـ index الحقيقي للكاميرا وليس القيمة الافتراضية 0
+        cam_idx = getattr(_cam, '_cam_index', camera_index)
+        _cam.start(camera_index=cam_idx)
 
     ready = _cam.wait_for_frame(timeout=wait_timeout)
     if ready:
@@ -101,7 +103,8 @@ def trigger(save_path: str = None, name: str = "capture") -> str | None:
         with _counter_lock:
             _counter += 1
             n = _counter
-        save_path = os.path.join(_save_dir, f"{name}.jpg")
+        # BUG-016: ts و n كانوا بيتحسبوا لكن مش بيتستخدموا → كل الصور بنفس الاسم
+        save_path = os.path.join(_save_dir, f"{name}_{ts}_{n}.jpg")
 
     os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
 

@@ -269,6 +269,8 @@ select.field-input{cursor:pointer}
       <button class="btn btn-danger"    id="btn-stop"  onclick="doStop()" disabled>■ Stop</button>
       <div class="hdr-sep"></div>
       <button class="btn btn-secondary" onclick="openResultsFile()">📊 التقرير</button>
+      <button class="btn btn-secondary" id="btn-reset-stats" onclick="doResetStats()"
+              title="مسح إجمالي العداد (total/pass/fail)">🔄 Reset Stats</button>
     </div>
   </div>
 
@@ -337,8 +339,13 @@ select.field-input{cursor:pointer}
 
   </div>
 
-  <!-- Stats row 1 -->
-  <div class="section-label">الإحصائيات</div>
+  <!-- Stats row 1 — الأرقام تتراكم عبر Stop/Start (persistent) -->
+  <div class="section-label" style="display:flex;align-items:center;gap:8px">
+    الإحصائيات
+    <span style="font-size:10px;color:var(--text3);font-weight:400">
+      (تتراكم بين Stop/Start — اضغط 🔄 Reset Stats للتصفير)
+    </span>
+  </div>
   <div class="grid-4" style="margin-bottom:10px">
     <div class="card">
       <div class="card-title">Total</div>
@@ -523,6 +530,13 @@ select.field-input{cursor:pointer}
       <span class="field-label">Result images folder</span>
       <input class="field-input settings-field" data-key="result_images_folder" disabled>
     </div>
+    <!-- BUG-042: result_images_backup_folders كانت مفقودة -->
+    <div class="field-row">
+      <span class="field-label">Backup folders</span>
+      <input class="field-input settings-field" data-key="result_images_backup_folders"
+             placeholder="مجلدات النسخ الاحتياطي (مفصولة بفاصلة)" disabled>
+    </div>
+    <div class="field-hint" style="padding:0 0 4px">أفضل بتر من result_images_folder — اتركه فارغاً لتعطيل النسخ</div>
   </div>
 
   <!-- Test sequence -->
@@ -570,11 +584,11 @@ select.field-input{cursor:pointer}
   <div class="card" style="margin-bottom:12px">
     <div class="field-row">
       <span class="field-label">Signal pass period</span>
-      <input class="field-input settings-field" data-key="signal_pass_preriod" type="number" step="0.1" disabled>
+      <input class="field-input settings-field" data-key="signal_pass_period" type="number" step="0.1" disabled>
     </div>
     <div class="field-row">
       <span class="field-label">Signal fail period</span>
-      <input class="field-input settings-field" data-key="signal_fail_preriod" type="number" step="0.1" disabled>
+      <input class="field-input settings-field" data-key="signal_fail_period" type="number" step="0.1" disabled>
     </div>
     <div class="field-row">
       <span class="field-label">Watchdog interval</span>
@@ -583,6 +597,15 @@ select.field-input{cursor:pointer}
     <div class="field-row">
       <span class="field-label">Debug monitor interval</span>
       <input class="field-input settings-field" data-key="debug_monitor_interval" type="number" step="0.1" disabled>
+    </div>
+    <!-- BUG-031: reconnect_check_interval كان مفقوداً -->
+    <div class="field-row">
+      <span class="field-label">Reconnect check interval</span>
+      <input class="field-input settings-field" data-key="reconnect_check_interval" type="number" step="0.1" disabled>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Reconnect retry delay</span>
+      <input class="field-input settings-field" data-key="reconnect_retry_delay" type="number" step="0.1" disabled>
     </div>
   </div>
 
@@ -663,6 +686,8 @@ select.field-input{cursor:pointer}
 let theme = 'dark', testMode = false, lastState = {};
 let logEntries = [], logLevelFilter = 'ALL', logTextFilter = '', autoScroll = true;
 const MAX_LOG = 5000;
+// SEC-001: الباسوورد بيتحفظ في الـ session بدل prompt() في كل مرة
+let _sessionPassword = '';
 
 const STAGE_MAP = {
   IDLE:             { label:'في الانتظار',         pct:0   },
@@ -674,11 +699,11 @@ const STAGE_MAP = {
   ERROR:            { label:'خطأ ✗',               pct:100 },
 };
 
-/* ─── initial stage dots ─────────────────────────────────── */
+/* ─── initial stage dots — BUG-030: كانت hardcoded لـ 3 فقط ─── */
 (function(){
   const c = document.getElementById('stage-dots');
+  // نبني الدوت الثابتة فقط — الـ vision tests بتتبنى ديناميكياً في renderStage()
   ['IDLE','BARCODE_RECEIVED','PROGRAM_LOOKUP','SENDING_PROGRAM',
-   'VISION_TEST_1','VISION_TEST_2','VISION_TEST_3',
    'REPORTING','DONE'].forEach(k => {
     const el = document.createElement('span');
     el.className = 'stage-dot'; el.textContent = '●';
@@ -740,6 +765,16 @@ async function doStop() {
   document.getElementById('btn-start').disabled = true;
   document.getElementById('btn-stop').disabled  = true;
   try { await fetch('/api/stop', {method:'POST'}); } catch(e){}
+}
+
+/* ─── Reset Stats ────────────────────────────────────────── */
+async function doResetStats() {
+  if (!confirm('هتمسح كل الإحصائيات (Total/Pass/Fail/Errors/آخر باركود).\nمتأكد؟')) return;
+  try {
+    const r = await fetch('/api/stats/reset', {method:'POST'});
+    const d = await r.json();
+    if (d.ok) addLog('INFO','[UI] Stats reset done');
+  } catch(e) { alert('خطأ: ' + e); }
 }
 
 /* ─── Barcode injection ──────────────────────────────────── */
@@ -887,7 +922,7 @@ function refreshCamera() {
   };
   tmp.src = `/api/camera/frame.jpg?t=${Date.now()}`;
 }
-setInterval(refreshCamera, 250);
+setInterval(refreshCamera, 750);  // BUG-051: 250ms كانت كثيرة جداً → 750ms
 
 /* ─── Config endpoints display ───────────────────────────── */
 async function loadConnEndpoints() {
@@ -983,6 +1018,7 @@ async function loadConfig() {
 
 function setTestMode(enabled) {
   testMode = enabled;
+  if (!enabled) _sessionPassword = '';  // SEC-001: مسح الباسوورد عند الخروج
   document.querySelectorAll('.settings-field').forEach(el => el.disabled = !enabled);
   document.getElementById('btn-save').disabled      = !enabled;
   document.getElementById('btn-reset').disabled     = !enabled;
@@ -1017,8 +1053,12 @@ async function submitPw() {
       body: JSON.stringify({password: pw}),
     });
     const d = await r.json();
-    if (d.ok) { closeModal('modal-pw'); setTestMode(true); }
-    else {
+    if (d.ok) {
+      // SEC-001: نحفظ الباسوورد في الـ session عشان saveSettings/resetSettings يستخدموها
+      _sessionPassword = pw;
+      closeModal('modal-pw');
+      setTestMode(true);
+    } else {
       document.getElementById('pw-error').style.display = 'block';
       document.getElementById('pw-input').value = '';
       document.getElementById('pw-input').focus();
@@ -1027,10 +1067,9 @@ async function submitPw() {
 }
 
 async function saveSettings() {
+  // SEC-001: استخدم _sessionPassword المحفوظ بدل prompt()
   if (!testMode) return;
-  const pw = prompt('ادخل الباسوورد للحفظ:');
-  if (pw === null) return;
-  const updates = {_password: pw};
+  const updates = {_password: _sessionPassword};
   document.querySelectorAll('.settings-field').forEach(el => {
     const k = el.dataset.key;
     let v = el.value;
@@ -1044,7 +1083,10 @@ async function saveSettings() {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(updates),
     });
-    if (r.status === 403) { alert('الباسوورد غلط'); return; }
+    if (r.status === 403) {
+      alert('انتهت الجلسة — ادخل Test Mode من جديد');
+      setTestMode(false); return;
+    }
     const d = await r.json();
     alert(`✅ تم الحفظ — ${d.changed} تعديل.\nRobot IP يحتاج restart للتطبيق.`);
     loadConnEndpoints();
@@ -1052,15 +1094,17 @@ async function saveSettings() {
 }
 
 async function resetSettings() {
+  // SEC-001: استخدم _sessionPassword المحفوظ بدل prompt()
   if (!testMode) return;
   if (!confirm('هترجع كل الإعدادات للافتراضي. متأكد؟')) return;
-  const pw = prompt('ادخل الباسوورد:');
-  if (pw === null) return;
   const r = await fetch('/api/config/reset', {
     method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({password: pw}),
+    body: JSON.stringify({password: _sessionPassword}),
   });
-  if (r.status === 403) { alert('الباسوورد غلط'); return; }
+  if (r.status === 403) {
+    alert('انتهت الجلسة — ادخل Test Mode من جديد');
+    setTestMode(false); return;
+  }
   alert('✅ تمت استعادة الإعدادات الافتراضية.');
   loadConfig();
 }

@@ -13,6 +13,7 @@ flag_barcode = False
 _recorded_keys = []
 _listener_started = False
 _listener_lock = threading.Lock()
+_hook_ref = None      # مرجع الـ hook المسجل — لإلغاء تسجيله بدقة
 
 last_barcode = None  # لتخزين آخر
 
@@ -44,12 +45,12 @@ def _on_key_event(e):
 
 def start_listener():
     """تشغيل الـ keyboard hook في الباك جراوند (مش blocking)."""
-    global _listener_started
+    global _listener_started, _hook_ref
     with _listener_lock:
         if _listener_started:
             return
         try:
-            keyboard.hook(_on_key_event)
+            _hook_ref = keyboard.hook(_on_key_event)
             _listener_started = True
             print("Scanner listener started — waiting for barcode...")
         except Exception as e:
@@ -57,16 +58,24 @@ def start_listener():
 
 
 def stop_listener():
-    """إيقاف الـ keyboard hook."""
-    global _listener_started
+    """إيقاف الـ keyboard hook — بيشيل الـ hook بتاعنا بس."""
+    global _listener_started, _hook_ref
     with _listener_lock:
         if not _listener_started:
             return
         try:
-            keyboard.unhook_all()
+            if _hook_ref is not None:
+                keyboard.unhook(_hook_ref)   # BUG-022: unhook بتاعنا بس
+                _hook_ref = None
         except Exception:
             pass
         _listener_started = False
+
+
+def is_listener_running() -> bool:
+    """فانكشن عامة بتحل محل الوصول المباشر لـ _listener_started."""
+    with _listener_lock:
+        return _listener_started
 
 
 def reset_queue():

@@ -18,6 +18,7 @@ config.py
     config.set_password("new_password")  # تغيير الباسوورد
 """
 
+import copy
 import os
 import sys
 import json
@@ -90,8 +91,8 @@ DEFAULT_CONFIG = {
 
     # ── TCP timeouts ──────────────────────────────────────────────
     
-    "signal_pass_preriod": 0.5,
-    "signal_fail_preriod":0.5,
+    "signal_pass_period": 0.5,
+    "signal_fail_period": 0.5,
 
 
 
@@ -122,7 +123,7 @@ class Config:
     def __init__(self, path=CONFIG_FILE):
         self.path = path
         self._lock = threading.Lock()
-        self._data = dict(DEFAULT_CONFIG)
+        self._data = copy.deepcopy(DEFAULT_CONFIG)
         self._listeners = []  # callbacks بتتنده لما حاجه تتغير
         self.load()
 
@@ -135,14 +136,21 @@ class Config:
                     with open(self.path, "r", encoding="utf-8") as f:
                         loaded = json.load(f)
                     # ندمج مع الـ defaults عشان أي keys جديدة تتضاف تلقائياً
-                    merged = dict(DEFAULT_CONFIG)
+                    merged = copy.deepcopy(DEFAULT_CONFIG)
                     merged.update(loaded)
                     # نتأكد إن الـ _meta موجود
-                    merged.setdefault("_meta", dict(DEFAULT_CONFIG["_meta"]))
+                    merged.setdefault("_meta", copy.deepcopy(DEFAULT_CONFIG["_meta"]))
+                    # ── Migration: تصحيح أسماء المفاتيح القديمة ─────────────────
+                    for old_key, new_key in [
+                        ("signal_pass_preriod", "signal_pass_period"),
+                        ("signal_fail_preriod", "signal_fail_period"),
+                    ]:
+                        if old_key in merged and new_key not in merged:
+                            merged[new_key] = merged.pop(old_key)
                     self._data = merged
                 except Exception as e:
                     print(f"[CONFIG] Failed to load {self.path}: {e}. Using defaults.")
-                    self._data = dict(DEFAULT_CONFIG)
+                    self._data = copy.deepcopy(DEFAULT_CONFIG)
                     self._data["_meta"]["created_at"] = datetime.now().isoformat()
             else:
                 # أول مرة — نكتب الـ defaults
@@ -238,7 +246,7 @@ class Config:
         """رجوع للـ defaults. الباسوورد بيتساب لو keep_password=True."""
         with self._lock:
             old_hash = self._data.get("password_hash") if keep_password else None
-            self._data = dict(DEFAULT_CONFIG)
+            self._data = copy.deepcopy(DEFAULT_CONFIG)
             if old_hash:
                 self._data["password_hash"] = old_hash
             self._data["_meta"]["modified_at"] = datetime.now().isoformat()

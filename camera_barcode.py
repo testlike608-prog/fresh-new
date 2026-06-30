@@ -38,7 +38,7 @@ DECODE_FPS  = 10
 
 
 # ─── Decode loop ──────────────────────────────────────────────────────────────
-DEBUG_FRAME_PATH    = "./result/test.jpg"   # الصورة اللي بنحفظها للتشخيص
+DEBUG_FRAME_PATH    = "./results/test.jpg"  # BUG-017: كان "./result/test.jpg" (اسم فولدر غلط)
 DEBUG_SAVE_INTERVAL = 2.0                   # احفظ كل 2 ثانية
 
 
@@ -169,12 +169,20 @@ def stop():
     """إيقاف الـ decode loop."""
     global _thread
 
-    with _lock:
-        _stop_event.set()
+    # BUG-039: _thread = None كان يتعمل برّه الـ lock → race مع is_running()
+    _stop_event.set()
 
-    if _thread is not None:
-        _thread.join(timeout=3.0)
-        _thread = None
+    # اجيب reference للـ thread برّه الـ lock حتى أعمل join
+    with _lock:
+        t = _thread
+
+    if t is not None:
+        t.join(timeout=3.0)
+
+    # امسح _thread جوّا الـ lock بعد الـ join
+    with _lock:
+        if _thread is t:   # تأكيد: مش اتعمل restart في نفس اللحظة
+            _thread = None
 
     log.info("[CameraScanner] أوقف.")
 

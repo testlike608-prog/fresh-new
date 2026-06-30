@@ -10,8 +10,6 @@ import shutil
 from datetime import datetime
 from PIL import Image as PILImage
 
-import serial
-
 
 def _base_dir():
     """المجلد المرجعي اللي بنحسب منه المسارات النسبية."""
@@ -181,10 +179,10 @@ def result_reporting(ID, result, file_path=None):
 
     # ─── كتابة البيانات النصية ───
     ws.cell(row=next_row, column=1, value=str(ID))
-    result_cell = ws.cell(row=next_row, column=3, value=str(result))
+    result_cell = ws.cell(row=next_row, column=2, value=str(result))   # BUG-018/040: كان 3
     # لون النتيجة: أخضر للـ PASS، أحمر للـ FAIL
     _color_result_cell(result_cell, str(result))
-    ws.cell(row=next_row, column=4, value=current_time)
+    ws.cell(row=next_row, column=3, value=current_time)                # BUG-018/040: كان 4
 
     # ─── تضمين الصور في الخلايا ───
     ws.row_dimensions[next_row].height = ROW_H
@@ -195,7 +193,7 @@ def result_reporting(ID, result, file_path=None):
     _alive_bufs = []
 
     for i, img_path in enumerate(image_paths):
-        col_idx    = 5 + i
+        col_idx    = 4 + i    # BUG-040: الصور تبدأ من العمود 4 بعد إزالة عمود Serial
         col_letter = get_column_letter(col_idx)
 
         if not img_path.exists():
@@ -248,15 +246,14 @@ def _write_header(ws, headers, img_count, col_w):
         cell.fill      = HEADER_FILL
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
-    # عروض الأعمدة الثابتة
+    # عروض الأعمدة الثابتة — BUG-041: تصحيح بعد إزالة عمود Serial
     ws.column_dimensions["A"].width = 16   # ID
-    ws.column_dimensions["B"].width = 22   # Serial
-    ws.column_dimensions["C"].width = 12   # Result
-    ws.column_dimensions["D"].width = 20   # Timestamp
+    ws.column_dimensions["B"].width = 12   # Result
+    ws.column_dimensions["C"].width = 20   # Timestamp
 
-    # عروض أعمدة الصور
+    # عروض أعمدة الصور — تبدأ من D (عمود 4)
     for i in range(img_count):
-        ws.column_dimensions[get_column_letter(5 + i)].width = col_w
+        ws.column_dimensions[get_column_letter(4 + i)].width = col_w
 
     ws.row_dimensions[1].height = 22
 
@@ -272,20 +269,6 @@ def _color_result_cell(cell, result: str):
         cell.font = Font(color="721C24", bold=True)
     cell.alignment = Alignment(horizontal="center", vertical="center")
 
-
-def _prepare_xl_image(img_path: Path, w: int, h: int) -> XLImage:
-    """يفتح الصورة، يصغّرها للمقاس المطلوب، ويرجع XLImage جاهز للإضافة."""
-    pil = PILImage.open(str(img_path)).convert("RGB")
-    pil.thumbnail((w, h), PILImage.LANCZOS)
-
-    buf = io.BytesIO()
-    pil.save(buf, format="JPEG")
-    buf.seek(0)
-
-    xl = XLImage(buf)
-    xl.width  = w
-    xl.height = h
-    return xl
 
 
 def _needs_migration(ws, img_count: int) -> bool:

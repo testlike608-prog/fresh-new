@@ -18,17 +18,18 @@ from openpyxl import load_workbook
 import openpyxl
 from openpyxl.styles import Font
 import scanner as sc
-import excel as ex
+import excel as ex                             # BUG-001: إزالة import مكرر
 from thread_logger import LoggedThread, get_logger as _get_thread_logger
 from camera_hub import CameraHub
 import cv2
 from fairino.Robot import RPC
 import capture_trigger as ct
-from config import Config
+from config import config as _cfg_singleton    # BUG-008: استخدام singleton
 import camera_barcode
 from ai_vision import WaterDetector
-import excel as ex
-import asyncio
+
+# ── مسار ملف الإحصائيات الدائمة ──────────────────────────────────────────────
+_SESSION_STATS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "session_stats.json")
 
 def _to_bytes(message, is_hex=False):
     """
@@ -70,26 +71,22 @@ class AppStage:
     @classmethod
     def get_vision_test_count(cls) -> int:
         try:
-            from config import config as _cfg
-            count = int(_cfg.get("vision_test_count", cls.VISION_TEST_COUNT))
+            count = int(_cfg_singleton.get("vision_test_count", 6))
         except Exception:
-            count = cls.VISION_TEST_COUNT
+            count = 6
         return max(1, min(cls.MAX_VISION_TESTS, count))
 
     @classmethod
     def get_order(cls) -> list:
+        """BUG-052: إزالة ORDER المكرر — استخدم get_order() فقط."""
         vision_stages = [cls.vision_stage(i) for i in range(cls.MAX_VISION_TESTS)]
         return [
             cls.IDLE, cls.BARCODE_RECEIVED, cls.PROGRAM_LOOKUP, cls.SENDING_PROGRAM,
             *vision_stages,
             cls.REPORTING, cls.DONE,
         ]
-
-    ORDER = (
-        ["IDLE", "BARCODE_RECEIVED", "PROGRAM_LOOKUP", "SENDING_PROGRAM"]
-        + [f"VISION_TEST_{i}" for i in range(1, MAX_VISION_TESTS + 1)]
-        + ["REPORTING", "DONE"]
-    )
+    # BUG-026: إزالة VISION_TEST_COUNT الميت
+    # BUG-052: إزالة ORDER المكرر (كان index مختلف عن get_order)
 
     LABELS = {
         "IDLE":             "في الانتظار",
@@ -111,7 +108,7 @@ for _i in range(1, AppStage.MAX_VISION_TESTS + 1):
 class App():
     def __init__(self):
         self.robot = None
-        self._cfg = Config()
+        self._cfg = _cfg_singleton              # BUG-008: singleton بدل new Config()
         self.robot_ip = self._cfg.get(key="cobot_ip")
         self._robot_lock = threading.RLock()
         self._motion_lock = threading.Lock()
@@ -134,6 +131,44 @@ class App():
         self._main_thread   = None
         self._state_lock    = threading.Lock()
         self._stop_app      = threading.Event()
+
+    # ── Session stats persistence ──────────────────────────────────────
+
+    def _load_session_stats(self) -> dict:
+        """تحميل الإحصائيات المحفوظة من الجلسة السابقة (stop/start)."""
+        try:
+            if os.path.exists(_SESSION_STATS_FILE):
+                with open(_SESSION_STATS_FILE, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    # تأكد من صحة الشكل
+                    stats   = {k: int(data.get(k, 0)) for k in ("total", "pass", "fail", "errors")}
+                    barcode = data.get("last_barcode")
+                    return {"stats": stats, "last_barcode": barcode}
+        except Exception:
+            pass
+        return {"stats": {"total": 0, "pass": 0, "fail": 0, "errors": 0}, "last_barcode": None}
+
+    def _save_session_stats(self):
+        """حفظ الإحصائيات الحالية على الـ disk عند الإيقاف."""
+        try:
+            with self._state_lock:
+                data = dict(self._stats)
+                data["last_barcode"] = self.barcode
+            with open(_SESSION_STATS_FILE, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False)
+        except Exception:
+            pass
+
+    def reset_session_stats(self):
+        """إعادة تعيين الإحصائيات المتراكمة والملف."""
+        with self._state_lock:
+            self._stats  = {"total": 0, "pass": 0, "fail": 0, "errors": 0}
+            self.barcode = None
+        try:
+            if os.path.exists(_SESSION_STATS_FILE):
+                os.remove(_SESSION_STATS_FILE)
+        except Exception:
+            pass
 
     # ── Camera & AI builder ────────────────────────────────────────────
 
@@ -176,11 +211,14 @@ class App():
         يرجع snapshot من الحالة الحالية للـ web dashboard.
         آمن للنداء من أي thread.
         """
+        # BUG-027: استخدام is_listener_running() العامة بدل _listener_started الخاص
+        # القراءات دي برّه الـ lock عشان is_running() تأخد الـ lock بتاعها من غير deadlock
+        camera_ok  = self._camera.is_running()
+        scanner_ok = sc.is_listener_running() or camera_barcode.is_running()
+
         with self._state_lock:
-            uptime = (time.time() - self._start_time) if (self._start_time and self._running) else 0
+            uptime     = (time.time() - self._start_time) if (self._start_time and self._running) else 0
             robot_ok   = self.robot is not None
-            camera_ok  = self._camera.is_running()
-            scanner_ok = sc._listener_started or camera_barcode.is_running()
             return {
                 "is_running":        self._running,
                 "stage":             self._stage,
@@ -244,10 +282,13 @@ class App():
 
     def get_points_from_db(self, point_name: str):
         import sqlite3
-        conn   = sqlite3.connect('web_point.db')
+        # BUG-003: إصلاح SQL Injection — استخدام parameterized query
+        db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web_point.db")
+        conn   = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute(
-            f"SELECT j1, j2, j3, j4, j5, j6 FROM points WHERE name = '{point_name}'"
+            "SELECT j1, j2, j3, j4, j5, j6 FROM points WHERE name = ?",
+            (point_name,)
         )
         result = cursor.fetchone()
         conn.close()
@@ -259,9 +300,10 @@ class App():
             print(f"النقطة '{point_name}' مش موجودة في الداتا بيز.")
             return [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-    async def switch_camera(self):
+    def switch_camera(self):
+        """BUG-010/011: كانت async وبتتنادى بـ asyncio.run() → RuntimeError تحت uvicorn."""
         self.robot.SetDO(self._cfg.get(key="Switch_camera"), 1)
-        await asyncio.sleep(3)
+        time.sleep(3)
         self.robot.SetDO(self._cfg.get(key="Switch_camera"), 0)
 
     # ── Programs ──────────────────────────────────────────────────────
@@ -274,39 +316,36 @@ class App():
         _10kg_3 = self.get_points_from_db("10kg_3")
         ready   = self.get_points_from_db("ready")
 
-        asyncio.run(self.switch_camera())
+        # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
+        self.switch_camera()
         self.robot.MoveJ(joint_pos=ready,   tool=0, user=1, vel=100, acc=100)
 
         # Vision test 1
         self._set_stage(AppStage.vision_stage(0), step=1)
         self.robot.MoveJ(joint_pos=_10kg_1, tool=0, user=1, vel=100, acc=100)
-        ct.trigger(name=self.barcode + "_0")
+        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
         time.sleep(1)
 
         # Vision test 2
         self._set_stage(AppStage.vision_stage(1), step=2)
         self.robot.MoveJ(joint_pos=_10kg_2, tool=0, user=1, vel=100, acc=100)
-        ct.trigger(name=self.barcode + "_1")
+        img1 = ct.trigger(name=self.barcode + "_1")
         time.sleep(1)
 
         # Vision test 3
-        asyncio.run(self.switch_camera())
+        self.switch_camera()                           # BUG-010: sync
         self._set_stage(AppStage.vision_stage(2), step=3)
         self.robot.MoveJ(joint_pos=ready,   tool=0, user=1, vel=100, acc=100)
         self.robot.MoveJ(joint_pos=_10kg_3, tool=0, user=1, vel=100, acc=100)
-        ct.trigger(name=self.barcode + "_2")
+        img2 = ct.trigger(name=self.barcode + "_2")
         time.sleep(1)
 
         # Return home
         self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
-        # Reporting
+        # Reporting — BUG-012: مسارات الصور من trigger() بدل hardcoded
         self._set_stage(AppStage.REPORTING)
-        image_list = [
-            f"results/{self.barcode}_0.jpg",
-            f"results/{self.barcode}_1.jpg",
-            f"results/{self.barcode}_2.jpg",
-        ]
+        image_list = [p for p in (img0, img1, img2) if p is not None]
         result = self.check_images_status(
             self._ai_provider.run(image_paths=image_list)
         )
@@ -321,16 +360,16 @@ class App():
             else:
                 self._stats["errors"] += 1
 
-        # Signal robot
+        # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
         self.robot.SetDO(self._cfg.get(key="test_done"),   1)
         self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
         if result == "pass":
             self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
-            time.sleep(self._cfg.get(key="signal_pass_preriod"))
+            time.sleep(self._cfg.get("signal_pass_period", 0.5))
             self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
         elif result == "fail":
             self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
-            time.sleep(self._cfg.get(key="signal_fail_preriod"))
+            time.sleep(self._cfg.get("signal_fail_period", 0.5))
             self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
 
         self._set_stage(AppStage.DONE)
@@ -353,8 +392,8 @@ class App():
     def start_sequence(self):
         log = _get_thread_logger()
 
-        # اتحرك لنقطة المسح
-        barcode_point = self.get_points_from_db("CamScan")
+        # اتحرك لنقطة المسح — BUG-013: "CamScan" → "cam" (اسم موجود فعلاً في DB)
+        barcode_point = self.get_points_from_db("cam")
         self.robot.MoveJ(barcode_point, 0, 1, vel=100, acc=100)
 
         # شغّل وضع القراءة
@@ -380,9 +419,15 @@ class App():
         log.info(f"[Sequence] Barcode: {self.barcode}")
         self._set_stage(AppStage.BARCODE_RECEIVED)
 
-        # بحث عن البرنامج
+        # بحث عن البرنامج — BUG-014: ترجع None بدل string عربي عند الخطأ
         self._set_stage(AppStage.PROGRAM_LOOKUP)
         program = self.determine_program_from_barcode(barcode=self.barcode)
+
+        if program is None:
+            log.error(f"[Sequence] Could not determine program for barcode: {self.barcode!r}")
+            self._set_stage(AppStage.ERROR)
+            return
+
         with self._state_lock:
             self._program = program
             self._stats["total"] += 1
@@ -402,32 +447,38 @@ class App():
         elif program == 5:
             self.program_5()
         else:
-            log.warning(f"[Sequence] Unknown program: {program}")
+            # BUG-014: programs 2-5 فارغة → ERROR مع رسالة واضحة
+            log.warning(f"[Sequence] Program {program} has no implementation (programs 2-5 are empty stubs)")
             self._set_stage(AppStage.ERROR)
 
     # ── Program mapping ────────────────────────────────────────────────
 
     def determine_program_from_barcode(self, barcode, excel_file_path=None):
+        """
+        BUG-014: كانت بترجع string عربي عند الخطأ → أصبحت ترجع None عند الخطأ
+        عشان start_sequence يقدر يتعامل معاها بشكل صحيح.
+        """
+        log = _get_thread_logger()
+
         if excel_file_path is None:
-            from config import config as _cfg
-            excel_file_path = _cfg.get("program_mapping_file", "program_mapping.xlsx")
+            excel_file_path = _cfg_singleton.get("program_mapping_file", "program_mapping.xlsx")
 
         if not barcode or len(barcode) < 3:
-            return "خطأ: الباركود قصير جداً"
+            log.error(f"[Program] Barcode too short: {barcode!r}")
+            return None
 
         target_char = barcode[-3]
 
         try:
-            import os as _os
             try:
-                current_mtime = _os.path.getmtime(excel_file_path)
+                current_mtime = os.path.getmtime(excel_file_path)
             except OSError:
                 current_mtime = 0.0
 
             if (self._mapping_cache_df is None
                     or self._mapping_cache_path != excel_file_path
                     or self._mapping_cache_mtime != current_mtime):
-                print(f"[INFO] Loading mapping file: {excel_file_path}")
+                log.info(f"[Program] Loading mapping file: {excel_file_path}")
                 self._mapping_cache_df    = pd.read_excel(excel_file_path)
                 self._mapping_cache_path  = excel_file_path
                 self._mapping_cache_mtime = current_mtime
@@ -438,16 +489,22 @@ class App():
             match        = df[df[char_column] == target_char]
 
             if not match.empty:
-                return match[value_column].values[0]
+                raw = match[value_column].values[0]
+                try:
+                    return int(raw)
+                except (ValueError, TypeError):
+                    log.error(f"[Program] Value {raw!r} is not a valid program number")
+                    return None
             else:
-                return "الحرف غير موجود في ملف الإكسل."
+                log.error(f"[Program] Char '{target_char}' not found in mapping file")
+                return None
 
         except FileNotFoundError:
-            print(f"[ERROR] Excel file not found: {excel_file_path}")
-            return "خطأ: ملف الإكسل غير موجود في المسار المحدد."
+            log.error(f"[Program] Excel file not found: {excel_file_path}")
+            return None
         except Exception as e:
-            print(f"[ERROR] Unexpected error: {e}")
-            return f"حدث خطأ غير متوقع: {e}"
+            log.exception(f"[Program] Unexpected error: {e}")
+            return None
 
     # ── Main loop (runs in background thread) ─────────────────────────
 
@@ -456,9 +513,12 @@ class App():
         log = _get_thread_logger()
         log.info("[App] _run_main started")
         try:
-            # تشغيل الكاميرا
+            # تشغيل الكاميرا — BUG-037: تحقق من نجاح التشغيل
             self._camera.start()
-            self._camera.wait_for_frame(timeout=5.0)
+            if not self._camera.wait_for_frame(timeout=5.0):
+                log.error("[App] Camera failed to produce frames — aborting")
+                self._set_stage(AppStage.ERROR)
+                return
             ct.start(camera=self._camera)
 
             # اتصل بالروبوت
@@ -501,6 +561,7 @@ class App():
             self._set_stage(AppStage.ERROR)
         finally:
             self._running = False
+            self._save_session_stats()   # حفظ الإحصائيات عند الخروج
             self.robot    = None
             try:
                 self._camera.stop()
@@ -517,22 +578,37 @@ class App():
     def start(self, camera_index=None):
         """
         يشغّل البرنامج في ثريد خلفي ويرجع True/False فوراً (non-blocking).
+        الإحصائيات بتتحمل من الجلسة السابقة (stop/start تحافظ على الأرقام).
         """
         if self._running:
             return True
 
+        # ── انتظر الـ thread القديم يخلص تماماً قبل ما نبدأ واحد جديد ──
+        # (الـ thread ممكن يكون لسه بيوقف الكاميرا/الروبوت في finally)
+        if self._main_thread is not None and self._main_thread.is_alive():
+            self._main_thread.join(timeout=8.0)
+            if self._main_thread.is_alive():
+                # الـ thread عالق — مش آمن نبدأ من جديد
+                return False
+
         if camera_index is not None:
             self._camera._cam_index = camera_index
 
+        # ── تحميل إحصائيات الجلسة السابقة ──────────────────────────
+        saved = self._load_session_stats()
+
         self._stop_app.clear()
-        self._running    = True
         self._start_time = time.time()
         with self._state_lock:
-            self._stage  = AppStage.IDLE
-            self._stats  = {"total": 0, "pass": 0, "fail": 0, "errors": 0}
-            self.barcode = None
+            self._stage   = AppStage.IDLE
+            # BUG-050: persistent stats — مش بنصفّر، بنرجع من الجلسة السابقة
+            self._stats   = saved["stats"]
+            self.barcode  = saved["last_barcode"]
             self._program = None
             self._step    = 0
+
+        # BUG-050: مسح queue الباركودات القديمة
+        sc.reset_queue()
 
         self._main_thread = threading.Thread(
             target=self._run_main,
@@ -540,14 +616,24 @@ class App():
             daemon=True,
         )
         self._main_thread.start()
+        # BUG-028: _running = True بعد start() وليس قبلها
+        self._running = True
         return True
 
     def run(self):
         return self.start()
 
-    def stop(self):
-        """يوقف البرنامج (non-blocking — الـ thread بيوقف نفسه)."""
+    def stop(self, wait: bool = False, timeout: float = 10.0):
+        """
+        يوقف البرنامج.
+        BUG-049: ضيفنا wait=True لانتظار انتهاء الـ thread (للـ shutdown).
+        FIX-START: _running = False فوراً عشان start() تشتغل صح بعد stop().
+        """
+        self._save_session_stats()   # حفظ الإحصائيات قبل الإيقاف
+        self._running = False        # فوراً — مش نستنى الـ thread finally
         self._stop_app.set()
+        if wait and self._main_thread is not None:
+            self._main_thread.join(timeout=timeout)
 
 
 if __name__ == "__main__":

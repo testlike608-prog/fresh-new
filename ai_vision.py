@@ -484,7 +484,8 @@ class WaterDetector(ABC):
             print(f"  {verdict}")
             print("─" * 54)
 
-            self.short_term_memory.add(name, "Yes" if has_water else "No", has_water, True)
+            # BUG-023: في --run mode مفيش تقييم بشري → لا تضيف لـ short_term_memory
+            # (was_correct=True كان غلط لأننا مش عارفين الإجابة الصحيحة)
             final[f"image_{idx}"] = "Yes" if has_water else "No"
 
         # حفظ النتيجة كـ JSON file

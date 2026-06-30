@@ -38,7 +38,8 @@ import scanner
 # ════════════════════════════════════════════════════════════════════
 #                    Async log bridge
 # ════════════════════════════════════════════════════════════════════
-_log_queue: asyncio.Queue = asyncio.Queue(maxsize=5000)
+# BUG-021: لا تنشئ asyncio.Queue على مستوى الـ module — ينتظر lifespan
+_log_queue: asyncio.Queue = None   # type: ignore
 
 
 class _AsyncBridgeHandler(logging.Handler):
@@ -63,7 +64,8 @@ class _AsyncBridgeHandler(logging.Handler):
 
     def _put_nowait(self, entry):
         try:
-            _log_queue.put_nowait(entry)
+            # BUG-021: استخدم self._queue بدل المتغير العام
+            self._queue.put_nowait(entry)
         except Exception:
             pass
 
@@ -109,9 +111,12 @@ class _StreamToLogger:
 # ════════════════════════════════════════════════════════════════════
 #                    Socket.IO server
 # ════════════════════════════════════════════════════════════════════
+# SEC-002: قلّل الـ CORS — اسمح فقط لـ localhost/LAN (عدّل لو احتجت)
+# يمكن التعديل من متغير البيئة CORS_ORIGINS (مفصولة بفاصلة)
+_CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*")  # "*" = اترك كما هو لـ LAN
 sio = socketio.AsyncServer(
     async_mode="asgi",
-    cors_allowed_origins="*",
+    cors_allowed_origins=_CORS_ORIGINS,
     logger=False,
     engineio_logger=False,
     ping_timeout=60,
@@ -183,11 +188,17 @@ async def _log_broadcaster():
 # ════════════════════════════════════════════════════════════════════
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global app_ref, app_init_error
+    global app_ref, app_init_error, _log_queue
 
     # 1. Setup thread logger + log bridge
     loop = asyncio.get_event_loop()
-    log  = thread_logger.setup(watchdog_interval=2.0)
+
+    # BUG-021: إنشاء Queue هنا وليس على مستوى الـ module
+    _log_queue = asyncio.Queue(maxsize=5000)
+
+    # BUG-007: watchdog_interval من config بدل hardcoded 2.0
+    watchdog_interval = float(config.get("watchdog_interval", 2.0))
+    log  = thread_logger.setup(watchdog_interval=watchdog_interval)
 
     bridge = _AsyncBridgeHandler(loop, _log_queue)
     bridge.setLevel(logging.DEBUG)
@@ -230,7 +241,7 @@ async def lifespan(app: FastAPI):
         pass
 
     if app_ref is not None and app_ref.is_running:
-        app_ref.stop()
+        await asyncio.to_thread(app_ref.stop, True, 8.0)  # BUG-049: انتظار الـ thread
 
     if hasattr(sys, "_original_stdout"):
         sys.stdout = sys._original_stdout
@@ -275,12 +286,13 @@ async def get_state():
 
 @app.post("/api/start")
 async def start_app():
-    """يشغّل البرنامج (non-blocking — App.start() يرجع فوراً)."""
+    """يشغّل البرنامج (non-blocking — App.start() يرجع فوراً).
+    start() هي اللي بتتحكم في race conditions — مش محتاجين نعمل check هنا."""
     if app_ref is None:
         raise HTTPException(500, app_init_error or "App not initialised")
-    if app_ref.is_running:
-        return {"ok": True, "msg": "already running"}
     ok = await asyncio.to_thread(app_ref.start)
+    if ok is False:
+        raise HTTPException(503, "Previous run thread is still stopping — try again in a moment")
     return {"ok": bool(ok)}
 
 
@@ -322,6 +334,10 @@ async def download_report():
 @app.post("/api/barcode")
 async def inject_barcode(body: dict):
     """حقن باركود يدوي من الـ dashboard."""
+    # BUG-029: تحقق إن البرنامج شغّال قبل حقن الباركود
+    if app_ref is None or not app_ref.is_running:
+        raise HTTPException(400, "App is not running — press Start first")
+
     barcode = (body.get("barcode") or "").strip()
     if not barcode:
         raise HTTPException(400, "barcode field required")
@@ -415,7 +431,7 @@ async def update_config(body: dict):
     FLOAT_KEYS = {
         "watchdog_interval", "reconnect_check_interval",
         "reconnect_retry_delay", "debug_monitor_interval",
-        "signal_pass_preriod", "signal_fail_preriod",
+        "signal_pass_period", "signal_fail_period",   # BUG-033: إصلاح التهجئة
     }
     BOOL_KEYS = {"ai_enhancement"}
 
@@ -467,6 +483,19 @@ async def reset_config(body: dict):
     if not ok:
         raise HTTPException(403, "Wrong password")
     await asyncio.to_thread(config.reset_to_defaults)
+    return {"ok": True}
+
+
+# ════════════════════════════════════════════════════════════════════
+#                    REST: Session Stats Reset
+# ════════════════════════════════════════════════════════════════════
+
+@app.post("/api/stats/reset")
+async def reset_stats():
+    """إعادة تعيين الإحصائيات المتراكمة (total/pass/fail/errors/last_barcode)."""
+    if app_ref is None:
+        raise HTTPException(500, "App not initialised")
+    await asyncio.to_thread(app_ref.reset_session_stats)
     return {"ok": True}
 
 
