@@ -28,8 +28,9 @@ from config import config as _cfg_singleton    # BUG-008: استخدام singlet
 import camera_barcode
 from ai_vision import WaterDetector
 
-# ── مسار ملف الإحصائيات الدائمة ──────────────────────────────────────────────
-_SESSION_STATS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "session_stats.json")
+# ── مسار ملف الإحصائيات الدائمة (جوه DATA_DIR عشان يتحفظ في الـ Volume) ─────
+from config import data_path as _data_path
+_SESSION_STATS_FILE = _data_path("session_stats.json")
 
 def _to_bytes(message, is_hex=False):
     """
@@ -283,7 +284,8 @@ class App():
     def get_points_from_db(self, point_name: str):
         import sqlite3
         # BUG-003: إصلاح SQL Injection — استخدام parameterized query
-        db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web_point.db")
+        # Docker: web_point.db جوه DATA_DIR (Volume) عشان يتحفظ بين restarts
+        db_path = _data_path("web_point.db")
         conn   = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute(
@@ -461,7 +463,8 @@ class App():
         log = _get_thread_logger()
 
         if excel_file_path is None:
-            excel_file_path = _cfg_singleton.get("program_mapping_file", "program_mapping.xlsx")
+            fname = _cfg_singleton.get("program_mapping_file", "program_mapping.xlsx")
+            excel_file_path = fname if os.path.isabs(fname) else _data_path(fname)
 
         if not barcode or len(barcode) < 3:
             log.error(f"[Program] Barcode too short: {barcode!r}")

@@ -1,0 +1,92 @@
+# ════════════════════════════════════════════════════════════════
+#  GitHub Actions — Build & Push Docker Image
+#
+#  بيشتغل لما تعمل push على main أو tag بـ v*.*.*
+#  Image بتتنشر على GitHub Container Registry (ghcr.io)
+#
+#  للتحميل بعدين:
+#    docker pull ghcr.io/YOUR_USERNAME/water-inspection:latest
+# ════════════════════════════════════════════════════════════════
+
+name: Build & Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"          # مثال: v1.0.0 → image بـ tag v1.0.0
+  pull_request:
+    branches:
+      - main              # بيبني بس (مش بيـ push) للـ PRs
+
+jobs:
+  build-and-push:
+    name: Build & Push
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write     # لازم عشان تكتب على ghcr.io
+
+    steps:
+      # 1. تحميل الكود
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. إعداد QEMU لـ multi-platform builds (arm64 للـ Raspberry Pi مثلاً)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # 3. إعداد Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 4. تسجيل الدخول على ghcr.io
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 5. استخراج metadata للـ tags و labels
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            # main branch → :latest
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            # tags → :v1.2.3
+            type=semver,pattern={{version}}
+            # short SHA → :sha-abc1234
+            type=sha,prefix=sha-,format=short
+
+      # 6. Build & Push
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Cache بين الـ runs عشان الـ build أسرع
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # 7. ملخص في الـ Actions summary
+      - name: Image digest summary
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "## Docker Image Published 🐳" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`ghcr.io/${{ github.repository }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Pull command:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ghcr.io/${{ github.repository }}:latest" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

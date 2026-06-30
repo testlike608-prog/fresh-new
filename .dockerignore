@@ -1,0 +1,80 @@
+# ════════════════════════════════════════════════════════════════
+#  .dockerignore — Water Inspection System
+#  بيقلل الـ Docker build context من ~192MB لـ ~40MB
+# ════════════════════════════════════════════════════════════════
+
+# ── Secrets & Config (بتيجي من Volume مش من Image) ─────────────
+.env
+*.env
+config.json
+
+# ── Runtime data (بيتيجي من Volume) ────────────────────────────
+data/
+results/
+captures/
+enhanced_images/
+logs/
+result/
+failed_cases/
+failed_has_water/
+session_stats.json
+web_point.db
+program_mapping.xlsx
+program_mapping.broken.bak.xlsx
+results_report.xlsx
+results_report_backup_*.xlsx
+config.json
+
+# ── Windows compiled binaries (مش بتشتغل على Linux) ────────────
+fairino/build/
+fairino/__pycache__/
+**/*.pyd
+**/*.dll
+**/*.exe
+
+# ── Python cache ─────────────────────────────────────────────────
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ── Dev & test files ─────────────────────────────────────────────
+test_*.py
+*_test.py
+api_test.py
+debug_monitor.py
+run_diag.bat
+run_diag_admin.bat
+start_server.bat
+local_water_check_lmstudio.py
+img.py
+live_image.py
+test_enhance.py
+*.bat
+
+# ── Docs & reports ───────────────────────────────────────────────
+*.docx
+*.md
+motion_guide.docx
+BugReport_*.docx
+Bug_Fix_*.docx
+Docker_*.docx
+
+# ── Images & temp files ──────────────────────────────────────────
+image_000.jpg
+result.json
+*.tmp
+*.jpg
+*.png
+~$*
+
+# ── Git ──────────────────────────────────────────────────────────
+.git/
+.gitignore
+.gitkeep
+
+# ── OS ───────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini

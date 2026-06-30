@@ -11,9 +11,17 @@ from datetime import datetime
 from PIL import Image as PILImage
 
 
-def _base_dir():
-    """المجلد المرجعي اللي بنحسب منه المسارات النسبية."""
-    return Path(__file__).parent
+def _base_dir() -> Path:
+    """
+    المجلد المرجعي لكل الـ paths النسبية في excel.py.
+    في Docker: DATA_DIR=/app/data → كل الملفات جوه Volume.
+    في dev:    نفس مجلد الكود (الـ default السابق).
+    """
+    try:
+        from config import DATA_DIR
+        return Path(DATA_DIR)
+    except Exception:
+        return Path(__file__).parent
 
 
 def _resolve_folder(folder):
@@ -111,13 +119,18 @@ def result_reporting(ID, result, file_path=None):
     عدد الصور = vision_test_count من config (الرقم اللي بتحدده في الـ GUI).
     الصور بتتضام كصور حقيقية في الخلايا مش كـ path نصي.
     """
-    # ─── مسار الملف ───
+    # ─── مسار الملف (نسبي لـ DATA_DIR) ───
     if file_path is None:
         try:
-            from config import config as _cfg
-            file_path = _cfg.get("results_report_file", "results_report.xlsx")
+            from config import config as _cfg, DATA_DIR
+            fname = _cfg.get("results_report_file", "results_report.xlsx")
+            file_path = fname if os.path.isabs(fname) else os.path.join(DATA_DIR, fname)
         except Exception:
-            file_path = "results_report.xlsx"
+            import os as _os
+            file_path = _os.path.join(
+                _os.environ.get("DATA_DIR", _os.path.dirname(_os.path.abspath(__file__))),
+                "results_report.xlsx"
+            )
 
     # ─── عدد الصور من config (نفس رقم vision_test_count في الـ GUI) ───
     try:

@@ -26,7 +26,9 @@ from camera_hub import CameraHub
 log = logging.getLogger("capture_trigger")
 
 # ── إعدادات افتراضية ──────────────────────────────────────────────────────────
-DEFAULT_SAVE_DIR = "./results"
+# في Docker: DATA_DIR=/app/data → الصور بتتحفظ في /app/data/results (Volume)
+_DATA_DIR        = os.environ.get("DATA_DIR", os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_SAVE_DIR = os.path.join(_DATA_DIR, "results")
 _save_dir        = DEFAULT_SAVE_DIR
 _counter         = 0
 _counter_lock    = threading.Lock()

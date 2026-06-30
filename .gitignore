@@ -1,2 +1,53 @@
+# ════════════════════════════════════════════════════════════════
+#  .gitignore — Water Inspection System
+# ════════════════════════════════════════════════════════════════
+
+# ── Secrets (لا ترفعهم أبداً) ────────────────────────────────────
 .env
-.env git add .gitignore
+*.env
+
+# ── Data folder (Volume — على الـ Host مش على GitHub) ─────────
+data/
+# استثناء: نرفع مجلد data فاضي مع .gitkeep عشان Docker يعرف يعمل mount
+!data/.gitkeep
+
+# ── Runtime files (بتتكريت وقت التشغيل) ──────────────────────
+session_stats.json
+logs/
+captures/
+enhanced_images/
+result/
+results/
+failed_cases/
+failed_has_water/
+*.pyc
+__pycache__/
+
+# ── Root-level data files (بتيجي من Volume — مش على GitHub) ──
+config.json
+web_point.db
+program_mapping.xlsx
+
+# ── Excel runtime outputs ─────────────────────────────────────
+results_report.xlsx
+results_report_backup_*.xlsx
+program_mapping.broken.bak.xlsx
+
+# ── fairino Windows build artifacts (مش بتشتغل على Linux) ────
+fairino/build/
+
+# ── Temp Word lock files ─────────────────────────────────────
+~$*
+
+# ── Dev / test files ──────────────────────────────────────────
+image_000.jpg
+result.json
+*.tmp
+
+# ── Docs (اختياري — شيل الـ # لو عايز ترفع الـ Word files) ───
+# *.docx
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini

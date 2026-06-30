@@ -16,6 +16,7 @@ camera_barcode.py
 """
 
 import cv2
+import os
 import zxingcpp
 import threading
 import time
@@ -38,7 +39,8 @@ DECODE_FPS  = 10
 
 
 # ─── Decode loop ──────────────────────────────────────────────────────────────
-DEBUG_FRAME_PATH    = "./results/test.jpg"  # BUG-017: كان "./result/test.jpg" (اسم فولدر غلط)
+_DATA_DIR           = os.environ.get("DATA_DIR", os.path.dirname(os.path.abspath(__file__)))
+DEBUG_FRAME_PATH    = os.path.join(_DATA_DIR, "results", "test.jpg")  # BUG-017 + Docker
 DEBUG_SAVE_INTERVAL = 2.0                   # احفظ كل 2 ثانية
 
 

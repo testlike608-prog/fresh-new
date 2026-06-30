@@ -43,8 +43,22 @@ def _get_config_dir():
     return os.path.dirname(os.path.abspath(__file__))
 
 
-CONFIG_DIR = _get_config_dir()
-CONFIG_FILE = os.path.join(CONFIG_DIR, "config.json")
+# ─── DATA_DIR: كل الملفات الديناميكية بتتحفظ هنا ──────────────────────
+# في Docker:  DATA_DIR=/app/data  (بيتحدد من env var)
+# في dev:     نفس مجلد الكود
+DATA_DIR = os.environ.get("DATA_DIR", _get_config_dir())
+
+# ملف config.json نفسه جوه DATA_DIR
+CONFIG_DIR  = DATA_DIR
+CONFIG_FILE = os.path.join(DATA_DIR, "config.json")
+
+
+def data_path(*parts: str) -> str:
+    """
+    يبني مسار مطلق داخل DATA_DIR.
+    مثال: data_path("results", "img.jpg") → /app/data/results/img.jpg
+    """
+    return os.path.join(DATA_DIR, *parts)
 
 
 # ─── الـ defaults — نفس القيم اللي كانت hardcoded في الكود ──────────
@@ -61,14 +75,14 @@ DEFAULT_CONFIG = {
     # ── TCP Clients ───────────────────────────────────────────────
     "cobot_ip":         "192.168.57.2",
 
-    # ── File paths (نسبياً للـ working dir) ───────────────────────
+    # ── File paths (نسبياً للـ DATA_DIR — بيتحل في الكود بـ data_path()) ──
     "program_mapping_file": "program_mapping.xlsx",
     "results_report_file":  "results_report.xlsx",
     "vision_test_count": 6,
 
     # ── Result images ─────────────────────────────────────────────
-    # الفولدر الأساسي اللي فيه صور النتيجة (مسار مطلق أو نسبي للـ working dir)
-    "result_images_folder": "result_images",
+    # الفولدر الأساسي اللي فيه صور النتيجة (نسبي لـ DATA_DIR)
+    "result_images_folder": "results",
     # فولدرات إضافية تتنسخ فيها نسخة من كل صورة نتيجة (نسخ احتياطية)
     "result_images_backup_folders": [],
 

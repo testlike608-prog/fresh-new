@@ -32,7 +32,9 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 # ─── إعدادات افتراضية ───────────────────────────────────────────────────────
-LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+# DATA_DIR: في Docker = /app/data ، في dev = مجلد الكود
+_DATA_DIR = os.environ.get("DATA_DIR", os.path.dirname(os.path.abspath(__file__)))
+LOG_DIR   = os.path.join(_DATA_DIR, "logs")
 LOG_FILE = "threads.log"
 MAX_BYTES = 5 * 1024 * 1024   # 5 ميجا لكل ملف
 BACKUP_COUNT = 5              # هنحتفظ بـ 5 ملفات قديمة

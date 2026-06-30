@@ -1,0 +1,59 @@
+# ════════════════════════════════════════════════════════════════
+#  Water Inspection System — docker-compose.yml
+#  يشغّل الـ Container مع كل الـ hardware و volumes الصح
+#
+#  تشغيل:     docker compose up -d
+#  إيقاف:     docker compose down
+#  لوجات:     docker compose logs -f
+# ════════════════════════════════════════════════════════════════
+
+services:
+  water-inspection:
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-username/water-inspection}:latest
+    # أو لو بتبني locally:
+    # build: .
+
+    container_name: water-inspection
+
+    # ── Ports ────────────────────────────────────────────────────
+    ports:
+      - "8000:8000"
+
+    # ── Volume: كل الملفات الديناميكية على الـ Host ───────────────
+    # ./data على الـ Host ↔ /app/data جوه الـ Container
+    volumes:
+      - ./data:/app/data
+
+    # ── Environment variables ────────────────────────────────────
+    env_file:
+      - .env                  # GROQ_API_KEY, GEMINI_API_KEY, CORS_ORIGINS
+    environment:
+      - DATA_DIR=/app/data
+      - PYTHONUNBUFFERED=1
+
+    # ── Hardware devices ─────────────────────────────────────────
+    # كاميرا USB (UseePlus endoscope) — عدّل الرقم لو مختلف
+    devices:
+      - /dev/video0:/dev/video0       # كاميرا الفحص
+      - /dev/video1:/dev/video1       # كاميرا اللايف (لو موجودة)
+    # Barcode scanner (keyboard library يحتاج /dev/input)
+    # لو السكانر هاردوير: أضف السطر ده
+    # - /dev/input:/dev/input
+
+    # ── Network ──────────────────────────────────────────────────
+    # host mode عشان يوصل للكوبوت على 192.168.57.x بدون NAT
+    # لو مش محتاج كوبوت على نفس الـ subnet، غيّر لـ bridge
+    network_mode: host
+
+    # ── Restart policy ───────────────────────────────────────────
+    restart: unless-stopped
+
+    # ── Resource limits (اختياري) ────────────────────────────────
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 2g
+
+    # ── Privileges (لو السكانر keyboard محتاج evdev) ────────────
+    # group_add:
+    #   - input    # يضيف user للـ input group عشان يقرأ /dev/input
