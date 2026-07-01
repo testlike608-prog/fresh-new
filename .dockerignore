@@ -43,7 +43,6 @@ __pycache__/
 test_*.py
 *_test.py
 api_test.py
-debug_monitor.py
 run_diag.bat
 run_diag_admin.bat
 start_server.bat
