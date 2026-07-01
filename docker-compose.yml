@@ -9,8 +9,10 @@
 
 services:
   water-inspection:
-    image: ghcr.io/${GITHUB_REPOSITORY:-your-username/water-inspection}:latest
-    # أو لو بتبني locally:
+    # الـ image ده بيتبني وينشر أوتوماتيك بالـ GitHub Action
+    # (.github/workflows/docker-build.yml) من ريبو testlike608-prog/fresh-new
+    image: ghcr.io/testlike608-prog/fresh-new:latest
+    # أو لو بتبني locally بدل ما تسحب من GHCR:
     # build: .
 
     container_name: water-inspection
@@ -32,13 +34,20 @@ services:
       - PYTHONUNBUFFERED=1
 
     # ── Hardware devices ─────────────────────────────────────────
-    # كاميرا USB (UseePlus endoscope) — عدّل الرقم لو مختلف
+    # كاميرا UseePlus (endoscope, VID=0x2CE3/PID=0x3828) بتتوصل USB
+    # مباشر عن طريق pyusb — مش /dev/videoX (دي كاميرات UVC عادية بس).
+    # بننزّل الـ USB bus كله + نفتح صلاحية الـ device class (189 = USB)
+    # عشان pyusb يقدر يعمل enumerate/claim للجهاز من جوه الكونتينر.
     devices:
-      - /dev/video0:/dev/video0       # كاميرا الفحص
-      - /dev/video1:/dev/video1       # كاميرا اللايف (لو موجودة)
+      - /dev/bus/usb:/dev/bus/usb
+    device_cgroup_rules:
+      - "c 189:* rmw"
     # Barcode scanner (keyboard library يحتاج /dev/input)
     # لو السكانر هاردوير: أضف السطر ده
     # - /dev/input:/dev/input
+    # لو المشكلة استمرت (permission denied على USB)، فعّل السطر ده
+    # كحل أخير (بيدي صلاحيات كاملة للكونتينر):
+    # privileged: true
 
     # ── Network ──────────────────────────────────────────────────
     # host mode عشان يوصل للكوبوت على 192.168.57.x بدون NAT
