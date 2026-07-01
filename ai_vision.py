@@ -783,7 +783,7 @@ class _Groq(WaterDetector):
 
             # New images
             user_content = [{"type": "text",
-                             "text": "Examine the attached images for water points. Precisely identify any clear, distinct, and individual water droplets on the surface of the white plastic piece. CRITICAL WARNING: Under no circumstances classify the yellowish/brownish viscous accumulation along the edge (referred to as "كولة" or glue) as "water". Classify only the liquid that appears clearly aqueous, and ignore the solidified adhesive material. Report clearly on the inspection results: Have any water points been found? Where? Ensure they are not confused with the yellowish material."}]
+                             "text": "Examine the attached images for water points. Precisely identify any clear, distinct, and individual water droplets on the surface of the white plastic piece. CRITICAL WARNING: Under no circumstances classify the yellowish/brownish viscous accumulation along the edge (referred to as \"كولة\" or glue) as \"water\". Classify only the liquid that appears clearly aqueous, and ignore the solidified adhesive material. Report clearly on the inspection results: Have any water points been found? Where? Ensure they are not confused with the yellowish material."}]
             valid = 0
             for i, path in enumerate(image_paths, 1):
                 if not os.path.exists(path):
