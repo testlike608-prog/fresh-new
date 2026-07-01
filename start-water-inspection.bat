@@ -70,6 +70,11 @@ if %errorlevel% neq 0 (
 echo.
 
 REM ---- 6) Start the container ----
+REM Remove any leftover container with the same name first (avoids
+REM "Conflict: name already in use" if a previous container wasn't
+REM tracked by this compose project). Safe no-op if none exists.
+docker rm -f water-inspection >nul 2>&1
+
 echo [4/4] Starting the container (docker compose up -d)...
 cd /d "%PROJECT_DIR%"
 docker compose up -d

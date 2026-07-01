@@ -50,9 +50,16 @@ services:
     # privileged: true
 
     # ── Network ──────────────────────────────────────────────────
-    # host mode عشان يوصل للكوبوت على 192.168.57.x بدون NAT
-    # لو مش محتاج كوبوت على نفس الـ subnet، غيّر لـ bridge
-    network_mode: host
+    # ملحوظة: كان هنا network_mode: host — لكن على Docker Desktop
+    # (Windows/Mac) الـ "host" بيقصد شبكة الـ WSL2 VM الداخلية مش
+    # جهاز الويندوز نفسه، فالـ "ports:" فوق كان بيتجاهل تمامًا
+    # وده سبب إن صفحة الويب مكنتش بتفتح على localhost:8000.
+    # رجعنا لـ bridge (default) عشان الـ port mapping يشتغل صح.
+    # الاتصال بالكوبوت (192.168.57.2) اتصال خارج (outbound) بيعدي
+    # عادي عن طريق الـ NAT الافتراضي، طالما جهاز الويندوز نفسه
+    # عنده مسار (route) لنفس الشبكة دي.
+    # لو محتاج ترجع لـ host mode (مثلاً على Linux host مش Windows):
+    # network_mode: host
 
     # ── Restart policy ───────────────────────────────────────────
     restart: unless-stopped
