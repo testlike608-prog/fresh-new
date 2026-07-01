@@ -7780,3 +7780,24 @@
 2026-06-29 10:03:42.766 [DEBUG   ] [ThreadWatchdog tid=7424] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
 2026-06-29 10:03:44.768 [DEBUG   ] [ThreadWatchdog tid=7424] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
 2026-06-29 10:03:46.769 [DEBUG   ] [ThreadWatchdog tid=7424] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-01 11:56:31.841 [INFO    ] [MainThread tid=12592] ======================================================================
+2026-07-01 11:56:31.841 [INFO    ] [MainThread tid=12592] Logger initialised — log file: c:\Users\Hisham Elbadry\Desktop\updated\fresh-new\logs\threads.log
+2026-07-01 11:56:31.841 [INFO    ] [MainThread tid=12592] Python 3.12.10 on win32
+2026-07-01 11:56:31.841 [INFO    ] [MainThread tid=12592] ======================================================================
+2026-07-01 11:56:31.842 [INFO    ] [ThreadWatchdog tid=7516] Watchdog started — checking every 2.0s
+2026-07-01 11:56:31.842 [INFO    ] [MainThread tid=12592] thread_logger setup complete ✓
+2026-07-01 11:56:31.842 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-01 11:56:31.843 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-01 11:56:31.843 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-01 11:56:31.843 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-01 11:56:32.333 [INFO    ] [MainThread tid=12592] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-01 11:56:32.334 [INFO    ] [MainThread tid=12592] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-01 11:56:33.845 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-01 11:56:33.845 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-01 11:56:33.845 [WARNING ] [ThreadWatchdog tid=7516] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-01 11:56:33.846 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-01 11:56:35.846 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-01 11:56:37.848 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-01 11:56:39.849 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-01 11:56:41.850 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-01 11:56:43.851 [DEBUG   ] [ThreadWatchdog tid=7516] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']

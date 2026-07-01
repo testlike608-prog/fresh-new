@@ -530,11 +530,21 @@ combined_app = socketio.ASGIApp(sio, other_asgi_app=app)
 # ════════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
     import uvicorn
+    import threading
+    import webbrowser
+
+    _URL = "http://localhost:8000"
+
+    def _open_browser():
+        webbrowser.open(_URL)
 
     print("=" * 60)
     print("  Test Station Controller — Web Mode")
-    print("  http://localhost:8000")
+    print(f"  {_URL}")
     print("=" * 60)
+
+    # فتح المتصفح تلقائيًا بعد تأخير قصير (يسيب وقت لـ uvicorn يبدأ يسمع على البورت)
+    threading.Timer(1.5, _open_browser).start()
 
     uvicorn.run(
         "web_server:combined_app",
