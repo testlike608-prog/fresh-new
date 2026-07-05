@@ -9,6 +9,7 @@ python-socketio
 openai
 google-genai
 ollama
+groq
 
 # Computer vision & image processing
 opencv-python
