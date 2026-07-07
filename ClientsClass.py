@@ -258,7 +258,13 @@ class App():
             print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
             return "error"
         for image_name, value in images_data.items():
-            if str(value).strip().lower() == "yes":
+            # تحويل القيمة لنص، تنظيف المسافات، وجعلها lowercase
+            val_cleaned = str(value).strip().lower()
+            
+            # طباعة للتأكد مما يراه الكود (debug)
+            print(f"Checking: {image_name} -> Value: '{val_cleaned}'")
+            
+            if val_cleaned == "yes":
                 return "fail"
         return "pass"
 
@@ -313,6 +319,9 @@ class App():
     def program_1(self):
         log = _get_thread_logger()
         homing  = self.get_points_from_db("water1")
+        _10kg_relif1= self.get_points_from_db("10kg_relif1")
+        _10kg_relif2= self.get_points_from_db("10kg_relif2")
+        _10kg_relif3= self.get_points_from_db("10kg_relif3")
         _10kg_1 = self.get_points_from_db("10kg_1")
         _10kg_2 = self.get_points_from_db("10kg_2")
         _10kg_3 = self.get_points_from_db("10kg_3")
@@ -320,37 +329,46 @@ class App():
 
         # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
         self.switch_camera()
-        self.robot.MoveJ(joint_pos=ready,   tool=0, user=1, vel=100, acc=100)
-
+        self.robot.MoveJ(joint_pos=ready,   tool=0, user=1, vel=60, acc=100)
+        self.robot.MoveJ(joint_pos=_10kg_relif3, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=_10kg_relif2, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=_10kg_relif1, tool=0, user=1, vel=100, acc=100)
         # Vision test 1
         self._set_stage(AppStage.vision_stage(0), step=1)
-        self.robot.MoveJ(joint_pos=_10kg_1, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=_10kg_1, tool=0, user=1, vel=60, acc=100)
+        time.sleep(1)
         img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
         time.sleep(1)
-
+        self.robot.MoveJ(joint_pos=_10kg_relif1, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=_10kg_relif2, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=_10kg_relif3, tool=0, user=1, vel=100, acc=100)
         # Vision test 2
-        self._set_stage(AppStage.vision_stage(1), step=2)
-        self.robot.MoveJ(joint_pos=_10kg_2, tool=0, user=1, vel=100, acc=100)
-        img1 = ct.trigger(name=self.barcode + "_1")
-        time.sleep(1)
+        #self._set_stage(AppStage.vision_stage(1), step=2)
+        #self.robot.MoveJ(joint_pos=_10kg_2, tool=0, user=1, vel=60, acc=100)
+        #time.sleep(1)
+        #img1 = ct.trigger(name=self.barcode + "_1")
+        #time.sleep(1)
+        #self.robot.MoveJ(joint_pos=_10kg_relif2, tool=0, user=1, vel=60, acc=100)        
 
         # Vision test 3
         self.switch_camera()                           # BUG-010: sync
         self._set_stage(AppStage.vision_stage(2), step=3)
         self.robot.MoveJ(joint_pos=ready,   tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=_10kg_3, tool=0, user=1, vel=100, acc=100)
-        img2 = ct.trigger(name=self.barcode + "_2")
-        time.sleep(1)
-
+        #self.robot.MoveJ(joint_pos=_10kg_3, tool=0, user=1, vel=100, acc=100)
+        #img2 = ct.trigger(name=self.barcode + "_2")
+        #time.sleep(1)
+        #img0 = ct.trigger(name=self.barcode + "_5")
         # Return home
         self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
         # Reporting — BUG-012: مسارات الصور من trigger() بدل hardcoded
         self._set_stage(AppStage.REPORTING)
-        image_list = [p for p in (img0, img1, img2) if p is not None]
+        image_list = ["D:\\hhhhhhhhhh\\fresh-new\\results\\2511TL005663ISI_0.jpg"]
+        res = self._ai_provider.run(image_paths=image_list)
         result = self.check_images_status(
-            self._ai_provider.run(image_paths=image_list)
+            res
         )
+        log.info(f"[program_1] Done — model answer — barcode={self.barcode}  result={res}")
         ex.result_reporting(ID=self.barcode, result=result)
 
         # Update stats
@@ -395,7 +413,7 @@ class App():
         log = _get_thread_logger()
 
         # اتحرك لنقطة المسح — BUG-013: "CamScan" → "cam" (اسم موجود فعلاً في DB)
-        barcode_point = self.get_points_from_db("cam")
+        barcode_point = self.get_points_from_db("CamScan")
         self.robot.MoveJ(barcode_point, 0, 1, vel=100, acc=100)
 
         # شغّل وضع القراءة

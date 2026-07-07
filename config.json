@@ -2,34 +2,32 @@
   "_meta": {
     "version": "1.0",
     "created_at": "",
-    "modified_at": "2026-06-04T08:32:34.705095"
+    "modified_at": "2026-07-07T11:21:41.788009"
   },
   "password_hash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
   "cobot_ip": "192.168.57.2",
- 
   "program_mapping_file": "program_mapping.xlsx",
   "results_report_file": "results_report.xlsx",
-  "vision_test_count": 3,
+  "vision_test_count": 1,
   "result_images_folder": "results",
-  "result_images_backup_folders": [],
+  "result_images_backup_folders": "",
   "scan_mode": "camera",
   "camera_index": 0,
   "camera_type": "useeplus",
-
   "live_camera_index": 0,
+  "AI_Agent": "online",
+  "ai_model": "gemini-2.5-flash-lite",
+  "ai_enhancement": false,
+  "watchdog_interval": 2.0,
+  "reconnect_check_interval": 3.0,
+  "reconnect_retry_delay": 5.0,
+  "debug_monitor_interval": 2.0,
   "signal_pass_period": 0.5,
   "signal_fail_period": 0.5,
-
-  "AI_Agent": "groq",
-  "ai_model": "meta-llama/llama-4-scout-17b-16e-instruct",
-  "ai_enhancement": true,
-  
-  
   "input_trigger": 0,
-
-  "test_done":0,
-  "test_pass":1,
-  "test_fail":2,
-  "yellow_led":3,
-  "Switch_camera":4
+  "test_done": 0,
+  "test_pass": 1,
+  "test_fail": 2,
+  "yellow_led": 3,
+  "Switch_camera": 4
 }

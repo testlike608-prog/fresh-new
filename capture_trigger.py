@@ -101,12 +101,12 @@ def trigger(save_path: str = None, name: str = "capture") -> str | None:
         return None
 
     if save_path is None:
-        ts = time.strftime("%Y%m%d_%H%M%S")
+        #ts = time.strftime("%Y%m%d_%H%M%S")
         with _counter_lock:
             _counter += 1
             n = _counter
         # BUG-016: ts و n كانوا بيتحسبوا لكن مش بيتستخدموا → كل الصور بنفس الاسم
-        save_path = os.path.join(_save_dir, f"{name}_{ts}_{n}.jpg")
+        save_path = os.path.join(_save_dir, f"{name}.jpg")
 
     os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
 

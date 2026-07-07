@@ -783,7 +783,7 @@ class _Groq(WaterDetector):
 
             # New images
             user_content = [{"type": "text",
-                             "text": "Examine the attached images for water points. Precisely identify any clear, distinct, and individual water droplets on the surface of the white plastic piece. CRITICAL WARNING: Under no circumstances classify the yellowish/brownish viscous accumulation along the edge (referred to as \"كولة\" or glue) as \"water\". Classify only the liquid that appears clearly aqueous, and ignore the solidified adhesive material. Report clearly on the inspection results: Have any water points been found? Where? Ensure they are not confused with the yellowish material."}]
+                             "text": "Analyze the following images for water presence:  Examine the attached images for water points. Precisely identify any clear, distinct, and individual water droplets on the surface of the white plastic piece. CRITICAL WARNING: Under no circumstances classify the yellowish/brownish viscous accumulation along the edge (referred to as \"كولة\" or glue) as \"water\". Classify only the liquid that appears clearly aqueous, and ignore the solidified adhesive material. Report clearly on the inspection results: Have any water points been found? Where? Ensure they are not confused with the yellowish material."}]
             valid = 0
             for i, path in enumerate(image_paths, 1):
                 if not os.path.exists(path):
@@ -1108,8 +1108,38 @@ def main():
         )
 
 
+
+def check_images_status(images_data):
+        if isinstance(images_data, str) and "Error:" in images_data:
+            print(f"[ERROR] check_images_status: AI error: {images_data}")
+            return "error"
+        if isinstance(images_data, str):
+            try:
+                images_data = json.loads(images_data)
+            except Exception as e:
+                print(f"[ERROR] check_images_status: JSON parse failed: {e}")
+                return "error"
+        if not isinstance(images_data, dict):
+            print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
+            return "error"
+        for image_name, value in images_data.items():
+            # تحويل القيمة لنص، تنظيف المسافات، وجعلها lowercase
+            val_cleaned = str(value).strip().lower()
+            
+            # طباعة للتأكد مما يراه الكود (debug)
+            print(f"Checking: {image_name} -> Value: '{val_cleaned}'")
+            
+            if val_cleaned == "yes":
+                return "fail"
+        return "pass"
+
 if __name__ == "__main__":
     from dotenv import load_dotenv
 
     load_dotenv()
-    main()
+    ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
+    image_list = ["D:\\hhhhhhhhhh\\fresh-new\\results\\2511TL005663ISI_0.jpg"]
+    res1= ai.run(image_paths=image_list)
+    res = check_images_status(res1)
+    print(res1)
+    print(res)
