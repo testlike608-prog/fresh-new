@@ -270,12 +270,23 @@ class _UseePlus(CameraHub):
     """
     CameraHub.UseePlus — useeplus SuperCamera (USB endoscope).
 
+    ملاحظات مهمة:
+      - السنسور بيبعت 640×480 MJPEG فقط (أقصى دقة هاردوير حقيقية).
+      - أبلكيشن UseePlus بيعمل upscale برمجي ×3 → 1920×1440.
+        الكلاس بيعمل نفس الحاجة افتراضياً (upscale=True + sharpen=True).
+      - البروتوكول (UPP): كل رسالة USB = هيدر 5 بايت (magic + camera_id + length)
+        + هيدر كاميرا 7 بايت (frame_id + cam_num + flags + g_sensor) + جزء من الـ JPEG.
+        بنجمّع الأجزاء لحد ما الـ frame_id يتغير = فريم كامل.
+      - أي فريم هيدرز رسايله متضاربة أو الـ JPEG بتاعه ناقص بيترمي بالكامل —
+        عشان كده مش هتشوف فريمات مشوهة أبداً (زي الأبلكيشن بالظبط).
+
     المتطلبات:
         pip install pyusb opencv-python numpy libusb-package
         + Zadig (WinUSB driver) للكاميرا على Windows
 
     مثال:
-        cam = CameraHub.UseePlus(camera_index=0)
+        cam = CameraHub.UseePlus(camera_index=0)   # 1920×1440 زي الأبلكيشن
+        cam = CameraHub.UseePlus(upscale=False)    # 640×480 خام
         cam.start()
         frame = cam.get_frame()
     """
@@ -286,10 +297,17 @@ class _UseePlus(CameraHub):
     INTERFACE    = 1
     ALT_SETTING  = 1
     EP_OUT       = 0x01
+    EP_OUT2      = 0x02
     EP_IN        = 0x81
-    CONNECT_CMD  = bytes([0xBB, 0xAA, 0x05, 0x00, 0x00])
-    HEADER_MAGIC = bytes([0xAA, 0xBB, 0x07])
-    HEADER_SIZE  = 12
+    MAGIC_WORDS  = bytes([0xFF, 0x55, 0xFF, 0x55, 0xEE, 0x10])  # init على EP2 (الأبلكيشن بيبعتها)
+    CONNECT_CMD  = bytes([0xBB, 0xAA, 0x05, 0x00, 0x00])        # start stream
+
+    # ── UPP protocol ──────────────────────────────────────────────────────────
+    USB_MAGIC    = bytes([0xAA, 0xBB])  # uint16 LE = 0xBBAA
+    USB_HDR_LEN  = 5     # magic(2) + camera_id(1) + length(2 LE، مش شاملة الهيدر)
+    CAM_HDR_LEN  = 7     # frame_id(1) + cam_num(1) + flags(1) + g_sensor(4)
+    VALID_CIDS   = (7, 11)
+    MAX_MSG_LEN  = 4096  # sanity limit للـ length field
     JPEG_SOI     = bytes([0xFF, 0xD8])
     JPEG_EOI     = bytes([0xFF, 0xD9])
 
@@ -297,7 +315,27 @@ class _UseePlus(CameraHub):
     WRITE_TIMEOUT = 5000      # ms
     CHUNK_SIZE    = 64 * 1024 # 64 KB per USB read
     FREEZE_TIMEOUT = 2.0      # ثواني بدون فريم → recovery
+    STARTUP_GRACE  = 6.0      # مهلة أطول قبل أول recovery (الكاميرا بتاخد وقت تثبّت)
     BUF_MAX        = 2 * 1024 * 1024  # 2 MB حد أقصى للبفر
+
+    NATIVE_SIZE    = (640, 480)  # دقة السنسور الحقيقية
+
+    def __init__(
+        self,
+        camera_index: int | None = None,
+        frame_width: int = 1920,
+        frame_height: int = 1440,
+        upscale: bool = True,
+        sharpen: bool = True,
+    ):
+        """
+        upscale : يكبّر الفريم لـ frame_width×frame_height (زي الأبلكيشن بالظبط)
+        sharpen : unsharp mask خفيف بعد التكبير (نفس مظهر الأبلكيشن)
+        """
+        super().__init__(camera_index, frame_width, frame_height)
+        self.upscale = upscale
+        self.sharpen = sharpen
+        self.on_button_press = None  # callback اختياري لزرار الإندوسكوب
 
     def _capture_loop(self, camera_index: int):
         import queue
@@ -340,18 +378,34 @@ class _UseePlus(CameraHub):
 
         dev = devices[camera_index]
 
-        # ── إعداد USB ─────────────────────────────────────────────────────────
+        # ── إعداد USB (نفس تسلسل الأبلكيشن الرسمي) ───────────────────────────
         try:
-            try:
-                if dev.is_kernel_driver_active(self.INTERFACE):
-                    dev.detach_kernel_driver(self.INTERFACE)
-            except (NotImplementedError, Exception):
-                pass
+            for _intf in (0, self.INTERFACE):
+                try:
+                    if dev.is_kernel_driver_active(_intf):
+                        dev.detach_kernel_driver(_intf)
+                except Exception:
+                    pass
             dev.set_configuration()
+            try:
+                usb.util.claim_interface(dev, 0)
+                usb.util.claim_interface(dev, self.INTERFACE)
+            except Exception:
+                pass
             dev.set_interface_altsetting(
                 interface=self.INTERFACE,
                 alternate_setting=self.ALT_SETTING,
             )
+            for _ep in (self.EP_OUT, self.EP_IN):
+                try:
+                    dev.clear_halt(_ep)
+                except Exception:
+                    pass
+            # "الكلمات السحرية" — الأبلكيشن بيبعتها على EP2 قبل بدء الستريم
+            try:
+                dev.write(self.EP_OUT2, self.MAGIC_WORDS, self.WRITE_TIMEOUT)
+            except Exception as e:
+                log.warning(f"{self._log_name}: ⚠️ EP2 init فشل (غالباً مش مشكلة): {e}")
             dev.write(self.EP_OUT, self.CONNECT_CMD, self.WRITE_TIMEOUT)
             log.info(
                 f"{self._log_name}: ✅ Camera {camera_index} شغالة "
@@ -364,6 +418,7 @@ class _UseePlus(CameraHub):
 
         # ── Decode thread — منفصل لتجنب blocking ─────────────────────────────
         decode_q: queue.Queue = queue.Queue(maxsize=3)
+        out_size = (self.frame_width, self.frame_height)
 
         def _decode_worker():
             while True:
@@ -373,6 +428,14 @@ class _UseePlus(CameraHub):
                 arr     = np.frombuffer(item, dtype=np.uint8)
                 decoded = cv2.imdecode(arr, cv2.IMREAD_COLOR)
                 if decoded is not None:
+                    if self.upscale and (decoded.shape[1], decoded.shape[0]) != out_size:
+                        # نفس اللي الأبلكيشن بيعمله: upscale + شوية sharpening
+                        decoded = cv2.resize(
+                            decoded, out_size, interpolation=cv2.INTER_LANCZOS4
+                        )
+                        if self.sharpen:
+                            blur    = cv2.GaussianBlur(decoded, (0, 0), 1.5)
+                            decoded = cv2.addWeighted(decoded, 1.4, blur, -0.4, 0)
                     self._set_frame(decoded)
                 decode_q.task_done()
 
@@ -381,39 +444,122 @@ class _UseePlus(CameraHub):
         )
         dec_thread.start()
 
-        # ── Accumulation buffer helpers ────────────────────────────────────────
-        buf = bytearray()
+        # ── UPP stream parser ─────────────────────────────────────────────────
+        buf       = bytearray()  # بيانات USB خام
+        frame_buf = bytearray()  # payload الفريم الحالي
+        cur_hdr   = None         # (fid, cam_num, has_g, other) بتوع الفريم الحالي
+        frame_bad = False
+        stats     = {"ok": 0, "dropped": 0}
 
-        def _feed(raw: bytes):
-            if len(raw) >= 3 and raw[:3] == self.HEADER_MAGIC:
-                buf.extend(raw[self.HEADER_SIZE:])
+        def _reset_frame():
+            nonlocal cur_hdr, frame_bad
+            frame_buf.clear()
+            cur_hdr   = None
+            frame_bad = False
+
+        def _finish_frame() -> bytes | None:
+            """يقفل الفريم الحالي — يرجع JPEG سليم أو None (فريم بايظ = يترمي)."""
+            jpeg = None
+            if not frame_bad and frame_buf[:2] == self.JPEG_SOI:
+                eoi = frame_buf.rfind(self.JPEG_EOI)
+                if eoi != -1:
+                    jpeg = bytes(frame_buf[:eoi + 2])
+            if jpeg:
+                stats["ok"] += 1
             else:
-                buf.extend(raw)
-
-        def _extract_jpeg() -> bytes | None:
-            soi = buf.find(self.JPEG_SOI)
-            if soi == -1:
-                return None
-            eoi = buf.find(self.JPEG_EOI, soi + 2)
-            if eoi == -1:
-                return None
-            end  = eoi + 2
-            jpeg = bytes(buf[soi:end])
-            del buf[:end]
+                stats["dropped"] += 1
+                log.debug(
+                    f"{self._log_name}: فريم مرفوض "
+                    f"(bad={frame_bad}, len={len(frame_buf)})"
+                )
+            _reset_frame()
             return jpeg
+
+        def _parse_stream() -> list:
+            """
+            يفكك رسائل UPP من buf ويرجع الفريمات الكاملة السليمة فقط.
+            رسالة = [AA BB][cid][len LE][fid][cam][flags][g_sensor x4][payload]
+            """
+            nonlocal cur_hdr, frame_bad
+            frames = []
+
+            while True:
+                if len(buf) < self.USB_HDR_LEN:
+                    break
+
+                # resync: الماجيك لازم يبقى في أول البفر
+                if buf[:2] != self.USB_MAGIC:
+                    idx = buf.find(self.USB_MAGIC, 1)
+                    if idx == -1:
+                        del buf[:-1]  # سيب آخر بايت (الماجيك ممكن يكون متقسم)
+                        break
+                    del buf[:idx]
+                    continue
+
+                cid    = buf[2]
+                length = buf[3] | (buf[4] << 8)
+                if cid not in self.VALID_CIDS or \
+                        not (self.CAM_HDR_LEN <= length <= self.MAX_MSG_LEN):
+                    del buf[:2]  # هيدر بايظ → دور على الماجيك اللي بعده
+                    continue
+
+                total = self.USB_HDR_LEN + length
+                if len(buf) < total:
+                    break  # الرسالة لسه ما كملتش — استنى بيانات أكتر
+
+                fid     = buf[5]
+                cam_num = buf[6]
+                flags   = buf[7]
+                has_g   = flags & 0x01
+                button  = (flags >> 1) & 0x01
+                other   = flags >> 2
+                payload = bytes(buf[self.USB_HDR_LEN + self.CAM_HDR_LEN:total])
+                del buf[:total]
+
+                if button and self.on_button_press:
+                    try:
+                        self.on_button_press()
+                    except Exception:
+                        pass
+
+                # frame_id اتغير = الفريم اللي فات اكتمل
+                if cur_hdr is not None and fid != cur_hdr[0]:
+                    jpeg = _finish_frame()
+                    if jpeg:
+                        frames.append(jpeg)
+
+                if cur_hdr is None:
+                    # أول رسالة في فريم جديد — الهيدر لازم يكون سليم
+                    if cam_num < 2 and has_g == 0 and other == 0:
+                        cur_hdr = (fid, cam_num, has_g, other)
+                        frame_buf.extend(payload)
+                    # لو مش سليم: منتصف فريم قديم — نتجاهل لحد بداية فريم نضيف
+                else:
+                    if (fid, cam_num, has_g, other) != cur_hdr:
+                        frame_bad = True  # تضارب → الفريم كله هيترمي
+                    else:
+                        frame_buf.extend(payload)
+
+            return frames
 
         def _recover():
             """يصحّح الـ USB endpoint بعد pipe error أو freeze."""
             try:
                 dev.clear_halt(self.EP_IN)
+                try:
+                    dev.write(self.EP_OUT2, self.MAGIC_WORDS, self.WRITE_TIMEOUT)
+                except Exception:
+                    pass
                 dev.write(self.EP_OUT, self.CONNECT_CMD, self.WRITE_TIMEOUT)
-                del buf[:]
-                log.info(f"{self._log_name}: ✅ endpoint cleared — CONNECT_CMD resent")
+                buf.clear()
+                _reset_frame()
+                log.info(f"{self._log_name}: ✅ endpoint cleared — stream restarted")
             except Exception as e:
                 log.warning(f"{self._log_name}: ⚠️ recovery failed: {e}")
 
         # ── Read loop ─────────────────────────────────────────────────────────
         last_frame_time = time.time()
+        got_first_frame = False
         recovery_count  = 0
 
         try:
@@ -424,7 +570,11 @@ class _UseePlus(CameraHub):
                     err = str(e).lower()
 
                     if "timed out" in err:
-                        if time.time() - last_frame_time > self.FREEZE_TIMEOUT:
+                        # قبل أول فريم بنستنى أطول — عشان recovery مايقطعش
+                        # الستريم والكاميرا لسه بتثبّت (ده كان سبب التقطيع في الأول)
+                        limit = self.FREEZE_TIMEOUT if got_first_frame \
+                                else self.STARTUP_GRACE
+                        if time.time() - last_frame_time > limit:
                             recovery_count += 1
                             log.warning(
                                 f"{self._log_name}: ⚠️ freeze #{recovery_count} — recovering..."
@@ -450,30 +600,28 @@ class _UseePlus(CameraHub):
                 if not raw:
                     continue
 
-                _feed(raw)
+                buf.extend(raw)
 
-                # لو البفر كبر — احذف القديم وابدأ من أحدث SOI
+                # حماية — مفروض مايحصلش مع البارسر الجديد
                 if len(buf) > self.BUF_MAX:
-                    soi = buf.rfind(self.JPEG_SOI)
-                    if soi > 0:
-                        del buf[:soi]
-                    else:
-                        del buf[:]
+                    buf.clear()
+                    _reset_frame()
 
-                # استخرج JPEGs وابعتها لـ decode thread
-                got_jpeg = False
-                while True:
-                    jpeg = _extract_jpeg()
-                    if jpeg is None:
-                        break
-                    got_jpeg = True
+                for jpeg in _parse_stream():
+                    got_first_frame = True
+                    last_frame_time = time.time()
                     try:
                         decode_q.put_nowait(jpeg)
                     except queue.Full:
-                        pass  # دايماً نحافظ على أحدث فريم
-
-                if got_jpeg:
-                    last_frame_time = time.time()
+                        # ارمي الأقدم وحافظ على الأحدث (مش العكس!)
+                        try:
+                            decode_q.get_nowait()
+                        except queue.Empty:
+                            pass
+                        try:
+                            decode_q.put_nowait(jpeg)
+                        except queue.Full:
+                            pass
 
         except Exception as e:
             log.error(f"{self._log_name}: خطأ غير متوقع: {e}")
@@ -489,7 +637,9 @@ class _UseePlus(CameraHub):
                 pass
             self._clear_frame()
             log.info(
-                f"{self._log_name}: الكاميرا اتقفلت. (recoveries={recovery_count})"
+                f"{self._log_name}: الكاميرا اتقفلت. "
+                f"(frames ok={stats['ok']} dropped={stats['dropped']} "
+                f"recoveries={recovery_count})"
             )
 
 
@@ -537,3 +687,4 @@ if __name__ == "__main__":
     finally:
         cam.stop()
         cv2.destroyAllWindows()
+# EOF

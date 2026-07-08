@@ -178,7 +178,7 @@ class App():
         cam_index = self._cfg.get("camera_index", 0)
         if cam_type == "opencv":
             return CameraHub.OpenCV(camera_index=cam_index)
-        return CameraHub.UseePlus(camera_index=cam_index)
+        return CameraHub.UseePlus(camera_index=cam_index, upscale=False)
 
     def _build_ai_provider(self) -> WaterDetector:
         agent   = self._cfg.get("AI_Agent")

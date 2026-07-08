@@ -4,7 +4,8 @@ capture_app.py
 ==============
 برنامج مستقل تماماً (Standalone) لعرض الكاميرا لايف والتقاط صور بزرار Capture.
 
-⚠️ مهم: البرنامج ده منفصل خالص عن نظام الفحص — مبيستوردش أي ملف من المشروع.
+⚠️ مهم: البرنامج ده منفصل عن نظام الفحص — بيستورد camera_hub.py فقط
+   (درايفر الكاميرا الموحد) وماحتاجش أي حاجة تانية من المشروع.
    بس الكاميرا مينفعش تتفتح من برنامجين في نفس الوقت،
    فلازم توقف web_server / ClientsClass الأول قبل ما تشغله.
 
@@ -80,130 +81,33 @@ class OpenCVSource:
 
 # ════════════════════════════════════════════════════════════════════
 #  مصدر 2: كاميرا UseePlus (USB endoscope — VID 0x2CE3 / PID 0x3828)
-#  نسخة مدمجة ومختصرة من الدرايفر — من غير أي import من المشروع
+#  wrapper رفيع حوالين الدرايفر الموحد في camera_hub.py —
+#  نفس البارسر الجديد (UPP protocol + فلترة الفريمات البايظة + upscale 1920×1440)
 # ════════════════════════════════════════════════════════════════════
 
-class UseePlusSource:
-    VENDOR_ID   = 0x2CE3
-    PRODUCT_ID  = 0x3828
-    INTERFACE   = 1
-    ALT_SETTING = 1
-    EP_OUT      = 0x01
-    EP_IN       = 0x81
-    CONNECT_CMD = bytes([0xBB, 0xAA, 0x05, 0x00, 0x00])
-    HEADER_MAGIC = bytes([0xAA, 0xBB, 0x07])
-    HEADER_SIZE  = 12
-    JPEG_SOI = bytes([0xFF, 0xD8])
-    JPEG_EOI = bytes([0xFF, 0xD9])
-    CHUNK    = 64 * 1024
+from camera_hub import CameraHub
 
-    def __init__(self, camera_index: int = 0):  # camera_index مش مستخدم — للتوافق بس
-        self._dev = None
-        self._buffer = bytearray()
-        self._frame = None
-        self._lock = threading.Lock()
-        self._stop = threading.Event()
-        self._thread = None
+
+class UseePlusSource:
+    def __init__(self, camera_index: int = 0):
+        # upscale=True (افتراضي) → 1920×1440 زي أبلكيشن UseePlus بالظبط
+        self._cam = CameraHub.UseePlus(camera_index=camera_index, upscale=False)
 
     def start(self):
-        import usb.core
-        import usb.util
-        import usb.backend.libusb1
-
-        backend = None
-        try:
-            import libusb
-            backend = usb.backend.libusb1.get_backend(
-                find_library=lambda x: libusb.dll._name)
-        except Exception:
-            pass
-
-        self._dev = usb.core.find(idVendor=self.VENDOR_ID,
-                                  idProduct=self.PRODUCT_ID, backend=backend)
-        if self._dev is None:
+        self._cam.start()
+        if not self._cam.wait_for_frame(timeout=8.0):
+            self._cam.stop()
             raise RuntimeError(
-                "كاميرا UseePlus مش موجودة!\n"
+                "كاميرا UseePlus مش موجودة أو مش بتبعت فريمات!\n"
                 "- اتأكد إنها متوصلة\n"
                 "- اتأكد إن WinUSB متسطب بـ Zadig\n"
                 "- اتأكد إن البرنامج الرئيسي (web_server) واقف")
 
-        try:
-            if self._dev.is_kernel_driver_active(self.INTERFACE):
-                self._dev.detach_kernel_driver(self.INTERFACE)
-        except Exception:
-            pass
-
-        self._dev.set_configuration()
-        self._dev.set_interface_altsetting(interface=self.INTERFACE,
-                                           alternate_setting=self.ALT_SETTING)
-        self._dev.write(self.EP_OUT, self.CONNECT_CMD, 5000)
-
-        self._stop.clear()
-        self._thread = threading.Thread(target=self._loop, daemon=True)
-        self._thread.start()
-
-    def _loop(self):
-        import usb.core
-        no_data = 0
-        while not self._stop.is_set():
-            try:
-                raw = bytes(self._dev.read(self.EP_IN, self.CHUNK, 2000))
-            except usb.core.USBError as e:
-                if "timed out" in str(e).lower():
-                    no_data += 1
-                    if no_data > 50:
-                        break
-                    continue
-                break
-            except Exception:
-                break
-
-            no_data = 0
-            # فك الهيدر الخاص
-            if len(raw) >= 3 and raw[:3] == self.HEADER_MAGIC:
-                self._buffer.extend(raw[self.HEADER_SIZE:])
-            else:
-                self._buffer.extend(raw)
-
-            # استخراج JPEGs كاملة
-            buf, pos = self._buffer, 0
-            last_jpeg = None
-            while True:
-                soi = buf.find(self.JPEG_SOI, pos)
-                if soi == -1:
-                    break
-                eoi = buf.find(self.JPEG_EOI, soi + 2)
-                if eoi == -1:
-                    break
-                last_jpeg = bytes(buf[soi:eoi + 2])
-                pos = eoi + 2
-            if pos > 0:
-                self._buffer = buf[pos:]
-            if last_jpeg:
-                arr = np.frombuffer(last_jpeg, dtype=np.uint8)
-                frame = cv2.imdecode(arr, cv2.IMREAD_COLOR)
-                if frame is not None:
-                    with self._lock:
-                        self._frame = frame
-
     def get_frame(self):
-        with self._lock:
-            return None if self._frame is None else self._frame.copy()
+        return self._cam.get_frame()
 
     def stop(self):
-        self._stop.set()
-        if self._thread:
-            self._thread.join(timeout=2)
-        if self._dev is not None:
-            try:
-                import usb.util
-                self._dev.set_interface_altsetting(interface=self.INTERFACE,
-                                                   alternate_setting=0)
-                usb.util.dispose_resources(self._dev)
-            except Exception:
-                pass
-            self._dev = None
-        self._frame = None
+        self._cam.stop()
 
 
 # ════════════════════════════════════════════════════════════════════
