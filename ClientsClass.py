@@ -257,16 +257,19 @@ class App():
         if not isinstance(images_data, dict):
             print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
             return "error"
+        has_error = False
         for image_name, value in images_data.items():
             # تحويل القيمة لنص، تنظيف المسافات، وجعلها lowercase
             val_cleaned = str(value).strip().lower()
-            
+
             # طباعة للتأكد مما يراه الكود (debug)
             print(f"Checking: {image_name} -> Value: '{val_cleaned}'")
-            
+
             if val_cleaned == "yes":
                 return "fail"
-        return "pass"
+            if val_cleaned != "no":
+                has_error = True   # FIX: "Error" ميتحسبش pass
+        return "error" if has_error else "pass"
 
     # ── Scanner / Barcode ──────────────────────────────────────────────
 
@@ -361,13 +364,16 @@ class App():
         # Return home
         self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
-        # Reporting — BUG-012: مسارات الصور من trigger() بدل hardcoded
+        # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
         self._set_stage(AppStage.REPORTING)
-        image_list = ["D:\\hhhhhhhhhh\\fresh-new\\results\\2511TL005663ISI_0.jpg"]
-        res = self._ai_provider.run(image_paths=image_list)
-        result = self.check_images_status(
-            res
-        )
+        image_list = [p for p in [img0] if p]
+        if not image_list:
+            log.error(f"[program_1] Camera trigger failed — no image captured for barcode={self.barcode}")
+            res    = "Error: no captured image"
+            result = "error"
+        else:
+            res    = self._ai_provider.run(image_paths=image_list)
+            result = self.check_images_status(res)
         log.info(f"[program_1] Done — model answer — barcode={self.barcode}  result={res}")
         ex.result_reporting(ID=self.barcode, result=result)
 

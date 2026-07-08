@@ -1,0 +1,358 @@
+# -*- coding: utf-8 -*-
+"""
+capture_app.py
+==============
+برنامج مستقل تماماً (Standalone) لعرض الكاميرا لايف والتقاط صور بزرار Capture.
+
+⚠️ مهم: البرنامج ده منفصل خالص عن نظام الفحص — مبيستوردش أي ملف من المشروع.
+   بس الكاميرا مينفعش تتفتح من برنامجين في نفس الوقت،
+   فلازم توقف web_server / ClientsClass الأول قبل ما تشغله.
+
+التشغيل:
+    python capture_app.py
+
+المميزات:
+    - عرض لايف للكاميرا (UseePlus USB أو أي كاميرا OpenCV عادية)
+    - زرار Capture بيحفظ الصورة بالدقة الكاملة في فولدر تختاره
+    - تغيير الفولدر واسم البادئة (prefix) من الواجهة
+    - عداد للصور المحفوظة
+
+المتطلبات (كلها موجودة في requirements.txt):
+    opencv-python, Pillow, numpy, pyusb, libusb (للـ UseePlus فقط)
+    tkinter — بييجي مع بايثون نفسه
+"""
+
+import os
+import time
+import threading
+from datetime import datetime
+
+import cv2
+import numpy as np
+import tkinter as tk
+from tkinter import ttk, filedialog, messagebox
+from PIL import Image, ImageTk
+
+# ════════════════════════════════════════════════════════════════════
+#  مصدر 1: كاميرا OpenCV عادية (ويب كام / USB UVC)
+# ════════════════════════════════════════════════════════════════════
+
+class OpenCVSource:
+    def __init__(self, camera_index: int = 0):
+        self.camera_index = camera_index
+        self._cap = None
+        self._frame = None
+        self._lock = threading.Lock()
+        self._stop = threading.Event()
+        self._thread = None
+
+    def start(self):
+        self._cap = cv2.VideoCapture(self.camera_index, cv2.CAP_DSHOW)
+        if not self._cap.isOpened():
+            self._cap = cv2.VideoCapture(self.camera_index)  # fallback بدون DSHOW
+        if not self._cap.isOpened():
+            raise RuntimeError(f"مقدرتش أفتح كاميرا OpenCV رقم {self.camera_index}")
+        self._stop.clear()
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+        self._thread.start()
+
+    def _loop(self):
+        while not self._stop.is_set():
+            ok, frame = self._cap.read()
+            if ok and frame is not None:
+                with self._lock:
+                    self._frame = frame
+            else:
+                time.sleep(0.05)
+
+    def get_frame(self):
+        with self._lock:
+            return None if self._frame is None else self._frame.copy()
+
+    def stop(self):
+        self._stop.set()
+        if self._thread:
+            self._thread.join(timeout=2)
+        if self._cap:
+            self._cap.release()
+        self._frame = None
+
+
+# ════════════════════════════════════════════════════════════════════
+#  مصدر 2: كاميرا UseePlus (USB endoscope — VID 0x2CE3 / PID 0x3828)
+#  نسخة مدمجة ومختصرة من الدرايفر — من غير أي import من المشروع
+# ════════════════════════════════════════════════════════════════════
+
+class UseePlusSource:
+    VENDOR_ID   = 0x2CE3
+    PRODUCT_ID  = 0x3828
+    INTERFACE   = 1
+    ALT_SETTING = 1
+    EP_OUT      = 0x01
+    EP_IN       = 0x81
+    CONNECT_CMD = bytes([0xBB, 0xAA, 0x05, 0x00, 0x00])
+    HEADER_MAGIC = bytes([0xAA, 0xBB, 0x07])
+    HEADER_SIZE  = 12
+    JPEG_SOI = bytes([0xFF, 0xD8])
+    JPEG_EOI = bytes([0xFF, 0xD9])
+    CHUNK    = 64 * 1024
+
+    def __init__(self, camera_index: int = 0):  # camera_index مش مستخدم — للتوافق بس
+        self._dev = None
+        self._buffer = bytearray()
+        self._frame = None
+        self._lock = threading.Lock()
+        self._stop = threading.Event()
+        self._thread = None
+
+    def start(self):
+        import usb.core
+        import usb.util
+        import usb.backend.libusb1
+
+        backend = None
+        try:
+            import libusb
+            backend = usb.backend.libusb1.get_backend(
+                find_library=lambda x: libusb.dll._name)
+        except Exception:
+            pass
+
+        self._dev = usb.core.find(idVendor=self.VENDOR_ID,
+                                  idProduct=self.PRODUCT_ID, backend=backend)
+        if self._dev is None:
+            raise RuntimeError(
+                "كاميرا UseePlus مش موجودة!\n"
+                "- اتأكد إنها متوصلة\n"
+                "- اتأكد إن WinUSB متسطب بـ Zadig\n"
+                "- اتأكد إن البرنامج الرئيسي (web_server) واقف")
+
+        try:
+            if self._dev.is_kernel_driver_active(self.INTERFACE):
+                self._dev.detach_kernel_driver(self.INTERFACE)
+        except Exception:
+            pass
+
+        self._dev.set_configuration()
+        self._dev.set_interface_altsetting(interface=self.INTERFACE,
+                                           alternate_setting=self.ALT_SETTING)
+        self._dev.write(self.EP_OUT, self.CONNECT_CMD, 5000)
+
+        self._stop.clear()
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+        self._thread.start()
+
+    def _loop(self):
+        import usb.core
+        no_data = 0
+        while not self._stop.is_set():
+            try:
+                raw = bytes(self._dev.read(self.EP_IN, self.CHUNK, 2000))
+            except usb.core.USBError as e:
+                if "timed out" in str(e).lower():
+                    no_data += 1
+                    if no_data > 50:
+                        break
+                    continue
+                break
+            except Exception:
+                break
+
+            no_data = 0
+            # فك الهيدر الخاص
+            if len(raw) >= 3 and raw[:3] == self.HEADER_MAGIC:
+                self._buffer.extend(raw[self.HEADER_SIZE:])
+            else:
+                self._buffer.extend(raw)
+
+            # استخراج JPEGs كاملة
+            buf, pos = self._buffer, 0
+            last_jpeg = None
+            while True:
+                soi = buf.find(self.JPEG_SOI, pos)
+                if soi == -1:
+                    break
+                eoi = buf.find(self.JPEG_EOI, soi + 2)
+                if eoi == -1:
+                    break
+                last_jpeg = bytes(buf[soi:eoi + 2])
+                pos = eoi + 2
+            if pos > 0:
+                self._buffer = buf[pos:]
+            if last_jpeg:
+                arr = np.frombuffer(last_jpeg, dtype=np.uint8)
+                frame = cv2.imdecode(arr, cv2.IMREAD_COLOR)
+                if frame is not None:
+                    with self._lock:
+                        self._frame = frame
+
+    def get_frame(self):
+        with self._lock:
+            return None if self._frame is None else self._frame.copy()
+
+    def stop(self):
+        self._stop.set()
+        if self._thread:
+            self._thread.join(timeout=2)
+        if self._dev is not None:
+            try:
+                import usb.util
+                self._dev.set_interface_altsetting(interface=self.INTERFACE,
+                                                   alternate_setting=0)
+                usb.util.dispose_resources(self._dev)
+            except Exception:
+                pass
+            self._dev = None
+        self._frame = None
+
+
+# ════════════════════════════════════════════════════════════════════
+#  واجهة Tkinter
+# ════════════════════════════════════════════════════════════════════
+
+PREVIEW_W, PREVIEW_H = 800, 600
+
+class CaptureApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("📸 Capture Tool — Standalone")
+        self.geometry("980x760")
+        self.minsize(720, 560)
+
+        self.source = None
+        self.save_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     "captures_standalone")
+        self.saved_count = 0
+        self._photo = None   # مرجع لصورة Tk عشان الـ GC
+
+        self._build_ui()
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
+        self._update_preview()
+
+    # ── UI ────────────────────────────────────────────────────────
+    def _build_ui(self):
+        top = ttk.Frame(self, padding=8)
+        top.pack(fill="x")
+
+        ttk.Label(top, text="نوع الكاميرا:").pack(side="right", padx=4)
+        self.cam_type = tk.StringVar(value="useeplus")
+        ttk.Combobox(top, textvariable=self.cam_type, state="readonly",
+                     values=["useeplus", "opencv"], width=10).pack(side="right")
+
+        ttk.Label(top, text="رقم الكاميرا (opencv):").pack(side="right", padx=4)
+        self.cam_index = tk.IntVar(value=0)
+        ttk.Spinbox(top, from_=0, to=10, textvariable=self.cam_index,
+                    width=4).pack(side="right")
+
+        self.btn_start = ttk.Button(top, text="▶ تشغيل الكاميرا",
+                                    command=self._toggle_camera)
+        self.btn_start.pack(side="left", padx=4)
+
+        # ── منطقة العرض ──
+        self.preview = tk.Label(self, bg="#222",
+                                text="الكاميرا متوقفة — اضغط تشغيل",
+                                fg="#aaa", font=("Segoe UI", 14))
+        self.preview.pack(fill="both", expand=True, padx=8, pady=4)
+
+        # ── شريط الحفظ ──
+        bottom = ttk.Frame(self, padding=8)
+        bottom.pack(fill="x")
+
+        self.btn_capture = ttk.Button(bottom, text="📸  CAPTURE",
+                                      command=self._capture, state="disabled")
+        self.btn_capture.pack(side="left", padx=4, ipadx=20, ipady=6)
+
+        ttk.Button(bottom, text="📁 اختيار الفولدر",
+                   command=self._choose_folder).pack(side="left", padx=4)
+
+        ttk.Label(bottom, text="البادئة:").pack(side="left", padx=(12, 2))
+        self.prefix = tk.StringVar(value="capture")
+        ttk.Entry(bottom, textvariable=self.prefix, width=14).pack(side="left")
+
+        # ── شريط الحالة ──
+        self.status = tk.StringVar(value=f"فولدر الحفظ: {self.save_dir}")
+        ttk.Label(self, textvariable=self.status, anchor="e",
+                  padding=4).pack(fill="x")
+
+        # اختصار: مسطرة (Space) = Capture
+        self.bind("<space>", lambda e: self._capture())
+
+    # ── Camera control ────────────────────────────────────────────
+    def _toggle_camera(self):
+        if self.source is None:
+            self._start_camera()
+        else:
+            self._stop_camera()
+
+    def _start_camera(self):
+        cls = UseePlusSource if self.cam_type.get() == "useeplus" else OpenCVSource
+        try:
+            src = cls(camera_index=self.cam_index.get())
+            src.start()
+        except Exception as e:
+            messagebox.showerror("خطأ في الكاميرا", str(e))
+            return
+        self.source = src
+        self.btn_start.config(text="⏹ إيقاف الكاميرا")
+        self.btn_capture.config(state="normal")
+        self.status.set(f"الكاميرا شغالة ({self.cam_type.get()}) — فولدر الحفظ: {self.save_dir}")
+
+    def _stop_camera(self):
+        if self.source:
+            self.source.stop()
+            self.source = None
+        self.btn_start.config(text="▶ تشغيل الكاميرا")
+        self.btn_capture.config(state="disabled")
+        self.preview.config(image="", text="الكاميرا متوقفة — اضغط تشغيل")
+        self._photo = None
+
+    # ── Live preview loop ─────────────────────────────────────────
+    def _update_preview(self):
+        if self.source is not None:
+            frame = self.source.get_frame()
+            if frame is not None:
+                h, w = frame.shape[:2]
+                # ملائمة حجم العرض مع الحفاظ على النسبة
+                pw = self.preview.winfo_width() or PREVIEW_W
+                ph = self.preview.winfo_height() or PREVIEW_H
+                scale = min(pw / w, ph / h, 1.0)
+                disp = cv2.resize(frame, (max(1, int(w * scale)),
+                                          max(1, int(h * scale))))
+                rgb = cv2.cvtColor(disp, cv2.COLOR_BGR2RGB)
+                self._photo = ImageTk.PhotoImage(Image.fromarray(rgb))
+                self.preview.config(image=self._photo, text="")
+        self.after(33, self._update_preview)   # ~30 fps
+
+    # ── Capture ───────────────────────────────────────────────────
+    def _capture(self):
+        if self.source is None:
+            return
+        frame = self.source.get_frame()
+        if frame is None:
+            self.status.set("⚠️ مفيش فريم متاح — استنى الكاميرا")
+            return
+        os.makedirs(self.save_dir, exist_ok=True)
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.saved_count += 1
+        name = f"{self.prefix.get() or 'capture'}_{ts}_{self.saved_count:04d}.png"
+        path = os.path.join(self.save_dir, name)
+        if cv2.imwrite(path, frame):
+            self.status.set(f"✅ اتحفظت ({self.saved_count}): {path}")
+        else:
+            self.status.set(f"❌ فشل الحفظ في: {path}")
+
+    def _choose_folder(self):
+        folder = filedialog.askdirectory(initialdir=self.save_dir,
+                                         title="اختار فولدر الحفظ")
+        if folder:
+            self.save_dir = folder
+            self.status.set(f"فولدر الحفظ: {self.save_dir}")
+
+    # ── Cleanup ───────────────────────────────────────────────────
+    def _on_close(self):
+        self._stop_camera()
+        self.destroy()
+
+
+if __name__ == "__main__":
+    CaptureApp().mainloop()

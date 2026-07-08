@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0",
     "created_at": "",
-    "modified_at": "2026-07-07T11:21:41.788009"
+    "modified_at": "2026-07-07T15:03:45.541978"
   },
   "password_hash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
   "cobot_ip": "192.168.57.2",
@@ -15,8 +15,8 @@
   "camera_index": 0,
   "camera_type": "useeplus",
   "live_camera_index": 0,
-  "AI_Agent": "online",
-  "ai_model": "gemini-2.5-flash-lite",
+  "AI_Agent": "groq",
+  "ai_model": "meta-llama/llama-4-scout-17b-16e-instruct",
   "ai_enhancement": false,
   "watchdog_interval": 2.0,
   "reconnect_check_interval": 3.0,

@@ -27,6 +27,13 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
+# ── FIX: تحميل .env (GENAI_API_KEY / GROQ_API_KEY) قبل project imports ──
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(_HERE, ".env"))
+except ImportError:
+    pass  # dotenv مش متسطب — نعتمد على متغيرات البيئة (Docker)
+
 # ── Project imports ───────────────────────────────────────────────────
 import thread_logger
 import debug_monitor

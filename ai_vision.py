@@ -51,6 +51,37 @@ import cv2
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+# ── FIX: تحميل .env على مستوى الـ module ──────────────────────────────────────
+# عشان GENAI_API_KEY / GROQ_API_KEY يتحملوا مهما كانت طريقة التشغيل
+# (python ClientsClass.py / web_server.py / ai_vision.py — كلهم بيعدوا من هنا)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
+except ImportError:
+    pass  # dotenv مش متسطب — نعتمد على متغيرات البيئة (Docker)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  HELPERS
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _parse_entry(value) -> tuple[str, float | None]:
+    """
+    يوحّد شكل نتيجة صورة واحدة ويرجع (answer, confidence).
+
+    بيدعم الشكلين:
+      - الجديد: {"answer": "Yes", "confidence": 0.92}
+      - القديم: "Yes"  → confidence = None
+    """
+    if isinstance(value, dict):
+        ans = str(value.get("answer", "No"))
+        try:
+            conf = float(value.get("confidence", 0.0))
+        except (TypeError, ValueError):
+            conf = 0.0
+        return ans, max(0.0, min(1.0, conf))
+    return str(value), None
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  TRAINING MEMORY
@@ -461,38 +492,50 @@ class WaterDetector(ABC):
         print(f"  🧠  ذاكرة محملة: {loaded} صورة بمياه، {loaded2} بدون مياه")
         print("═" * 54)
 
-        # النتيجة النهائية — نفس format القديم {"image_1": "Yes", ...}
+        # النتيجة النهائية — {"image_1": {"answer": "Yes", "confidence": 0.92}, ...}
         final: dict = {}
 
         for idx, path in enumerate(image_paths, 1):
             if not os.path.exists(path):
                 print(f"  ⚠️  مش موجودة: {path}")
-                final[f"image_{idx}"] = "Error"
+                final[f"image_{idx}"] = {"answer": "Error", "confidence": None}
                 continue
 
             name = os.path.basename(path)
             print(f"\n  📸  {name}")
 
             raw = self.check_multiple_images_for_water([path], few_shot_examples=fewshot or None)
-            try:
-                parsed    = _j.loads(raw)
-                has_water = parsed.get("image_1", "No") == "Yes"
-            except Exception:
-                has_water = "yes" in raw.lower()
 
+            # FIX: أي خطأ API يرجع "Error" — مش "No" بصمت
+            if raw.startswith("Error:"):
+                print(f"  ❌ AI error: {raw}")
+                final[f"image_{idx}"] = {"answer": "Error", "confidence": None}
+                continue
+
+            try:
+                parsed     = _j.loads(raw)
+                ans, conf  = _parse_entry(parsed.get("image_1", "No"))
+                has_water  = ans == "Yes"
+            except Exception:
+                has_water, conf = "yes" in raw.lower(), None
+
+            conf_txt = f"  (confidence: {conf:.0%})" if conf is not None else ""
             verdict = "🟢 توجد مياه" if has_water else "⚪ لا توجد مياه"
-            print(f"  {verdict}")
+            print(f"  {verdict}{conf_txt}")
             print("─" * 54)
 
             # BUG-023: في --run mode مفيش تقييم بشري → لا تضيف لـ short_term_memory
             # (was_correct=True كان غلط لأننا مش عارفين الإجابة الصحيحة)
-            final[f"image_{idx}"] = "Yes" if has_water else "No"
+            final[f"image_{idx}"] = {
+                "answer":     "Yes" if has_water else "No",
+                "confidence": conf,
+            }
 
         # حفظ النتيجة كـ JSON file
         with open(output_json, "w", encoding="utf-8") as f:
             _j.dump(final, f, indent=2, ensure_ascii=False)
 
-        water = sum(1 for v in final.values() if v == "Yes")
+        water = sum(1 for v in final.values() if v.get("answer") == "Yes")
         print(f"\n📊 ملخص: {len(final)} صورة  |  بها مياه: {water}  |  بدون: {len(final)-water}")
         print(f"💾 النتيجة اتحفظت في: {output_json}")
         return final
@@ -547,12 +590,14 @@ class WaterDetector(ABC):
             raw = self.check_multiple_images_for_water([path], few_shot_examples=fewshot or None)
             try:
                 parsed    = _j.loads(raw)
-                has_water = parsed.get("image_1", "No") == "Yes"
+                ans, conf = _parse_entry(parsed.get("image_1", "No"))
+                has_water = ans == "Yes"
             except Exception:
-                has_water = "yes" in raw.lower()
+                has_water, conf = "yes" in raw.lower(), None
 
+            conf_txt = f"  (confidence: {conf:.0%})" if conf is not None else ""
             verdict = "🟢 توجد مياه" if has_water else "⚪ لا توجد مياه"
-            print(f"  🤖  {verdict}\n")
+            print(f"  🤖  {verdict}{conf_txt}\n")
 
             # تقييم المستخدم
             while True:
@@ -670,14 +715,25 @@ class _Gemini(WaterDetector):
                 return "Error: No valid images provided."
 
             contents.append(
-                "Determine if water is present in each numbered image. "
+                "Determine if water is present in each numbered image, "
+                "and how confident you are (0.0 to 1.0). "
                 "Respond according to the schema."
             )
 
             t = self._t
             props = {
-                f"image_{i}": t.Schema(type=t.Type.STRING, enum=["Yes", "No"],
-                                       description=f"Result for image {i}")
+                f"image_{i}": t.Schema(
+                    type=t.Type.OBJECT,
+                    properties={
+                        "answer": t.Schema(
+                            type=t.Type.STRING, enum=["Yes", "No"],
+                            description=f"Result for image {i}"),
+                        "confidence": t.Schema(
+                            type=t.Type.NUMBER,
+                            description="Confidence in the answer, from 0.0 to 1.0"),
+                    },
+                    required=["answer", "confidence"],
+                )
                 for i in range(1, len(image_paths) + 1)
             }
             schema = t.Schema(
@@ -692,7 +748,8 @@ class _Gemini(WaterDetector):
                 config=t.GenerateContentConfig(
                     system_instruction=(
                         "You are a precise quality control assistant. "
-                        "Output JSON mapping each image number to 'Yes' or 'No'."
+                        "For each image output an object with 'answer' "
+                        "('Yes' or 'No') and 'confidence' (0.0-1.0)."
                     ),
                     response_mime_type="application/json",
                     response_schema=schema,
@@ -750,8 +807,9 @@ class _Groq(WaterDetector):
                 "content": (
                     "You are a precise quality control assistant. "
                     "Analyze images for water presence. "
-                    "Respond ONLY with valid JSON: "
-                    "{\"image_1\": \"Yes\"|\"No\", \"image_2\": ...}"
+                    "Respond ONLY with valid JSON where each image maps to an "
+                    "object with 'answer' ('Yes' or 'No') and 'confidence' (0.0-1.0): "
+                    "{\"image_1\": {\"answer\": \"Yes\", \"confidence\": 0.92}, \"image_2\": ...}"
                 )
             })
 
@@ -809,7 +867,8 @@ class _Groq(WaterDetector):
                 "type": "text",
                 "text": (
                     f"Return JSON with keys image_1 through image_{len(image_paths)}, "
-                    "each 'Yes' or 'No'."
+                    "each an object like {\"answer\": \"Yes\", \"confidence\": 0.92} "
+                    "where confidence is between 0.0 and 1.0."
                 )
             })
             messages.append({"role": "user", "content": user_content})
@@ -874,19 +933,20 @@ class _Local(WaterDetector):
             for i, path in enumerate(image_paths, 1):
                 if not os.path.exists(path):
                     print(f"Warning: {path} not found.")
-                    results[f"image_{i}"] = "Error"
+                    results[f"image_{i}"] = {"answer": "Error", "confidence": None}
                     continue
 
                 b64 = self._img_to_b64(path, enhance_fn)
                 if b64 is None:
-                    results[f"image_{i}"] = "Error"
+                    results[f"image_{i}"] = {"answer": "Error", "confidence": None}
                     continue
 
                 messages = [
                     {"role": "system",
                      "content": (
                          "You are a precise quality control assistant. "
-                         "Answer only 'Yes' or 'No' about water presence."
+                         "Answer about water presence with 'Yes' or 'No' followed "
+                         "by your confidence from 0.0 to 1.0, e.g. 'Yes 0.85'."
                      )}
                 ]
 
@@ -915,7 +975,7 @@ class _Local(WaterDetector):
                 messages.append({
                     "role": "user",
                     "content": [
-                        {"type": "text",  "text": "Is water present in this image? Answer Yes or No only."},
+                        {"type": "text",  "text": "Is water present in this image? Answer 'Yes' or 'No' followed by a confidence between 0.0 and 1.0 (e.g. 'Yes 0.85')."},
                         {"type": "image_url",
                          "image_url": {"url": f"data:image/jpeg;base64,{b64}"}},
                     ]
@@ -943,7 +1003,18 @@ class _Local(WaterDetector):
                 else:
                     answer = data["choices"][0]["message"]["content"].strip()
 
-                results[f"image_{i}"] = "Yes" if "yes" in answer.lower() else "No"
+                import re as _re
+                m = _re.search(r"(?:0?\.\d+|1\.0|[01])(?!\d)", answer)
+                conf = None
+                if m:
+                    try:
+                        conf = max(0.0, min(1.0, float(m.group())))
+                    except ValueError:
+                        pass
+                results[f"image_{i}"] = {
+                    "answer":     "Yes" if "yes" in answer.lower() else "No",
+                    "confidence": conf,
+                }
 
             return _json.dumps(results)
         except Exception as e:
@@ -1123,12 +1194,13 @@ def check_images_status(images_data):
             print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
             return "error"
         for image_name, value in images_data.items():
-            # تحويل القيمة لنص، تنظيف المسافات، وجعلها lowercase
-            val_cleaned = str(value).strip().lower()
-            
+            # بيدعم الشكل الجديد {"answer": "Yes", "confidence": 0.9} والقديم "Yes"
+            ans, conf = _parse_entry(value)
+            val_cleaned = ans.strip().lower()
+
             # طباعة للتأكد مما يراه الكود (debug)
-            print(f"Checking: {image_name} -> Value: '{val_cleaned}'")
-            
+            print(f"Checking: {image_name} -> Value: '{val_cleaned}' (confidence: {conf})")
+
             if val_cleaned == "yes":
                 return "fail"
         return "pass"
@@ -1138,8 +1210,9 @@ if __name__ == "__main__":
 
     load_dotenv()
     ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
-    image_list = ["D:\\hhhhhhhhhh\\fresh-new\\results\\2511TL005663ISI_0.jpg"]
-    res1= ai.run(image_paths=image_list)
+    ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct")
+    image_list = ["captures_standalone/capture_20260708_140557_0005.png","captures_standalone/capture_20260708_135208_0002.png"]
+    res1= ai2.run(image_paths=image_list)
     res = check_images_status(res1)
     print(res1)
     print(res)

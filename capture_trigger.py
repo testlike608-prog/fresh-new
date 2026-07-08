@@ -8,7 +8,7 @@ capture_trigger.py
     capture_trigger.start()
     ...
     path = capture_trigger.trigger()          # يحفظ صورة ويرجع المسار
-    path = capture_trigger.trigger("out/x.jpg")  # اختر المسار بنفسك
+    path = capture_trigger.trigger("out/x.png")  # اختر المسار بنفسك
 
 الاستخدام من command line:
     python capture_trigger.py                # يستنى Space أو Enter لكل صورة
@@ -106,7 +106,8 @@ def trigger(save_path: str = None, name: str = "capture") -> str | None:
             _counter += 1
             n = _counter
         # BUG-016: ts و n كانوا بيتحسبوا لكن مش بيتستخدموا → كل الصور بنفس الاسم
-        save_path = os.path.join(_save_dir, f"{name}.jpg")
+        # PNG بدل JPEG — حفظ lossless بدون ضغط تاني فوق ضغط الكاميرا
+        save_path = os.path.join(_save_dir, f"{name}.png")
 
     os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
 

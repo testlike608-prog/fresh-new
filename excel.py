@@ -152,9 +152,17 @@ def result_reporting(ID, result, file_path=None):
     ALL_HEADERS   = FIXED_HEADERS + IMG_HEADERS
 
     # ─── تجميع أسماء ومسارات الصور ───
+    # الصور بتتحفظ .png (وقبل كده كانت .jpg) — ندور على الاتنين
+    def _find_image(stem):
+        for ext in (".png", ".jpg", ".jpeg"):
+            p = images_folder / f"{stem}{ext}"
+            if p.exists():
+                return p
+        return images_folder / f"{stem}.png"   # غير موجودة — هتتعامل كـ missing
+
     images_folder = _get_images_folder()
-    image_names   = [f"{ID}_{i}.jpg" for i in range(img_count)]
-    image_paths   = [images_folder / name for name in image_names]
+    image_paths   = [_find_image(f"{ID}_{i}") for i in range(img_count)]
+    image_names   = [p.name for p in image_paths]
     _copy_result_images_to_backups(image_names)
 
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
