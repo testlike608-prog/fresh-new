@@ -332,6 +332,13 @@ class WaterDetector(ABC):
         retry_delay: float = 5.0,
         memory: TrainingMemory | None = None,
         short_term_memory: ShortTermMemory | None = None,
+        denoise: bool | None = None,
+        glare_compress: bool | None = None,
+        glare_thresh: int | None = None,
+        glare_knee: float | None = None,
+        gamma: float | None = None,
+        clahe_clip: float | None = None,
+        sharpen: float | None = None,
     ):
         """
         Parameters
@@ -342,6 +349,14 @@ class WaterDetector(ABC):
         retry_delay       : ثواني الانتظار (بتتضاعف كل محاولة)
         memory            : TrainingMemory — few-shot examples محفوظة على الـ disk
         short_term_memory : ShortTermMemory — context الجلسة الحالية (session-level)
+
+        باراميترات التحسين (اختيارية — لو مش متحددة بيستخدم الافتراضي):
+        glare_compress    : تشغيل/إيقاف ضغط انعكاسات الإضاءة (افتراضي True)
+        glare_thresh      : عتبة السطوع اللي تعتبر glare 0-255 (افتراضي 220، قللها لو الانعكاس لسه باين)
+        glare_knee        : قوة ضغط الـ glare (افتراضي 0.35، أقل = ضغط أقوى)
+        gamma             : غمقان الفواتح (افتراضي 1.3، زودها لو البياض محروق)
+        clahe_clip        : قوة الكونتراست المحلي CLAHE (افتراضي 2.0)
+        sharpen           : قوة الحدة (افتراضي 1.2، حط 1.0 لإيقافها)
         """
         self.model             = model
         self.use_enhancement   = use_enhancement
@@ -350,27 +365,93 @@ class WaterDetector(ABC):
         self.memory            = memory
         self.short_term_memory = short_term_memory or ShortTermMemory()
 
+        # override لإعدادات الـ enhancement لو اتبعتت في الـ constructor
+        if denoise        is not None: self.ENH_DENOISE        = denoise
+        if glare_compress is not None: self.ENH_GLARE_COMPRESS = glare_compress
+        if glare_thresh   is not None: self.ENH_GLARE_THRESH   = glare_thresh
+        if glare_knee     is not None: self.ENH_GLARE_KNEE     = glare_knee
+        if gamma          is not None: self.ENH_GAMMA          = gamma
+        if clahe_clip     is not None: self.ENH_CLAHE_CLIP     = clahe_clip
+        if sharpen        is not None: self.ENH_SHARPEN        = sharpen
+
     # ── Shared: Image Enhancement ─────────────────────────────────────────────
+    # إعدادات الـ enhancement — قابلة للتعديل من بره:
+    #   detector.ENH_GLARE_THRESH = 200   ← مثلاً
+    ENH_DENOISE        = True   # تقليل الضوضاء (أتقل خطوة — اقفلها للمعاينة اللايف)
+    ENH_GLARE_COMPRESS = True   # ضغط انعكاسات الإضاءة (glare) على الأسطح اللامعة
+    ENH_GLARE_THRESH   = 220    # مستوى السطوع اللي يعتبر glare (0-255)
+    ENH_GLARE_KNEE     = 0.35   # قد إيه الـ glare يتضغط (أقل = ضغط أقوى)
+    ENH_GAMMA          = 1.3    # >1 بيغمّق الفواتح ويرجّع تفاصيل البلاستيك الأبيض
+    ENH_CLAHE_CLIP     = 2.0    # قوة الـ CLAHE
+    ENH_SHARPEN        = 1.2    # قوة الـ unsharp (1.0 = مفيش) — متزودش عشان اللمعة
 
     def enhance_image(self, img_bgr):
         """
-        تحسين جودة الصورة لإظهار تفاصيل المياه للموديل.
-        المراحل: Denoising → CLAHE على قناة L → Unsharp Masking
+        تحسين مخصوص لكشف المايه على بلاستيك أبيض عاكس.
+
+        المراحل:
+          1. Denoising
+          2. ضغط الـ glare — البكسلات الساطعة جداً قليلة التشبع (انعكاس إضاءة)
+             بتتضغط بمنحنى soft-knee بدل ما تفضل محروقة
+          3. Gamma darkening — بيرجّع التفاصيل المخفية في المناطق البيضا
+          4. CLAHE على قناة L — بيبرز فرق الملمس بين الناشف والمبلول
+          5. Unsharp خفيف
+
+        كل الباراميترات قابلة للتعديل من الـ ENH_* attributes.
         """
+        import numpy as np
+
         if img_bgr is None:
             return None
 
-        denoised = cv2.fastNlMeansDenoisingColored(
-            img_bgr, None, h=3, hColor=3,
-            templateWindowSize=7, searchWindowSize=21,
-        )
-        lab = cv2.cvtColor(denoised, cv2.COLOR_BGR2Lab)
+        # 1) Denoise (اختياري)
+        if self.ENH_DENOISE:
+            img = cv2.fastNlMeansDenoisingColored(
+                img_bgr, None, h=3, hColor=3,
+                templateWindowSize=7, searchWindowSize=21,
+            )
+        else:
+            img = img_bgr.copy()
+
+        # 2) ضغط الـ glare (سطوع عالي + تشبع منخفض = انعكاس إضاءة مش مايه ملونة)
+        if self.ENH_GLARE_COMPRESS:
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            v = hsv[:, :, 2].astype(np.float32)
+            s = hsv[:, :, 1].astype(np.float32)
+            t = float(self.ENH_GLARE_THRESH)
+
+            glare_mask = ((v > t) & (s < 40)).astype(np.float32)
+            glare_mask = cv2.GaussianBlur(glare_mask, (0, 0), 5)  # حواف ناعمة
+
+            v_comp = np.where(v > t, t + (v - t) * self.ENH_GLARE_KNEE, v)
+            v = v * (1.0 - glare_mask) + v_comp * glare_mask
+            hsv[:, :, 2] = np.clip(v, 0, 255).astype(np.uint8)
+            img = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+
+        # 3) Gamma darkening للمناطق الفاتحة
+        if self.ENH_GAMMA and self.ENH_GAMMA != 1.0:
+            lut = np.clip(
+                ((np.arange(256) / 255.0) ** self.ENH_GAMMA) * 255.0, 0, 255
+            ).astype(np.uint8)
+            img = cv2.LUT(img, lut)
+
+        # 4) CLAHE على قناة الإضاءة
+        lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
         l_ch, a_ch, b_ch = cv2.split(lab)
-        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        clahe = cv2.createCLAHE(
+            clipLimit=self.ENH_CLAHE_CLIP, tileGridSize=(8, 8)
+        )
         l_ch = clahe.apply(l_ch)
-        enhanced = cv2.cvtColor(cv2.merge((l_ch, a_ch, b_ch)), cv2.COLOR_Lab2BGR)
-        blurred = cv2.GaussianBlur(enhanced, (0, 0), 3)
-        return cv2.addWeighted(enhanced, 1.5, blurred, -0.5, 0)
+        img = cv2.cvtColor(cv2.merge((l_ch, a_ch, b_ch)), cv2.COLOR_Lab2BGR)
+
+        # 5) Unsharp خفيف
+        if self.ENH_SHARPEN and self.ENH_SHARPEN > 1.0:
+            blurred = cv2.GaussianBlur(img, (0, 0), 3)
+            img = cv2.addWeighted(
+                img, self.ENH_SHARPEN, blurred, -(self.ENH_SHARPEN - 1.0), 0
+            )
+
+        return img
 
     # ── Shared: Public API with Retry ─────────────────────────────────────────
 
@@ -673,8 +754,10 @@ class _Gemini(WaterDetector):
     def __init__(self, model: str, use_enhancement: bool = False,
                  max_retries: int = 4, retry_delay: float = 5.0,
                  api_key: str | None = None,
-                 memory: TrainingMemory | None = None):
-        super().__init__(model, use_enhancement, max_retries, retry_delay, memory)
+                 memory: TrainingMemory | None = None,
+                 **enh_kwargs):
+        super().__init__(model, use_enhancement, max_retries, retry_delay,
+                         memory, **enh_kwargs)
         from google import genai
         from google.genai import types as _t
         self._client = genai.Client(api_key=api_key or os.getenv("GENAI_API_KEY", ""))
@@ -781,8 +864,10 @@ class _Groq(WaterDetector):
     def __init__(self, model: str, use_enhancement: bool = False,
                  max_retries: int = 4, retry_delay: float = 5.0,
                  api_key: str | None = None,
-                 memory: "TrainingMemory | None" = None):
-        super().__init__(model, use_enhancement, max_retries, retry_delay, memory)
+                 memory: "TrainingMemory | None" = None,
+                 **enh_kwargs):
+        super().__init__(model, use_enhancement, max_retries, retry_delay,
+                         memory, **enh_kwargs)
         from groq import Groq as _GroqClient
         self._client = _GroqClient(api_key=api_key or os.getenv("GROQ_API_KEY", ""))
 
@@ -906,8 +991,10 @@ class _Local(WaterDetector):
     def __init__(self, model: str, backend: str = "ollama",
                  use_enhancement: bool = False,
                  max_retries: int = 4, retry_delay: float = 5.0,
-                 memory: "TrainingMemory | None" = None):
-        super().__init__(model, use_enhancement, max_retries, retry_delay, memory)
+                 memory: "TrainingMemory | None" = None,
+                 **enh_kwargs):
+        super().__init__(model, use_enhancement, max_retries, retry_delay,
+                         memory, **enh_kwargs)
         if backend not in self._BACKENDS:
             raise ValueError(f"backend must be one of {list(self._BACKENDS)}")
         self.backend  = backend
@@ -1210,8 +1297,27 @@ if __name__ == "__main__":
 
     load_dotenv()
     ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
-    ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct")
-    image_list = ["captures_standalone/capture_20260708_140557_0005.png","captures_standalone/capture_20260708_135208_0002.png"]
+    ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct", use_enhancement=True)
+    image_list = ["captures_standalone/capture_20260708_135151_0001.png",
+                  "captures_standalone/capture_20260708_135208_0002.png",
+                  "captures_standalone/capture_20260708_135209_0003.png",
+                  "captures_standalone/capture_20260708_135243_0005.png"
+                  ]
+
+    # ── حفظ نسخة محسّنة من كل صورة في فولدر enhanced/ ─────────────────────────
+    enhanced_dir = "enhanced"
+    os.makedirs(enhanced_dir, exist_ok=True)
+    for _p in image_list:
+        _img = cv2.imread(_p)
+        if _img is None:
+            print(f"⚠️ متقريتش الصورة: {_p}")
+            continue
+        _out = os.path.join(enhanced_dir, os.path.basename(_p))
+        if cv2.imwrite(_out, ai2.enhance_image(_img)):
+            print(f"✅ الصورة المحسّنة اتحفظت: {_out}")
+        else:
+            print(f"❌ فشل حفظ: {_out}")
+
     res1= ai2.run(image_paths=image_list)
     res = check_images_status(res1)
     print(res1)

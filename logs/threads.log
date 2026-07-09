@@ -904,3 +904,306 @@
 2026-07-07 15:23:28.972 [DEBUG   ] [ThreadWatchdog tid=9964] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
 2026-07-07 15:23:30.978 [DEBUG   ] [ThreadWatchdog tid=9964] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
 2026-07-07 15:23:32.980 [DEBUG   ] [ThreadWatchdog tid=9964] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:53:15.109 [INFO    ] [MainThread tid=3000] ======================================================================
+2026-07-08 15:53:15.110 [INFO    ] [MainThread tid=3000] Logger initialised — log file: c:\Users\Hisham Elbadry\Desktop\problemmmmmm\fresh-new\logs\threads.log
+2026-07-08 15:53:15.110 [INFO    ] [MainThread tid=3000] Python 3.12.10 on win32
+2026-07-08 15:53:15.110 [INFO    ] [MainThread tid=3000] ======================================================================
+2026-07-08 15:53:15.111 [INFO    ] [ThreadWatchdog tid=7488] Watchdog started — checking every 2.0s
+2026-07-08 15:53:15.111 [INFO    ] [MainThread tid=3000] thread_logger setup complete ✓
+2026-07-08 15:53:15.112 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-08 15:53:15.112 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-08 15:53:15.113 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-08 15:53:15.113 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-08 15:53:15.635 [INFO    ] [MainThread tid=3000] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-08 15:53:15.635 [INFO    ] [MainThread tid=3000] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-08 15:53:17.115 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-08 15:53:17.115 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-08 15:53:17.116 [WARNING ] [ThreadWatchdog tid=7488] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-08 15:53:17.117 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:19.119 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:19.120 [INFO    ] [app-main tid=13884] [App] _run_main started
+2026-07-08 15:53:21.120 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-08 15:53:21.121 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-08 15:53:21.122 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'Thread-3 (robot_state_routine_thread)' (daemon=True)
+2026-07-08 15:53:21.123 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-08 15:53:21.124 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:53:21.611 [INFO    ] [app-main tid=13884] [App] Ready — waiting for trigger DI0
+2026-07-08 15:53:21.611 [WARNING ] [app-main tid=13884] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:53:22.614 [WARNING ] [app-main tid=13884] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:53:23.125 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:53:23.615 [WARNING ] [app-main tid=13884] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:53:24.617 [WARNING ] [app-main tid=13884] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:53:25.125 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:53:25.619 [WARNING ] [app-main tid=13884] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:53:26.620 [WARNING ] [app-main tid=13884] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:53:27.127 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:53:27.622 [WARNING ] [app-main tid=13884] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:53:28.638 [INFO    ] [app-main tid=13884] [App] _run_main finished
+2026-07-08 15:53:29.128 [WARNING ] [ThreadWatchdog tid=7488] Watchdog: − thread DISAPPEARED 'app-main' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-08 15:53:29.129 [WARNING ] [ThreadWatchdog tid=7488] Watchdog: − thread DISAPPEARED 'cam-useeplus-decode' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-08 15:53:29.130 [WARNING ] [ThreadWatchdog tid=7488] Watchdog: − thread DISAPPEARED 'camera-_useeplus' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-08 15:53:29.131 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:31.132 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:33.134 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:35.135 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:37.136 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:39.137 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:41.138 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:43.139 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:45.140 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:47.142 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:49.143 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:51.144 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:53.145 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:55.147 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:57.147 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:53:59.149 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:01.150 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:03.152 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:05.153 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:07.155 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:09.156 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:11.157 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:13.158 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:15.159 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:17.160 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:19.162 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:21.163 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:23.165 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:25.165 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:27.167 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:29.168 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:31.169 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:33.170 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:35.171 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:37.173 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:39.174 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:41.175 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:43.177 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:45.178 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:47.179 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:49.180 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:51.181 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:53.182 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:55.184 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:57.185 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:54:59.187 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:01.188 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:03.189 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:05.190 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:07.192 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:09.193 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:11.194 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:13.195 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:15.197 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:17.199 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:19.201 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:21.202 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:23.203 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:25.205 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:27.205 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:29.207 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:31.208 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:33.210 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:35.211 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:37.212 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:39.213 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:41.215 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:43.216 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:45.217 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:47.218 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:49.219 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:51.221 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:53.225 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:55.226 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:57.227 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:55:59.228 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:01.229 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:03.230 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:05.231 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:07.233 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:09.234 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:11.235 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:13.237 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:15.239 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:17.240 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:19.242 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:21.243 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:23.244 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:25.245 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:27.247 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:29.248 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:31.249 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:33.250 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:35.252 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:37.253 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:39.254 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:41.255 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:43.256 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:45.257 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:47.259 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-08 15:56:48.152 [INFO    ] [app-main tid=20072] [App] _run_main started
+2026-07-08 15:56:49.260 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-08 15:56:49.260 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-08 15:56:49.261 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'Thread-4 (robot_state_routine_thread)' (daemon=True)
+2026-07-08 15:56:49.262 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-08 15:56:49.262 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:56:50.470 [INFO    ] [app-main tid=20072] [App] Ready — waiting for trigger DI0
+2026-07-08 15:56:50.471 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:56:51.264 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:56:51.474 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:56:52.476 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:56:53.265 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:56:53.477 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:56:54.478 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:56:55.267 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:56:55.479 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:56:56.481 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:56:57.268 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:56:57.483 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:56:58.484 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:56:59.269 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:56:59.486 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:00.488 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:01.270 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:01.490 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:02.492 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:03.272 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:03.494 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:04.495 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:05.273 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:05.496 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:06.498 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:07.275 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:07.499 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:08.501 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:09.276 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:09.502 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:10.503 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:11.277 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:11.505 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:12.506 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:13.278 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:13.507 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:14.509 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:15.279 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog: + thread appeared 'asyncio_1' (daemon=False)
+2026-07-08 15:57:15.279 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:15.510 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:16.512 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:17.280 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:17.513 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:18.514 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:19.281 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:19.516 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:20.517 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:21.282 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:21.518 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:22.520 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:23.283 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:23.521 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:24.523 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:25.284 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:25.524 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:26.526 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:27.286 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:27.527 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:28.528 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:29.288 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:29.529 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:30.531 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:31.289 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:31.532 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:32.534 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:33.291 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:33.535 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:34.538 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:35.291 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:35.538 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:36.539 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:37.292 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:37.540 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:38.541 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:39.293 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:39.542 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:40.543 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:41.294 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:41.544 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:42.545 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:43.295 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:43.546 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:44.547 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:45.296 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:45.548 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:46.549 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:47.297 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:47.550 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:48.551 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:49.297 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:49.553 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:50.554 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:51.298 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:51.555 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:52.556 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:53.299 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:53.557 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:54.558 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:55.300 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:55.559 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:56.561 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:57.300 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:57.562 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:58.564 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:57:59.302 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:57:59.566 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:58:00.567 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:58:01.303 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:58:01.568 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:58:02.570 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-08 15:58:03.305 [DEBUG   ] [ThreadWatchdog tid=7488] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-08 15:58:03.571 [WARNING ] [app-main tid=20072] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:18:57.149 [INFO    ] [MainThread tid=18916] ======================================================================
+2026-07-09 09:18:57.149 [INFO    ] [MainThread tid=18916] Logger initialised — log file: c:\Users\Hisham Elbadry\Desktop\problemmmmmm\fresh-new\logs\threads.log
+2026-07-09 09:18:57.149 [INFO    ] [MainThread tid=18916] Python 3.12.10 on win32
+2026-07-09 09:18:57.149 [INFO    ] [MainThread tid=18916] ======================================================================
+2026-07-09 09:18:57.151 [INFO    ] [ThreadWatchdog tid=9244] Watchdog started — checking every 2.0s
+2026-07-09 09:18:57.151 [INFO    ] [MainThread tid=18916] thread_logger setup complete ✓
+2026-07-09 09:18:57.151 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-09 09:18:57.152 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-09 09:18:57.152 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-09 09:18:57.152 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-09 09:18:57.584 [INFO    ] [MainThread tid=18916] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-09 09:18:57.585 [INFO    ] [MainThread tid=18916] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-09 09:18:59.154 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-09 09:18:59.154 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-09 09:18:59.155 [WARNING ] [ThreadWatchdog tid=9244] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:18:59.155 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:19:01.157 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:19:03.158 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:19:03.876 [INFO    ] [app-main tid=20100] [App] _run_main started
+2026-07-09 09:19:05.159 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-09 09:19:05.160 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-09 09:19:05.161 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-09 09:19:05.162 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 7 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:19:07.162 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'Thread-3 (robot_state_routine_thread)' (daemon=True)
+2026-07-09 09:19:07.163 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:19:08.404 [INFO    ] [app-main tid=20100] [App] Ready — waiting for trigger DI0
+2026-07-09 09:19:08.405 [WARNING ] [app-main tid=20100] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:19:09.165 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:19:09.406 [WARNING ] [app-main tid=20100] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:19:10.408 [WARNING ] [app-main tid=20100] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:19:11.166 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:19:11.410 [WARNING ] [app-main tid=20100] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:19:12.412 [WARNING ] [app-main tid=20100] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:19:13.168 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:19:13.414 [WARNING ] [app-main tid=20100] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:19:14.416 [WARNING ] [app-main tid=20100] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:19:15.169 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog: + thread appeared 'asyncio_1' (daemon=False)
+2026-07-09 09:19:15.169 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:19:15.418 [WARNING ] [app-main tid=20100] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:19:16.425 [INFO    ] [app-main tid=20100] [App] _run_main finished
+2026-07-09 09:19:17.171 [WARNING ] [ThreadWatchdog tid=9244] Watchdog: − thread DISAPPEARED 'app-main' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:19:17.172 [WARNING ] [ThreadWatchdog tid=9244] Watchdog: − thread DISAPPEARED 'camera-_useeplus' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:19:17.173 [WARNING ] [ThreadWatchdog tid=9244] Watchdog: − thread DISAPPEARED 'cam-useeplus-decode' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:19:17.174 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:19:19.175 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:19:21.177 [DEBUG   ] [ThreadWatchdog tid=9244] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']

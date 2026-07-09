@@ -315,7 +315,8 @@ class _UseePlus(CameraHub):
     WRITE_TIMEOUT = 5000      # ms
     CHUNK_SIZE    = 64 * 1024 # 64 KB per USB read
     FREEZE_TIMEOUT = 2.0      # ثواني بدون فريم → recovery
-    STARTUP_GRACE  = 6.0      # مهلة أطول قبل أول recovery (الكاميرا بتاخد وقت تثبّت)
+    STARTUP_GRACE  = 2.0      # قبل أول فريم: إعادة إرسال CONNECT كل ثانيتين
+                              # (بعض الكاميرات محتاجة الأمر يتبعت أكتر من مرة)
     BUF_MAX        = 2 * 1024 * 1024  # 2 MB حد أقصى للبفر
 
     NATIVE_SIZE    = (640, 480)  # دقة السنسور الحقيقية
@@ -327,14 +328,22 @@ class _UseePlus(CameraHub):
         frame_height: int = 1440,
         upscale: bool = True,
         sharpen: bool = True,
+        ep2_init: bool = False,
+        clear_halt_init: bool = False,
     ):
         """
-        upscale : يكبّر الفريم لـ frame_width×frame_height (زي الأبلكيشن بالظبط)
-        sharpen : unsharp mask خفيف بعد التكبير (نفس مظهر الأبلكيشن)
+        upscale         : يكبّر الفريم لـ frame_width×frame_height (زي الأبلكيشن بالظبط)
+        sharpen         : unsharp mask خفيف بعد التكبير (نفس مظهر الأبلكيشن)
+        ep2_init        : يبعت أمر init على EP2 قبل الستريم —
+                          ⚠️ مقفول افتراضياً: ثبت إنه بيكسر الستريم على بعض الأجهزة
+        clear_halt_init : يعمل clear_halt + claim للـ interfaces عند الفتح —
+                          ⚠️ مقفول افتراضياً: بعض الـ USB controllers بتتلخبط منه
         """
         super().__init__(camera_index, frame_width, frame_height)
         self.upscale = upscale
         self.sharpen = sharpen
+        self.ep2_init = ep2_init
+        self.clear_halt_init = clear_halt_init
         self.on_button_press = None  # callback اختياري لزرار الإندوسكوب
 
     def _capture_loop(self, camera_index: int):
@@ -346,22 +355,43 @@ class _UseePlus(CameraHub):
         try:
             import usb.core
             import usb.util
-            try:
-                import libusb_package
-                import usb.backend.libusb1 as _lb1
-                _backend = _lb1.get_backend(find_library=libusb_package.find_library)
-            except ImportError:
-                _backend = None
+            import usb.backend.libusb1 as _lb1
         except ImportError:
             log.error(f"{self._log_name}: ❌ pyusb مش متثبّت — شغّل: pip install pyusb")
             return
 
+        # الـ backend: بنجرب libusb-package الأول، وبعدها libusb، وبعدها الافتراضي
+        _backend = None
+        try:
+            import libusb_package
+            _backend = _lb1.get_backend(find_library=libusb_package.find_library)
+        except Exception:
+            pass
+        if _backend is None:
+            try:
+                import libusb
+                _backend = _lb1.get_backend(find_library=lambda x: libusb.dll._name)
+            except Exception:
+                pass
+        if _backend is None:
+            log.warning(
+                f"{self._log_name}: ⚠️ مفيش libusb backend صريح — "
+                "هجرب الافتراضي. لو الكاميرا مش لاقيها: pip install libusb-package"
+            )
+
         # ── إيجاد الجهاز ──────────────────────────────────────────────────────
         kw = {"backend": _backend} if _backend else {}
-        devices = list(usb.core.find(
-            idVendor=self.VENDOR_ID, idProduct=self.PRODUCT_ID,
-            find_all=True, **kw,
-        ))
+        try:
+            devices = list(usb.core.find(
+                idVendor=self.VENDOR_ID, idProduct=self.PRODUCT_ID,
+                find_all=True, **kw,
+            ))
+        except Exception as e:
+            log.error(
+                f"{self._log_name}: ❌ مفيش libusb backend — "
+                f"شغّل: pip install libusb-package  ({e})"
+            )
+            return
         if not devices:
             log.error(
                 f"{self._log_name}: ❌ الكاميرا مش موجودة "
@@ -387,25 +417,30 @@ class _UseePlus(CameraHub):
                 except Exception:
                     pass
             dev.set_configuration()
-            try:
-                usb.util.claim_interface(dev, 0)
-                usb.util.claim_interface(dev, self.INTERFACE)
-            except Exception:
-                pass
+            if self.clear_halt_init:
+                # claim صريح للـ interfaces — خطوة إضافية زي الأبلكيشن،
+                # بتتقفل مع safeinit لأن بعض الأجهزة بتتلخبط منها
+                try:
+                    usb.util.claim_interface(dev, 0)
+                    usb.util.claim_interface(dev, self.INTERFACE)
+                except Exception:
+                    pass
             dev.set_interface_altsetting(
                 interface=self.INTERFACE,
                 alternate_setting=self.ALT_SETTING,
             )
-            for _ep in (self.EP_OUT, self.EP_IN):
-                try:
-                    dev.clear_halt(_ep)
-                except Exception:
-                    pass
+            if self.clear_halt_init:
+                for _ep in (self.EP_OUT, self.EP_IN):
+                    try:
+                        dev.clear_halt(_ep)
+                    except Exception:
+                        pass
             # "الكلمات السحرية" — الأبلكيشن بيبعتها على EP2 قبل بدء الستريم
-            try:
-                dev.write(self.EP_OUT2, self.MAGIC_WORDS, self.WRITE_TIMEOUT)
-            except Exception as e:
-                log.warning(f"{self._log_name}: ⚠️ EP2 init فشل (غالباً مش مشكلة): {e}")
+            if self.ep2_init:
+                try:
+                    dev.write(self.EP_OUT2, self.MAGIC_WORDS, self.WRITE_TIMEOUT)
+                except Exception as e:
+                    log.warning(f"{self._log_name}: ⚠️ EP2 init فشل (غالباً مش مشكلة): {e}")
             dev.write(self.EP_OUT, self.CONNECT_CMD, self.WRITE_TIMEOUT)
             log.info(
                 f"{self._log_name}: ✅ Camera {camera_index} شغالة "
@@ -546,10 +581,11 @@ class _UseePlus(CameraHub):
             """يصحّح الـ USB endpoint بعد pipe error أو freeze."""
             try:
                 dev.clear_halt(self.EP_IN)
-                try:
-                    dev.write(self.EP_OUT2, self.MAGIC_WORDS, self.WRITE_TIMEOUT)
-                except Exception:
-                    pass
+                if self.ep2_init:
+                    try:
+                        dev.write(self.EP_OUT2, self.MAGIC_WORDS, self.WRITE_TIMEOUT)
+                    except Exception:
+                        pass
                 dev.write(self.EP_OUT, self.CONNECT_CMD, self.WRITE_TIMEOUT)
                 buf.clear()
                 _reset_frame()
@@ -667,15 +703,26 @@ if __name__ == "__main__":
 
     cam_type  = sys.argv[1] if len(sys.argv) > 1 else "opencv"  # opencv / useeplus
     cam_index = int(sys.argv[2]) if len(sys.argv) > 2 else 0
+    flags     = {a.lower() for a in sys.argv[3:]}
+    # فلاجز تشخيص للـ useeplus (الافتراضي = التهيئة الآمنة، شغالة على كل الأجهزة):
+    #   fullinit → يفعّل EP2 + clear_halt مع بعض (تهيئة الأبلكيشن الكاملة)
+    #   ep2      → يفعّل أمر EP2 بس
+    #   halt     → يفعّل clear_halt بس
+    #   raw      → من غير upscale (640×480 خام)
+    _ep2   = bool({"ep2", "fullinit"} & flags)
+    _halt  = bool({"halt", "fullinit"} & flags)
+    _upsc  = "raw" not in flags
 
     cam = CameraHub.OpenCV(camera_index=cam_index) if cam_type == "opencv" \
-          else CameraHub.UseePlus(camera_index=cam_index)
+          else CameraHub.UseePlus(camera_index=cam_index, upscale=_upsc,
+                                  ep2_init=_ep2, clear_halt_init=_halt)
 
     cam.start()
     print(f"[{cam_type}] اضغط Ctrl+C للإيقاف...")
 
     try:
-        if cam.wait_for_frame(timeout=5.0):
+        # مهلة أطول في وضع الاختبار — عشان نــدي فرصة لإعادة إرسال CONNECT
+        if cam.wait_for_frame(timeout=20.0):
             while True:
                 frame = cam.get_frame()
                 if frame is not None:
