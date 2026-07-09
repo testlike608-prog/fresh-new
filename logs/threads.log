@@ -1992,3 +1992,58 @@ NameError: name '_parse_entry' is not defined
 2026-07-09 09:43:39.333 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
 2026-07-09 09:43:41.336 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
 >>>>>>> 9c2871cf16faaeea592aa67454232e89394b0c3b
+2026-07-09 11:56:56.905 [INFO    ] [MainThread tid=6916] ======================================================================
+2026-07-09 11:56:56.905 [INFO    ] [MainThread tid=6916] Logger initialised — log file: c:\Users\Hisham Elbadry\Desktop\problemmmmmm\fresh-new\logs\threads.log
+2026-07-09 11:56:56.905 [INFO    ] [MainThread tid=6916] Python 3.12.10 on win32
+2026-07-09 11:56:56.905 [INFO    ] [MainThread tid=6916] ======================================================================
+2026-07-09 11:56:56.906 [INFO    ] [ThreadWatchdog tid=9676] Watchdog started — checking every 2.0s
+2026-07-09 11:56:56.906 [INFO    ] [MainThread tid=6916] thread_logger setup complete ✓
+2026-07-09 11:56:56.906 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-09 11:56:56.907 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-09 11:56:56.908 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-09 11:56:56.908 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-09 11:56:57.322 [INFO    ] [MainThread tid=6916] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-09 11:56:57.323 [INFO    ] [MainThread tid=6916] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-09 11:56:58.910 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-09 11:56:58.910 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-09 11:56:58.911 [WARNING ] [ThreadWatchdog tid=9676] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 11:56:58.911 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:00.912 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:02.914 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:04.915 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:06.917 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:08.918 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:10.920 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:12.921 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:14.922 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:16.923 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:18.924 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:20.926 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:22.927 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:24.928 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:26.929 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:28.930 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:30.932 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:32.933 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:34.934 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:36.936 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:38.937 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:40.938 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:42.939 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:44.941 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:46.942 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:48.943 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:50.945 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:52.946 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:54.947 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:56.948 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:57:58.950 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:58:00.951 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:58:02.952 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:58:04.953 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:58:06.955 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:58:08.956 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:58:10.957 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:58:12.958 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:58:14.960 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 11:58:16.962 [DEBUG   ] [ThreadWatchdog tid=9676] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
