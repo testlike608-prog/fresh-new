@@ -1297,7 +1297,6 @@ if __name__ == "__main__":
 
     load_dotenv()
     ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
-<<<<<<< HEAD
     ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct", use_enhancement=True)
     image_list = ["captures_standalone/capture_20260708_135151_0001.png",
                   "captures_standalone/capture_20260708_135208_0002.png",
@@ -1319,10 +1318,6 @@ if __name__ == "__main__":
         else:
             print(f"❌ فشل حفظ: {_out}")
 
-=======
-    ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct")
-    image_list = ["results/2511TL005663ISI_0.png"]
->>>>>>> 9c2871cf16faaeea592aa67454232e89394b0c3b
     res1= ai2.run(image_paths=image_list)
     res = check_images_status(res1)
     print(res1)
