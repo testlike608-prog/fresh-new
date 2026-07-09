@@ -25,7 +25,7 @@ pandas
 pyserial
 pyusb
 libusb
-
+libusb-package
 # Utilities
 python-dotenv
 keyboard

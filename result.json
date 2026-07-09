@@ -1,10 +1,14 @@
 {
   "image_1": {
+<<<<<<< HEAD
     "answer": "Yes",
     "confidence": 0.98
   },
   "image_2": {
     "answer": "Yes",
+=======
+    "answer": "No",
+>>>>>>> 9c2871cf16faaeea592aa67454232e89394b0c3b
     "confidence": 0.98
   },
   "image_3": {
