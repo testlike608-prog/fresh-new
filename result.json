@@ -1,10 +1,6 @@
 {
   "image_1": {
-    "answer": "Yes",
-    "confidence": 0.99
-  },
-  "image_2": {
-    "answer": "Yes",
+    "answer": "No",
     "confidence": 0.98
   }
 }

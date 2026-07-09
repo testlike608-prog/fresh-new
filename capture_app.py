@@ -89,13 +89,16 @@ from camera_hub import CameraHub
 
 
 class UseePlusSource:
-    def __init__(self, camera_index: int = 0):
-        # upscale=True (افتراضي) → 1920×1440 زي أبلكيشن UseePlus بالظبط
-        self._cam = CameraHub.UseePlus(camera_index=camera_index, upscale=False)
+    def __init__(self, camera_index: int = 0, **kwargs):
+        # upscale=False → 640×480 خام | غيّرها لـ True عشان 1920×1440 زي الأبلكيشن
+        # kwargs بتتبعت زي ما هي للدرايفر — مثال لو جهاز محتاج التهيئة الآمنة:
+        #   UseePlusSource(camera_index=0, ep2_init=False, clear_halt_init=False)
+        kwargs.setdefault("upscale", False)
+        self._cam = CameraHub.UseePlus(camera_index=camera_index, **kwargs)
 
     def start(self):
         self._cam.start()
-        if not self._cam.wait_for_frame(timeout=8.0):
+        if not self._cam.wait_for_frame(timeout=15.0):
             self._cam.stop()
             raise RuntimeError(
                 "كاميرا UseePlus مش موجودة أو مش بتبعت فريمات!\n"

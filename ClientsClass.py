@@ -32,6 +32,26 @@ from ai_vision import WaterDetector
 from config import data_path as _data_path
 _SESSION_STATS_FILE = _data_path("session_stats.json")
 
+
+def _parse_entry(value) -> tuple[str, float | None]:
+    """
+    يوحّد شكل نتيجة صورة واحدة ويرجع (answer, confidence).
+
+    بيدعم الشكلين:
+      - الجديد: {"answer": "Yes", "confidence": 0.92}
+      - القديم: "Yes"  → confidence = None
+    """
+    if isinstance(value, dict):
+        ans = str(value.get("answer", "No"))
+        try:
+            conf = float(value.get("confidence", 0.0))
+        except (TypeError, ValueError):
+            conf = 0.0
+        return ans, max(0.0, min(1.0, conf))
+    return str(value), None
+
+
+
 def _to_bytes(message, is_hex=False):
     """
     تحويل أي قيمة لـ bytes جاهزه للإرسال على السوكيت.
@@ -245,33 +265,31 @@ class App():
     # ── Images / AI ───────────────────────────────────────────────────
 
     def check_images_status(self, images_data):
-        if isinstance(images_data, str) and "Error:" in images_data:
-            print(f"[ERROR] check_images_status: AI error: {images_data}")
-            return "error"
-        if isinstance(images_data, str):
-            try:
-                images_data = json.loads(images_data)
-            except Exception as e:
-                print(f"[ERROR] check_images_status: JSON parse failed: {e}")
+            if isinstance(images_data, str) and "Error:" in images_data:
+                print(f"[ERROR] check_images_status: AI error: {images_data}")
                 return "error"
-        if not isinstance(images_data, dict):
-            print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
-            return "error"
-        has_error = False
-        for image_name, value in images_data.items():
-            # تحويل القيمة لنص، تنظيف المسافات، وجعلها lowercase
-            val_cleaned = str(value).strip().lower()
+            if isinstance(images_data, str):
+                try:
+                    images_data = json.loads(images_data)
+                except Exception as e:
+                    print(f"[ERROR] check_images_status: JSON parse failed: {e}")
+                    return "error"
+            if not isinstance(images_data, dict):
+                print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
+                return "error"
+            for image_name, value in images_data.items():
+                # بيدعم الشكل الجديد {"answer": "Yes", "confidence": 0.9} والقديم "Yes"
+                ans, conf = _parse_entry(value)
+                val_cleaned = ans.strip().lower()
 
-            # طباعة للتأكد مما يراه الكود (debug)
-            print(f"Checking: {image_name} -> Value: '{val_cleaned}'")
+                # طباعة للتأكد مما يراه الكود (debug)
+                print(f"Checking: {image_name} -> Value: '{val_cleaned}' (confidence: {conf})")
 
-            if val_cleaned == "yes":
-                return "fail"
-            if val_cleaned != "no":
-                has_error = True   # FIX: "Error" ميتحسبش pass
-        return "error" if has_error else "pass"
+                if val_cleaned == "yes":
+                    return "fail"
+            return "pass"
 
-    # ── Scanner / Barcode ──────────────────────────────────────────────
+        # ── Scanner / Barcode ──────────────────────────────────────────────
 
     def get_barcode_from_scanner(self):
         """

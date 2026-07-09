@@ -904,3 +904,785 @@
 2026-07-07 15:23:28.972 [DEBUG   ] [ThreadWatchdog tid=9964] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
 2026-07-07 15:23:30.978 [DEBUG   ] [ThreadWatchdog tid=9964] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
 2026-07-07 15:23:32.980 [DEBUG   ] [ThreadWatchdog tid=9964] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:20:58.924 [INFO    ] [MainThread tid=3640] ======================================================================
+2026-07-09 09:20:58.924 [INFO    ] [MainThread tid=3640] Logger initialised — log file: d:\hhhhhhhhhh\New folder\fresh-new\logs\threads.log
+2026-07-09 09:20:58.924 [INFO    ] [MainThread tid=3640] Python 3.12.10 on win32
+2026-07-09 09:20:58.924 [INFO    ] [MainThread tid=3640] ======================================================================
+2026-07-09 09:20:58.924 [INFO    ] [ThreadWatchdog tid=12400] Watchdog started — checking every 2.0s
+2026-07-09 09:20:58.924 [INFO    ] [MainThread tid=3640] thread_logger setup complete ✓
+2026-07-09 09:20:58.940 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-09 09:20:58.940 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-09 09:20:58.941 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-09 09:20:58.941 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-09 09:20:59.608 [INFO    ] [MainThread tid=3640] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-09 09:20:59.608 [INFO    ] [MainThread tid=3640] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-09 09:21:00.942 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-09 09:21:00.942 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-09 09:21:00.942 [WARNING ] [ThreadWatchdog tid=12400] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:21:00.942 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:21:02.963 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'asyncio_1' (daemon=False)
+2026-07-09 09:21:02.966 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:21:04.203 [INFO    ] [app-main tid=8396] [App] _run_main started
+2026-07-09 09:21:04.976 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-09 09:21:04.976 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-09 09:21:04.976 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-09 09:21:04.976 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog: + thread appeared 'Thread-3 (robot_state_routine_thread)' (daemon=True)
+2026-07-09 09:21:04.976 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:21:05.940 [INFO    ] [app-main tid=8396] [App] Ready — waiting for trigger DI0
+2026-07-09 09:21:05.940 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:06.946 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:06.985 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:21:07.948 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:08.950 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:08.986 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:21:09.953 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:10.956 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:10.989 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:21:11.960 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:12.964 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:12.993 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:21:13.966 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:14.969 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:14.994 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:21:15.974 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:16.978 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:16.996 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:21:17.980 [WARNING ] [app-main tid=8396] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:21:18.998 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:21:19.007 [INFO    ] [app-main tid=8396] [App] _run_main finished
+2026-07-09 09:21:21.007 [WARNING ] [ThreadWatchdog tid=12400] Watchdog: − thread DISAPPEARED 'cam-useeplus-decode' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:21:21.007 [WARNING ] [ThreadWatchdog tid=12400] Watchdog: − thread DISAPPEARED 'app-main' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:21:21.007 [WARNING ] [ThreadWatchdog tid=12400] Watchdog: − thread DISAPPEARED 'camera-_useeplus' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:21:21.007 [DEBUG   ] [ThreadWatchdog tid=12400] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:22:49.288 [INFO    ] [MainThread tid=7032] ======================================================================
+2026-07-09 09:22:49.289 [INFO    ] [MainThread tid=7032] Logger initialised — log file: d:\hhhhhhhhhh\New folder\fresh-new\logs\threads.log
+2026-07-09 09:22:49.289 [INFO    ] [MainThread tid=7032] Python 3.12.10 on win32
+2026-07-09 09:22:49.290 [INFO    ] [MainThread tid=7032] ======================================================================
+2026-07-09 09:22:49.290 [INFO    ] [ThreadWatchdog tid=6632] Watchdog started — checking every 2.0s
+2026-07-09 09:22:49.290 [INFO    ] [MainThread tid=7032] thread_logger setup complete ✓
+2026-07-09 09:22:49.290 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-09 09:22:49.291 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-09 09:22:49.291 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-09 09:22:49.293 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-09 09:22:49.793 [INFO    ] [MainThread tid=7032] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-09 09:22:49.793 [INFO    ] [MainThread tid=7032] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-09 09:22:51.293 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-09 09:22:51.293 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-09 09:22:51.293 [WARNING ] [ThreadWatchdog tid=6632] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:22:51.293 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:22:53.296 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:22:54.087 [INFO    ] [app-main tid=7820] [App] _run_main started
+2026-07-09 09:22:55.300 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-09 09:22:55.302 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-09 09:22:55.302 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-09 09:22:55.302 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 7 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:22:57.310 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog: + thread appeared 'Thread-3 (robot_state_routine_thread)' (daemon=True)
+2026-07-09 09:22:57.310 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:22:57.450 [INFO    ] [app-main tid=7820] [App] Ready — waiting for trigger DI0
+2026-07-09 09:22:57.460 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:22:58.466 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:22:59.319 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:22:59.471 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:00.473 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:01.320 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:23:01.475 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:02.476 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:03.324 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:23:03.478 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:04.483 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:05.327 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:23:05.488 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:06.490 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:07.328 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:23:07.492 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:08.499 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:09.333 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:23:09.504 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:10.505 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:11.335 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:23:11.508 [WARNING ] [app-main tid=7820] [App] GetDI error: unsupported operand type(s) for &: '_ctypes.CField' and 'int' — retrying...
+2026-07-09 09:23:12.527 [INFO    ] [app-main tid=7820] [App] _run_main finished
+2026-07-09 09:23:13.336 [WARNING ] [ThreadWatchdog tid=6632] Watchdog: − thread DISAPPEARED 'camera-_useeplus' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:23:13.337 [WARNING ] [ThreadWatchdog tid=6632] Watchdog: − thread DISAPPEARED 'cam-useeplus-decode' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:23:13.337 [WARNING ] [ThreadWatchdog tid=6632] Watchdog: − thread DISAPPEARED 'app-main' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:23:13.347 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:15.357 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:17.358 [DEBUG   ] [ThreadWatchdog tid=6632] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:25.543 [INFO    ] [MainThread tid=9656] ======================================================================
+2026-07-09 09:23:25.544 [INFO    ] [MainThread tid=9656] Logger initialised — log file: d:\hhhhhhhhhh\New folder\fresh-new\logs\threads.log
+2026-07-09 09:23:25.544 [INFO    ] [MainThread tid=9656] Python 3.12.10 on win32
+2026-07-09 09:23:25.544 [INFO    ] [MainThread tid=9656] ======================================================================
+2026-07-09 09:23:25.545 [INFO    ] [ThreadWatchdog tid=2616] Watchdog started — checking every 2.0s
+2026-07-09 09:23:25.545 [INFO    ] [MainThread tid=9656] thread_logger setup complete ✓
+2026-07-09 09:23:25.546 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-09 09:23:25.546 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-09 09:23:25.546 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-09 09:23:25.546 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-09 09:23:26.044 [INFO    ] [MainThread tid=9656] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-09 09:23:26.054 [INFO    ] [MainThread tid=9656] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-09 09:23:27.558 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-09 09:23:27.558 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-09 09:23:27.558 [WARNING ] [ThreadWatchdog tid=2616] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:23:27.558 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:29.560 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:31.571 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:33.574 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:35.585 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:37.587 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:39.594 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:41.601 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:43.603 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:45.614 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:47.616 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:49.627 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:51.664 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:53.671 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:55.680 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:57.682 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:23:58.091 [INFO    ] [app-main tid=2872] [App] _run_main started
+2026-07-09 09:23:59.686 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'Thread-3 (robot_state_routine_thread)' (daemon=True)
+2026-07-09 09:23:59.686 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-09 09:23:59.686 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-09 09:23:59.686 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-09 09:23:59.686 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:24:00.419 [INFO    ] [app-main tid=2872] [App] Ready — waiting for trigger DI0
+2026-07-09 09:24:01.697 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:24:03.700 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'asyncio_1' (daemon=False)
+2026-07-09 09:24:03.700 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:24:05.703 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:24:06.291 [INFO    ] [app-main tid=2872] [App] DI0 HIGH — starting sequence
+2026-07-09 09:24:07.704 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'camera-barcode-scanner' (daemon=True)
+2026-07-09 09:24:07.704 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:09.713 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:11.715 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:13.716 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:15.719 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:17.721 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:19.728 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:21.730 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:23.732 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:25.733 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:27.734 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:29.735 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:31.737 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:33.747 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:35.750 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:37.751 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:39.752 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:41.753 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:43.760 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:45.761 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:47.766 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:24:48.002 [INFO    ] [app-main tid=2872] [Sequence] Barcode: 2511TL005663ISI
+2026-07-09 09:24:48.002 [INFO    ] [app-main tid=2872] [Program] Loading mapping file: d:\hhhhhhhhhh\New folder\fresh-new\program_mapping.xlsx
+2026-07-09 09:24:48.103 [INFO    ] [app-main tid=2872] [Sequence] Program: 1
+2026-07-09 09:24:49.767 [WARNING ] [ThreadWatchdog tid=2616] Watchdog: − thread DISAPPEARED 'camera-barcode-scanner' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:24:49.767 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:24:51.776 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:24:53.780 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:24:55.782 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:24:57.793 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:24:59.795 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:01.798 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:03.799 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:05.801 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:07.809 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:08.642 [INFO    ] [app-main tid=2872] [program_1] Done — model answer — barcode=2511TL005663ISI  result={'image_1': {'answer': 'Error', 'confidence': None}}
+2026-07-09 09:25:08.852 [INFO    ] [app-main tid=2872] [program_1] Done — barcode=2511TL005663ISI  result=error
+2026-07-09 09:25:09.810 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:11.811 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:13.814 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:15.815 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:17.817 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:19.819 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:21.825 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:23.827 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:25.829 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:27.834 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:29.836 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:31.840 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:33.842 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:35.843 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:37.844 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:39.846 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:41.848 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:43.856 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:45.858 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:47.862 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:49.866 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:51.874 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:53.878 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:55.879 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:57.880 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:25:59.882 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:01.889 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:03.891 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:05.895 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:07.897 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:09.900 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:11.905 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:13.909 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:15.910 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:17.918 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:19.919 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:21.920 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:23.928 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:25.929 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:27.932 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:29.933 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:31.934 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:33.937 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:35.939 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:37.941 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:39.943 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:41.944 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:43.946 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:45.959 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:47.963 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:49.964 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:51.965 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:53.966 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:55.979 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:57.981 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:26:59.984 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:01.986 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:03.988 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:05.989 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:07.998 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:09.999 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:12.000 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:14.004 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:16.006 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:18.008 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:20.011 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:22.013 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:24.017 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:26.019 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:28.020 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:30.050 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:32.053 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:34.061 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:36.064 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:38.071 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:40.071 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:42.072 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:44.075 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:46.082 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:47.909 [INFO    ] [app-main tid=2872] [App] DI0 HIGH — starting sequence
+2026-07-09 09:27:48.084 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:27:50.085 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog: + thread appeared 'camera-barcode-scanner' (daemon=True)
+2026-07-09 09:27:50.085 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:27:52.086 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:27:54.089 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:27:56.089 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:27:58.090 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:00.092 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:02.098 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:04.099 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:06.101 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:08.103 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:10.104 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:12.104 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:14.106 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:16.107 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:18.113 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:28:18.588 [INFO    ] [app-main tid=2872] [Sequence] Barcode: 2511TL005663ISI
+2026-07-09 09:28:18.588 [INFO    ] [app-main tid=2872] [Sequence] Program: 1
+2026-07-09 09:28:20.115 [WARNING ] [ThreadWatchdog tid=2616] Watchdog: − thread DISAPPEARED 'camera-barcode-scanner' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:28:20.115 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:22.118 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:24.122 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:26.124 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:28.130 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:30.134 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:32.136 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:34.137 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:36.139 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:38.146 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:38.889 [INFO    ] [app-main tid=2872] [program_1] Done — model answer — barcode=2511TL005663ISI  result={'image_1': {'answer': 'Error', 'confidence': None}}
+2026-07-09 09:28:39.013 [INFO    ] [app-main tid=2872] [program_1] Done — barcode=2511TL005663ISI  result=error
+2026-07-09 09:28:40.148 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:42.149 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:44.152 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:46.153 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:48.161 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:50.172 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:52.182 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:54.184 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:56.185 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:28:58.194 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:29:00.195 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:29:02.197 [DEBUG   ] [ThreadWatchdog tid=2616] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:31:09.813 [INFO    ] [MainThread tid=6968] ======================================================================
+2026-07-09 09:31:09.813 [INFO    ] [MainThread tid=6968] Logger initialised — log file: d:\hhhhhhhhhh\New folder\fresh-new\logs\threads.log
+2026-07-09 09:31:09.813 [INFO    ] [MainThread tid=6968] Python 3.12.10 on win32
+2026-07-09 09:31:09.813 [INFO    ] [MainThread tid=6968] ======================================================================
+2026-07-09 09:31:09.813 [INFO    ] [ThreadWatchdog tid=3252] Watchdog started — checking every 2.0s
+2026-07-09 09:31:09.820 [INFO    ] [MainThread tid=6968] thread_logger setup complete ✓
+2026-07-09 09:31:09.820 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-09 09:31:09.820 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-09 09:31:09.820 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-09 09:31:09.820 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-09 09:31:10.355 [INFO    ] [MainThread tid=6968] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-09 09:31:10.355 [INFO    ] [MainThread tid=6968] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-09 09:31:11.822 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-09 09:31:11.822 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-09 09:31:11.823 [WARNING ] [ThreadWatchdog tid=3252] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:31:11.824 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:31:13.826 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:31:15.422 [INFO    ] [app-main tid=8260] [App] _run_main started
+2026-07-09 09:31:15.838 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-09 09:31:15.838 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-09 09:31:15.838 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-09 09:31:15.838 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 7 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:31:17.846 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'Thread-3 (robot_state_routine_thread)' (daemon=True)
+2026-07-09 09:31:17.846 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:31:18.818 [INFO    ] [app-main tid=8260] [App] Ready — waiting for trigger DI0
+2026-07-09 09:31:19.852 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:31:21.857 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:31:23.462 [INFO    ] [app-main tid=8260] [App] DI0 HIGH — starting sequence
+2026-07-09 09:31:23.858 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:31:25.859 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'camera-barcode-scanner' (daemon=True)
+2026-07-09 09:31:25.859 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:27.860 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'asyncio_1' (daemon=False)
+2026-07-09 09:31:27.860 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:29.862 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:31.868 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:33.871 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:35.877 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:37.878 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:39.885 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:41.886 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:43.888 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:45.888 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:47.890 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:49.891 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:51.892 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:53.893 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:55.894 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:31:56.301 [INFO    ] [app-main tid=8260] [App] _run_main finished
+2026-07-09 09:31:57.895 [WARNING ] [ThreadWatchdog tid=3252] Watchdog: − thread DISAPPEARED 'camera-_useeplus' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:31:57.895 [WARNING ] [ThreadWatchdog tid=3252] Watchdog: − thread DISAPPEARED 'app-main' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:31:57.900 [WARNING ] [ThreadWatchdog tid=3252] Watchdog: − thread DISAPPEARED 'camera-barcode-scanner' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:31:57.904 [WARNING ] [ThreadWatchdog tid=3252] Watchdog: − thread DISAPPEARED 'cam-useeplus-decode' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:31:57.906 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:31:59.907 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:32:01.909 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:32:03.910 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:32:05.912 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:32:07.913 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:32:09.914 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:32:11.916 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:32:13.922 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:32:15.619 [INFO    ] [app-main tid=3436] [App] _run_main started
+2026-07-09 09:32:15.924 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-09 09:32:15.924 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-09 09:32:15.924 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-09 09:32:15.924 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:17.932 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog: + thread appeared 'Thread-4 (robot_state_routine_thread)' (daemon=True)
+2026-07-09 09:32:17.932 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:19.935 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:21.936 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:23.937 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:25.938 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:27.940 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:29.948 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:31.955 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:33.956 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:35.958 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:37.965 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:39.967 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:41.968 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:43.971 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:45.973 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:47.975 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:49.980 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:32:51.998 [DEBUG   ] [ThreadWatchdog tid=3252] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'Thread-4 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:07.246 [INFO    ] [MainThread tid=4988] ======================================================================
+2026-07-09 09:33:07.246 [INFO    ] [MainThread tid=4988] Logger initialised — log file: d:\hhhhhhhhhh\New folder\fresh-new\logs\threads.log
+2026-07-09 09:33:07.246 [INFO    ] [MainThread tid=4988] Python 3.12.10 on win32
+2026-07-09 09:33:07.246 [INFO    ] [MainThread tid=4988] ======================================================================
+2026-07-09 09:33:07.246 [INFO    ] [ThreadWatchdog tid=7996] Watchdog started — checking every 2.0s
+2026-07-09 09:33:07.246 [INFO    ] [MainThread tid=4988] thread_logger setup complete ✓
+2026-07-09 09:33:07.246 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-09 09:33:07.246 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-09 09:33:07.256 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-09 09:33:07.256 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-09 09:33:07.776 [INFO    ] [MainThread tid=4988] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-09 09:33:07.776 [INFO    ] [MainThread tid=4988] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-09 09:33:09.257 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-09 09:33:09.257 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-09 09:33:09.257 [WARNING ] [ThreadWatchdog tid=7996] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:33:09.257 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:33:11.259 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:33:12.864 [INFO    ] [app-main tid=5372] [App] _run_main started
+2026-07-09 09:33:13.262 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-09 09:33:13.262 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-09 09:33:13.262 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-09 09:33:13.262 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 7 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:15.271 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'Thread-3 (robot_state_routine_thread)' (daemon=True)
+2026-07-09 09:33:15.271 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:16.904 [INFO    ] [app-main tid=5372] [App] Ready — waiting for trigger DI0
+2026-07-09 09:33:17.274 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:19.281 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:21.283 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:23.294 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:25.303 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:25.876 [INFO    ] [app-main tid=5372] [App] DI0 HIGH — starting sequence
+2026-07-09 09:33:27.303 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'camera-barcode-scanner' (daemon=True)
+2026-07-09 09:33:27.303 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:33:29.305 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:33:31.311 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:33:33.312 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog: + thread appeared 'asyncio_1' (daemon=False)
+2026-07-09 09:33:33.312 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:33:35.315 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:33:37.316 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 10 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:33:38.385 [INFO    ] [app-main tid=5372] [Sequence] Barcode: 2511TL005663ISI
+2026-07-09 09:33:38.385 [INFO    ] [app-main tid=5372] [Program] Loading mapping file: d:\hhhhhhhhhh\New folder\fresh-new\program_mapping.xlsx
+2026-07-09 09:33:38.427 [INFO    ] [app-main tid=5372] [Sequence] Program: 1
+2026-07-09 09:33:39.318 [WARNING ] [ThreadWatchdog tid=7996] Watchdog: − thread DISAPPEARED 'camera-barcode-scanner' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:33:39.318 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:41.326 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:43.328 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:45.332 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:47.334 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:49.336 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:51.343 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:53.346 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:55.348 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:57.349 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:33:58.125 [INFO    ] [app-main tid=5372] [program_1] Done — model answer — barcode=2511TL005663ISI  result={'image_1': {'answer': 'No', 'confidence': 1.0}}
+2026-07-09 09:33:58.279 [INFO    ] [app-main tid=5372] [program_1] Done — barcode=2511TL005663ISI  result=error
+2026-07-09 09:33:59.351 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:01.357 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:03.366 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:05.369 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:07.371 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:09.380 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:11.382 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:13.386 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:15.388 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:17.393 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:19.403 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:21.408 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:23.410 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:25.414 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:27.421 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:29.432 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:31.434 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:33.443 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:35.462 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:37.471 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:39.475 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:41.478 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:43.479 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:45.492 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:47.495 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:49.497 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:51.499 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:53.502 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:55.505 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:57.507 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:34:59.207 [INFO    ] [app-main tid=5372] [App] _run_main finished
+2026-07-09 09:34:59.508 [WARNING ] [ThreadWatchdog tid=7996] Watchdog: − thread DISAPPEARED 'camera-_useeplus' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:34:59.510 [WARNING ] [ThreadWatchdog tid=7996] Watchdog: − thread DISAPPEARED 'app-main' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:34:59.510 [WARNING ] [ThreadWatchdog tid=7996] Watchdog: − thread DISAPPEARED 'cam-useeplus-decode' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:34:59.510 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:01.520 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:03.522 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:05.524 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:07.524 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:09.527 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:11.528 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:13.529 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:15.537 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:17.546 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:19.566 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:21.577 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:23.587 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:25.590 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:27.591 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:29.593 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:31.600 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:33.608 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:35.610 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:37.612 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:39.619 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:41.621 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:43.633 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:45.643 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:47.647 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:49.648 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:51.651 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:53.661 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:55.664 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:57.666 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:35:59.668 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:01.670 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:03.673 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:05.676 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:07.682 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:09.694 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:11.697 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:13.699 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:15.702 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:17.703 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:19.710 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:21.713 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:23.714 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:25.715 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:27.720 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:29.722 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:31.723 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:33.725 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:35.735 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:37.740 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:39.743 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:41.745 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:43.750 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:45.751 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:47.754 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:49.755 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:51.757 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:53.765 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:55.769 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:57.778 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:36:59.784 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:01.786 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:03.787 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:05.788 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:07.791 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:09.793 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:11.794 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:13.801 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:15.804 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:17.806 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:19.809 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:21.813 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:23.816 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:25.818 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:27.821 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:29.830 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:31.833 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:33.835 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:35.836 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:37.838 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:39.839 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:41.844 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:43.847 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:45.850 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:47.852 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:49.855 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:51.856 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:53.857 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:55.859 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:57.861 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:37:59.865 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:38:01.879 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:38:03.885 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:38:05.897 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:38:07.899 [DEBUG   ] [ThreadWatchdog tid=7996] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:38:45.623 [INFO    ] [MainThread tid=308] ======================================================================
+2026-07-09 09:38:45.624 [INFO    ] [MainThread tid=308] Logger initialised — log file: d:\hhhhhhhhhh\New folder\fresh-new\logs\threads.log
+2026-07-09 09:38:45.624 [INFO    ] [MainThread tid=308] Python 3.12.10 on win32
+2026-07-09 09:38:45.624 [INFO    ] [MainThread tid=308] ======================================================================
+2026-07-09 09:38:45.625 [INFO    ] [ThreadWatchdog tid=6032] Watchdog started — checking every 2.0s
+2026-07-09 09:38:45.625 [INFO    ] [MainThread tid=308] thread_logger setup complete ✓
+2026-07-09 09:38:45.625 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-09 09:38:45.626 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-09 09:38:45.627 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-09 09:38:45.627 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-09 09:38:46.169 [INFO    ] [MainThread tid=308] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-09 09:38:46.169 [INFO    ] [MainThread tid=308] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-09 09:38:47.629 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-09 09:38:47.629 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-09 09:38:47.629 [WARNING ] [ThreadWatchdog tid=6032] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:38:47.630 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:38:49.632 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:38:50.629 [INFO    ] [app-main tid=2920] [App] _run_main started
+2026-07-09 09:38:51.641 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'Thread-3 (robot_state_routine_thread)' (daemon=True)
+2026-07-09 09:38:51.648 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'app-main' (daemon=True)
+2026-07-09 09:38:51.650 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'camera-_useeplus' (daemon=True)
+2026-07-09 09:38:51.651 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'cam-useeplus-decode' (daemon=True)
+2026-07-09 09:38:51.652 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:38:52.417 [INFO    ] [app-main tid=2920] [App] Ready — waiting for trigger DI0
+2026-07-09 09:38:53.654 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:38:55.657 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:38:57.660 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:38:59.661 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:01.663 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:03.456 [INFO    ] [app-main tid=2920] [App] DI0 HIGH — starting sequence
+2026-07-09 09:39:03.666 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:05.673 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'camera-barcode-scanner' (daemon=True)
+2026-07-09 09:39:05.673 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:07.675 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:09.676 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:11.677 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:13.678 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:15.678 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:17.679 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:19.681 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:21.682 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:23.689 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:25.691 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus', 'camera-barcode-scanner']
+2026-07-09 09:39:26.280 [INFO    ] [app-main tid=2920] [Sequence] Barcode: 2511TL005663ISI
+2026-07-09 09:39:26.280 [INFO    ] [app-main tid=2920] [Program] Loading mapping file: d:\hhhhhhhhhh\New folder\fresh-new\program_mapping.xlsx
+2026-07-09 09:39:26.355 [INFO    ] [app-main tid=2920] [Sequence] Program: 1
+2026-07-09 09:39:27.692 [WARNING ] [ThreadWatchdog tid=6032] Watchdog: − thread DISAPPEARED 'camera-barcode-scanner' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:39:27.692 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:29.705 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:31.711 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 8 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:33.713 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog: + thread appeared 'asyncio_1' (daemon=False)
+2026-07-09 09:39:33.713 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:35.721 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:37.723 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:39.725 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:41.727 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:43.731 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:45.737 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 9 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'app-main', 'asyncio_0', 'asyncio_1', 'cam-useeplus-decode', 'camera-_useeplus']
+2026-07-09 09:39:46.687 [ERROR   ] [app-main tid=2920] [App] _run_main error: name '_parse_entry' is not defined
+Traceback (most recent call last):
+  File "d:\hhhhhhhhhh\New folder\fresh-new\ClientsClass.py", line 575, in _run_main
+    self.start_sequence()
+  File "d:\hhhhhhhhhh\New folder\fresh-new\ClientsClass.py", line 464, in start_sequence
+    self.program_1()
+  File "d:\hhhhhhhhhh\New folder\fresh-new\ClientsClass.py", line 374, in program_1
+    result = self.check_images_status(res)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\hhhhhhhhhh\New folder\fresh-new\ClientsClass.py", line 262, in check_images_status
+    ans, conf = _parse_entry(value)
+                ^^^^^^^^^^^^
+NameError: name '_parse_entry' is not defined
+2026-07-09 09:39:47.206 [INFO    ] [app-main tid=2920] [App] _run_main finished
+2026-07-09 09:39:47.741 [WARNING ] [ThreadWatchdog tid=6032] Watchdog: − thread DISAPPEARED 'app-main' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:39:47.741 [WARNING ] [ThreadWatchdog tid=6032] Watchdog: − thread DISAPPEARED 'camera-_useeplus' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:39:47.741 [WARNING ] [ThreadWatchdog tid=6032] Watchdog: − thread DISAPPEARED 'cam-useeplus-decode' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:39:47.741 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:39:49.747 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:39:51.748 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:39:53.759 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:39:55.771 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:39:57.775 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:39:59.784 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:01.786 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:03.793 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:05.794 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:07.799 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:09.802 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:11.805 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:13.807 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:15.810 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:17.810 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:19.811 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:21.814 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:23.815 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:25.822 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:27.833 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:29.845 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:31.856 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:33.858 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:35.860 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:37.864 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:39.868 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:41.870 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:43.870 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:45.873 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:47.876 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:49.884 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:51.889 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:53.896 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:55.905 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:57.910 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:40:59.912 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:01.913 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:03.915 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:05.917 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:07.918 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:09.925 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:11.935 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:13.938 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:15.945 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:17.980 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:19.983 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:21.984 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:23.986 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:25.994 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:27.998 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:30.001 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:32.004 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:34.005 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:36.016 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:38.017 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:40.018 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:42.020 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:44.021 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:46.022 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:48.033 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:50.037 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:52.038 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:54.039 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:56.041 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:41:58.049 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:00.052 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:02.053 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:04.055 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:06.063 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:08.065 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:10.065 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:12.073 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:14.079 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:16.084 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:18.086 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:20.087 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:22.088 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:24.090 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:26.091 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:28.093 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:30.095 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:32.097 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:34.098 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:36.099 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:38.102 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:40.104 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:42.107 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:44.112 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:46.114 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:48.118 [DEBUG   ] [ThreadWatchdog tid=6032] Watchdog snapshot: 6 alive — ['DebugMonitor', 'MainThread', 'Thread-3 (robot_state_routine_thread)', 'ThreadWatchdog', 'asyncio_0', 'asyncio_1']
+2026-07-09 09:42:55.188 [INFO    ] [MainThread tid=9180] ======================================================================
+2026-07-09 09:42:55.189 [INFO    ] [MainThread tid=9180] Logger initialised — log file: d:\hhhhhhhhhh\New folder\fresh-new\logs\threads.log
+2026-07-09 09:42:55.189 [INFO    ] [MainThread tid=9180] Python 3.12.10 on win32
+2026-07-09 09:42:55.190 [INFO    ] [MainThread tid=9180] ======================================================================
+2026-07-09 09:42:55.190 [INFO    ] [ThreadWatchdog tid=10252] Watchdog started — checking every 2.0s
+2026-07-09 09:42:55.190 [INFO    ] [MainThread tid=9180] thread_logger setup complete ✓
+2026-07-09 09:42:55.191 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-07-09 09:42:55.192 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-07-09 09:42:55.192 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-07-09 09:42:55.192 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-07-09 09:42:55.692 [INFO    ] [MainThread tid=9180] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-07-09 09:42:55.692 [INFO    ] [MainThread tid=9180] === web_server: listening on http://0.0.0.0:8000 ===
+2026-07-09 09:42:57.193 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog: + thread appeared 'asyncio_0' (daemon=False)
+2026-07-09 09:42:57.193 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-07-09 09:42:57.193 [WARNING ] [ThreadWatchdog tid=10252] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-07-09 09:42:57.193 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:42:59.199 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:01.200 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:03.204 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:05.206 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:07.216 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:09.218 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:11.224 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:13.226 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:15.227 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:17.229 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:19.239 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:21.249 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:23.265 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:25.266 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:27.274 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:29.280 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:31.288 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:33.298 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:35.301 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:37.311 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:39.333 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-07-09 09:43:41.336 [DEBUG   ] [ThreadWatchdog tid=10252] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']

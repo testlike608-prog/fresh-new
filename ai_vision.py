@@ -1211,7 +1211,7 @@ if __name__ == "__main__":
     load_dotenv()
     ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
     ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct")
-    image_list = ["captures_standalone/capture_20260708_140557_0005.png","captures_standalone/capture_20260708_135208_0002.png"]
+    image_list = ["results/2511TL005663ISI_0.png"]
     res1= ai2.run(image_paths=image_list)
     res = check_images_status(res1)
     print(res1)
