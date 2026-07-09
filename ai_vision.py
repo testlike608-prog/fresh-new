@@ -926,7 +926,7 @@ class _Groq(WaterDetector):
 
             # New images
             user_content = [{"type": "text",
-                             "text": "Analyze the following images for water presence:  Examine the attached images for water points. Precisely identify any clear, distinct, and individual water droplets on the surface of the white plastic piece. CRITICAL WARNING: Under no circumstances classify the yellowish/brownish viscous accumulation along the edge (referred to as \"كولة\" or glue) as \"water\". Classify only the liquid that appears clearly aqueous, and ignore the solidified adhesive material. Report clearly on the inspection results: Have any water points been found? Where? Ensure they are not confused with the yellowish material."}]
+                             "text": "You are a precise quality control assistant.Answer only 'Yes' or 'No' about water presence.Analyze the following images for water presence:  Examine the attached images for water points. Precisely identify any clear, distinct, and individual water droplets on the surface of the white plastic piece. CRITICAL WARNING: Under no circumstances classify the yellowish/brownish viscous accumulation along the edge (referred to as \"كولة\" or glue) as \"water\". Classify only the liquid that appears clearly aqueous, and ignore the solidified adhesive material. Report clearly on the inspection results: Have any water points been found? Where? Ensure they are not confused with the yellowish material."}]
             valid = 0
             for i, path in enumerate(image_paths, 1):
                 if not os.path.exists(path):
@@ -1280,17 +1280,23 @@ def check_images_status(images_data):
         if not isinstance(images_data, dict):
             print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
             return "error"
+        has_error = False                                    # ← جديد
         for image_name, value in images_data.items():
-            # بيدعم الشكل الجديد {"answer": "Yes", "confidence": 0.9} والقديم "Yes"
             ans, conf = _parse_entry(value)
             val_cleaned = ans.strip().lower()
-
-            # طباعة للتأكد مما يراه الكود (debug)
             print(f"Checking: {image_name} -> Value: '{val_cleaned}' (confidence: {conf})")
 
             if val_cleaned == "yes":
-                return "fail"
+                return "fail"     # مايه في أي صورة = فشل فوراً
+
+            if val_cleaned not in ("no",):                   # ← جديد: أي إجابة غريبة
+                has_error = True                             #    (زي "Error") بتتسجل
+                print(f"[ERROR] check_images_status: {image_name} answer='{ans}' — مش إجابة صالحة")
+
+        if has_error:                                        # ← جديد
+            return "error"        # مفيش مايه مؤكدة بس فيه صور فشلت = مينفعش pass
         return "pass"
+
 
 if __name__ == "__main__":
     from dotenv import load_dotenv
@@ -1299,7 +1305,7 @@ if __name__ == "__main__":
     ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
     ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct")
     image_list = [
-        "captures_standalone/capture_20260708_091329_0001.jpg"
+        "results/2511TL005663ISI_0.png"
     ]
     
     '''

@@ -277,17 +277,23 @@ class App():
             if not isinstance(images_data, dict):
                 print(f"[ERROR] check_images_status: expected dict, got {type(images_data)}")
                 return "error"
+            has_error = False                                    # ← جديد
             for image_name, value in images_data.items():
-                # بيدعم الشكل الجديد {"answer": "Yes", "confidence": 0.9} والقديم "Yes"
                 ans, conf = _parse_entry(value)
                 val_cleaned = ans.strip().lower()
-
-                # طباعة للتأكد مما يراه الكود (debug)
                 print(f"Checking: {image_name} -> Value: '{val_cleaned}' (confidence: {conf})")
 
                 if val_cleaned == "yes":
-                    return "fail"
+                    return "fail"     # مايه في أي صورة = فشل فوراً
+
+                if val_cleaned not in ("no",):                   # ← جديد: أي إجابة غريبة
+                    has_error = True                             #    (زي "Error") بتتسجل
+                    print(f"[ERROR] check_images_status: {image_name} answer='{ans}' — مش إجابة صالحة")
+
+            if has_error:                                        # ← جديد
+                return "error"        # مفيش مايه مؤكدة بس فيه صور فشلت = مينفعش pass
             return "pass"
+
 
         # ── Scanner / Barcode ──────────────────────────────────────────────
 
