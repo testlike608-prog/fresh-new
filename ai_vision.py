@@ -1297,13 +1297,12 @@ if __name__ == "__main__":
 
     load_dotenv()
     ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
-    ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct", use_enhancement=True)
-    image_list = ["captures_standalone/capture_20260708_135151_0001.png",
-                  "captures_standalone/capture_20260708_135208_0002.png",
-                  "captures_standalone/capture_20260708_135209_0003.png",
-                  "captures_standalone/capture_20260708_135243_0005.png"
-                  ]
-
+    ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct")
+    image_list = [
+        "captures_standalone/capture_20260708_091329_0001.jpg"
+    ]
+    
+    '''
     # ── حفظ نسخة محسّنة من كل صورة في فولدر enhanced/ ─────────────────────────
     enhanced_dir = "enhanced"
     os.makedirs(enhanced_dir, exist_ok=True)
@@ -1317,7 +1316,7 @@ if __name__ == "__main__":
             print(f"✅ الصورة المحسّنة اتحفظت: {_out}")
         else:
             print(f"❌ فشل حفظ: {_out}")
-
+    '''
     res1= ai2.run(image_paths=image_list)
     res = check_images_status(res1)
     print(res1)
