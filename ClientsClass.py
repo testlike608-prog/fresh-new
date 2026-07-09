@@ -495,6 +495,8 @@ class App():
             log.warning(f"[Sequence] Program {program} has no implementation (programs 2-5 are empty stubs)")
             self._set_stage(AppStage.ERROR)
 
+        self._save_session_stats()
+
     # ── Program mapping ────────────────────────────────────────────────
 
     def determine_program_from_barcode(self, barcode, excel_file_path=None):
