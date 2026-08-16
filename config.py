@@ -93,9 +93,17 @@ DEFAULT_CONFIG = {
     "camera_index":       0,
     "camera_type":        "useeplus",   # "useeplus" | "opencv"
     "live_camera_index":  0,
-    "AI_Agent":           "online",     # "online" | "groq" | "local_ollama" | "local_lmstudio"
+    # "online" | "groq" | "local_ollama" | "local_lmstudio" | "clip"
+    "AI_Agent":           "online",
     "ai_model":           "",           # اتركه فارغاً للنموذج الافتراضي
     "ai_enhancement":     False,
+
+    # ── CLIP (موديل محلي مدرّب — SigLIP classifier) ────────────────
+    # بيتستخدم بس لما AI_Agent = "clip"
+    # clip_model_path: مسار ملف الأوزان .pt (نسبي للمشروع أو مسار كامل)
+    # clip_device    : "auto" → CUDA لو متاحة وإلا CPU | "cpu" | "cuda"
+    "clip_model_path":    "siglip_leak_classifier.pt",
+    "clip_device":        "auto",
 
     # ── Intervals (بالثواني) ──────────────────────────────────────
     "watchdog_interval":         2.0,    # thread watchdog (thread_logger)

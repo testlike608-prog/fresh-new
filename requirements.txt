@@ -11,6 +11,12 @@ google-genai
 ollama
 groq
 
+# CLIP provider (AI_Agent = "clip") — موديل محلي مدرّب SigLIP.
+# مطلوبين بس لو هتستخدم CLIP.
+# لنسخة CUDA شوف: https://pytorch.org/get-started/locally/
+torch
+open_clip_torch
+
 # Computer vision & image processing
 opencv-python
 Pillow

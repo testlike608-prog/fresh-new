@@ -211,6 +211,21 @@ class App():
             return WaterDetector.Local(model=model, backend="ollama",    use_enhancement=enhance)
         elif agent == "local_lmstudio":
             return WaterDetector.Local(model=model, backend="lm_studio", use_enhancement=enhance)
+        elif agent == "clip":
+            # موديل محلي مدرّب (SigLIP classifier) — مفيش API key ولا انترنت.
+            # الأوزان بتتحمل مرة واحدة هنا، مش مع كل صورة.
+            path   = (self._cfg.get("clip_model_path") or "siglip_leak_classifier.pt").strip()
+            device = (self._cfg.get("clip_device") or "auto").strip().lower()
+            # ntpath عشان مسار ويندوز (D:\...) يتعرف كمسار مطلق حتى
+            # لو السيرفر شغال في Docker/Linux
+            import ntpath as _nt
+            if not (os.path.isabs(path) or _nt.isabs(path)):
+                path = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+            return WaterDetector.CLIP(
+                model_path      = path,
+                device          = None if device in ("", "auto") else device,
+                use_enhancement = enhance,
+            )
         else:
             return WaterDetector.Gemini(model=model, use_enhancement=enhance)
 

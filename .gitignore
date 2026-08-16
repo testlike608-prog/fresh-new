@@ -51,3 +51,13 @@ result.json
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# ── ML model weights (كبيرة جداً على GitHub — توزّع عن طريق Release) ──
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.ckpt
+
+# ── مجلد مؤقت للحذف ──────────────────────────────────────────
+_to_delete/

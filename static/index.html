@@ -482,17 +482,40 @@ select.field-input{cursor:pointer}
   <div class="card" style="margin-bottom:12px">
     <div class="field-row">
       <span class="field-label">AI Agent</span>
-      <select class="field-input settings-field" data-key="AI_Agent" disabled>
+      <select class="field-input settings-field" data-key="AI_Agent"
+              id="ai-agent-select" onchange="onAiAgentChange()" disabled>
         <option value="online">🌐 Online (Gemini)</option>
         <option value="groq">⚡ Groq</option>
         <option value="local_ollama">🏠 Local — Ollama</option>
         <option value="local_lmstudio">🏠 Local — LM Studio</option>
+        <option value="clip">🧠 CLIP — موديل محلي مدرّب (SigLIP)</option>
       </select>
     </div>
-    <div class="field-row">
+    <div class="field-row" id="row-ai-model">
       <span class="field-label">AI Model</span>
       <input class="field-input settings-field" data-key="ai_model"
              placeholder="اتركه فارغاً للنموذج الافتراضي" disabled>
+    </div>
+    <div class="field-row" id="row-clip-path" style="display:none">
+      <span class="field-label">CLIP Weights</span>
+      <input class="field-input settings-field" data-key="clip_model_path"
+             placeholder="siglip_leak_classifier.pt" disabled>
+    </div>
+    <div class="field-row" id="row-clip-device" style="display:none">
+      <span class="field-label">CLIP Device</span>
+      <select class="field-input settings-field" data-key="clip_device" disabled>
+        <option value="auto">Auto (CUDA لو متاحة وإلا CPU)</option>
+        <option value="cuda">CUDA (كارت الشاشة)</option>
+        <option value="cpu">CPU</option>
+      </select>
+    </div>
+    <div class="field-row" id="row-clip-hint" style="display:none">
+      <span class="field-label"></span>
+      <span style="font-size:12px;opacity:.7;line-height:1.6">
+        موديل محلي — مش محتاج انترنت ولا API key. لازم يكون
+        <code>torch</code> و <code>open_clip_torch</code> متسطبين،
+        وملف الأوزان موجود في مجلد المشروع.
+      </span>
     </div>
     <div class="field-row">
       <span class="field-label">AI Enhancement</span>
@@ -933,7 +956,9 @@ async function loadConnEndpoints() {
     document.getElementById('ep-camera').textContent  =
       `${c.camera_type || 'useeplus'} · #${c.camera_index ?? 0}`;
     document.getElementById('ep-ai').textContent      =
-      `${c.AI_Agent || 'online'} · ${c.ai_model || 'default'}`;
+      (c.AI_Agent === 'clip')
+        ? `clip · ${(c.clip_model_path || 'siglip_leak_classifier.pt').split(/[\\/]/).pop()} · ${c.clip_device || 'auto'}`
+        : `${c.AI_Agent || 'online'} · ${c.ai_model || 'default'}`;
     document.getElementById('ep-scanner').textContent = c.scan_mode || 'manual';
   } catch(e){}
 }
@@ -999,6 +1024,22 @@ function autoScrollChanged() {
 ══════════════════════════════════════════════════════════ */
 let currentConfig = {};
 
+/* يظهر حقول CLIP بس لما الـ provider = clip، ويخفي AI Model لأنه
+   مش بيتستخدم مع الموديل المحلي (الأوزان نفسها هي الموديل). */
+function onAiAgentChange() {
+  const sel  = document.getElementById('ai-agent-select');
+  if (!sel) return;
+  const isClip = sel.value === 'clip';
+  const show = (id, on) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = on ? '' : 'none';
+  };
+  show('row-ai-model',    !isClip);
+  show('row-clip-path',    isClip);
+  show('row-clip-device',  isClip);
+  show('row-clip-hint',    isClip);
+}
+
 async function loadConfig() {
   try {
     const r = await fetch('/api/config'); if (!r.ok) return;
@@ -1013,6 +1054,7 @@ async function loadConfig() {
         el.value = Array.isArray(val) ? val.join(', ') : (val ?? '');
       }
     });
+    onAiAgentChange();   // ظبّط ظهور حقول CLIP حسب القيمة المحمّلة
   } catch(e){}
 }
 
@@ -1088,7 +1130,7 @@ async function saveSettings() {
       setTestMode(false); return;
     }
     const d = await r.json();
-    alert(`✅ تم الحفظ — ${d.changed} تعديل.\nRobot IP يحتاج restart للتطبيق.`);
+    alert(`✅ تم الحفظ — ${d.changed} تعديل.\nRobot IP وإعدادات AI Provider تحتاج restart للتطبيق.`);
     loadConnEndpoints();
   } catch(e) { alert('خطأ: ' + e); }
 }
