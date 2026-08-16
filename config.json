@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0",
     "created_at": "",
-    "modified_at": "2026-07-09T13:40:39.544094"
+    "modified_at": "2026-08-16T09:32:45.534623"
   },
   "password_hash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
   "cobot_ip": "192.168.57.2",
@@ -15,9 +15,11 @@
   "camera_index": 0,
   "camera_type": "opencv",
   "live_camera_index": 0,
-  "AI_Agent": "groq",
+  "AI_Agent": "clip",
   "ai_model": "meta-llama/llama-4-scout-17b-16e-instruct",
   "ai_enhancement": false,
+  "clip_model_path": "siglip_leak_classifier.pt",
+  "clip_device": "cuda",
   "watchdog_interval": 2.0,
   "reconnect_check_interval": 3.0,
   "reconnect_retry_delay": 5.0,

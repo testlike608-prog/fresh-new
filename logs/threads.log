@@ -3835,3 +3835,123 @@ TypeError: App.check_images_status() takes 1 positional argument but 2 were give
 2026-08-16 09:02:22.561 [DEBUG   ] [ThreadWatchdog tid=19364] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
 2026-08-16 09:02:24.562 [DEBUG   ] [ThreadWatchdog tid=19364] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
 2026-08-16 09:02:26.563 [DEBUG   ] [ThreadWatchdog tid=19364] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadWatchdog', 'asyncio_0']
+2026-08-16 09:32:15.862 [INFO    ] [MainThread tid=281473069266624] ======================================================================
+2026-08-16 09:32:15.862 [INFO    ] [MainThread tid=281473069266624] Logger initialised — log file: /home/meeserv/fesh_project/fresh-new/logs/threads.log
+2026-08-16 09:32:15.863 [INFO    ] [MainThread tid=281473069266624] Python 3.10.12 on linux
+2026-08-16 09:32:15.863 [INFO    ] [MainThread tid=281473069266624] ======================================================================
+2026-08-16 09:32:15.863 [INFO    ] [ThreadWatchdog tid=281472321253664] Watchdog started — checking every 2.0s
+2026-08-16 09:32:15.863 [INFO    ] [MainThread tid=281473069266624] thread_logger setup complete ✓
+2026-08-16 09:32:15.866 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-08-16 09:32:15.867 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-08-16 09:32:15.867 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-08-16 09:32:15.868 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-08-16 09:32:16.212 [INFO    ] [MainThread tid=281473069266624] === web_server: App created (STOPPED) — press Start in dashboard ===
+2026-08-16 09:32:16.214 [INFO    ] [MainThread tid=281473069266624] === web_server: listening on http://0.0.0.0:8000 ===
+2026-08-16 09:32:17.870 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog: + thread appeared 'ThreadPoolExecutor-0_0' (daemon=False)
+2026-08-16 09:32:17.870 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog: + thread appeared 'DebugMonitor' (daemon=True)
+2026-08-16 09:32:17.871 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'Thread-2', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:19.873 [WARNING ] [ThreadWatchdog tid=281472321253664] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-08-16 09:32:19.873 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:21.876 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:23.878 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:25.881 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:27.885 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:29.889 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:31.890 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:33.892 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:35.895 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:37.898 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:39.901 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:41.904 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:43.907 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:45.910 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:47.911 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:49.914 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:51.916 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:53.919 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:55.922 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:57.925 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:32:59.926 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:33:01.929 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:33:03.930 [DEBUG   ] [ThreadWatchdog tid=281472321253664] Watchdog snapshot: 4 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:06.880 [INFO    ] [MainThread tid=281473755457216] ======================================================================
+2026-08-16 09:37:06.880 [INFO    ] [MainThread tid=281473755457216] Logger initialised — log file: /home/meeserv/fesh_project/fresh-new/logs/threads.log
+2026-08-16 09:37:06.880 [INFO    ] [MainThread tid=281473755457216] Python 3.10.12 on linux
+2026-08-16 09:37:06.881 [INFO    ] [MainThread tid=281473755457216] ======================================================================
+2026-08-16 09:37:06.882 [INFO    ] [ThreadWatchdog tid=281473007415584] Watchdog started — checking every 2.0s
+2026-08-16 09:37:06.882 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog: + thread appeared 'Thread-2' (daemon=False)
+2026-08-16 09:37:06.883 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog: + thread appeared 'ThreadWatchdog' (daemon=True)
+2026-08-16 09:37:06.883 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog: + thread appeared 'MainThread' (daemon=False)
+2026-08-16 09:37:06.883 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-08-16 09:37:06.882 [INFO    ] [MainThread tid=281473755457216] thread_logger setup complete ✓
+2026-08-16 09:37:06.884 [ERROR   ] [MainThread tid=281473755457216] Could not create App: type object 'WaterDetector' has no attribute 'CLIP'
+Traceback (most recent call last):
+  File "/home/meeserv/fesh_project/fresh-new/web_server.py", line 227, in lifespan
+    app_ref = cc.App()
+  File "/home/meeserv/fesh_project/fresh-new/ClientsClass.py", line 142, in __init__
+    self._ai_provider = self._build_ai_provider()
+  File "/home/meeserv/fesh_project/fresh-new/ClientsClass.py", line 224, in _build_ai_provider
+    return WaterDetector.CLIP(
+AttributeError: type object 'WaterDetector' has no attribute 'CLIP'
+2026-08-16 09:37:06.885 [INFO    ] [MainThread tid=281473755457216] === web_server: listening on http://0.0.0.0:8000 ===
+2026-08-16 09:37:08.885 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-08-16 09:37:10.888 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'Thread-2', 'ThreadWatchdog']
+2026-08-16 09:37:12.890 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog: + thread appeared 'ThreadPoolExecutor-0_0' (daemon=False)
+2026-08-16 09:37:12.891 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 4 alive — ['MainThread', 'Thread-2', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:14.894 [WARNING ] [ThreadWatchdog tid=281473007415584] Watchdog: − thread DISAPPEARED 'Thread-2' (if no FINISHED/CRASHED log above, it died silently)
+2026-08-16 09:37:14.894 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:16.897 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:18.899 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:20.902 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:22.904 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:24.907 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:26.909 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:28.912 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:30.915 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:32.917 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:34.920 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:36.921 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:38.923 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:40.925 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:42.928 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:44.929 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:46.932 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:48.935 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:50.937 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:52.940 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:54.943 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:56.945 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:37:58.948 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:00.951 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:02.954 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:04.957 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:06.960 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:08.963 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:10.965 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:12.968 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:14.970 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:16.973 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:18.976 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:20.979 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:22.981 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:24.984 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:26.986 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:28.989 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:30.992 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:32.995 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:34.997 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:37.000 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:39.003 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:41.005 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:43.008 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:45.009 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:47.012 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:49.013 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:51.016 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:53.019 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:55.021 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:57.024 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:38:59.026 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:39:01.029 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:39:03.030 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']
+2026-08-16 09:39:05.033 [DEBUG   ] [ThreadWatchdog tid=281473007415584] Watchdog snapshot: 3 alive — ['MainThread', 'ThreadPoolExecutor-0_0', 'ThreadWatchdog']

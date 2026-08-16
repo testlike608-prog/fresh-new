@@ -1108,6 +1108,181 @@ class _Local(WaterDetector):
             return f"Error: {e}"
 
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  INTERFACE: CLIP (Fine-Tuned / Local)
+# ══════════════════════════════════════════════════════════════════════════════
+
+class _CLIP(WaterDetector):
+    """
+    WaterDetector.CLIP — local CLIP inference using your fine-tuned weights.
+
+    Expected model format (recommended): a Hugging Face / Transformers
+    directory saved with model.save_pretrained() and processor.save_pretrained().
+
+    Example:
+        p = WaterDetector.CLIP(model_path="./clip_water_model")
+        result = p.check_multiple_images_for_water(["img1.jpg"])
+
+    The model is loaded once in __init__, so selecting CLIP in the GUI and then
+    checking many images does not reload the weights for every image.
+
+    Water definition for this project:
+        Yes = visible water droplets OR clearly visible/pooled liquid water.
+        No  = dry surface / no water.
+    """
+
+    def __init__(self, model_path: str, use_enhancement: bool = False,
+                 max_retries: int = 1, retry_delay: float = 0.0,
+                 memory: "TrainingMemory | None" = None,
+                 short_term_memory: "ShortTermMemory | None" = None,
+                 device: str | None = None,
+                 **enh_kwargs):
+        super().__init__(model_path, use_enhancement, max_retries, retry_delay,
+                         memory, short_term_memory=short_term_memory, **enh_kwargs)
+
+        self.model_path = model_path
+
+        try:
+            import torch
+            import torch.nn as nn
+            import open_clip
+        except ImportError as e:
+            raise ImportError(
+                "CLIP requires PyTorch and open_clip_torch. "
+                "Install them with: pip install torch open_clip_torch"
+            ) from e
+
+        self._torch = torch
+
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        if device == "cuda" and not torch.cuda.is_available():
+            print("[CLIP] CUDA requested but unavailable; falling back to CPU.")
+            device = "cpu"
+        self.device = torch.device(device)
+
+        # ---------------------------------------------------------------
+        # This checkpoint is a raw state_dict (torch.save(model.state_dict()))
+        # for a direct image classifier built on an open_clip SigLIP backbone:
+        #   visual.trunk.*  -> ViT-B-16-SigLIP vision encoder (224px, 768-dim)
+        #   head.0 / head.2 -> LayerNorm(768) -> Dropout -> Linear(768, 2)
+        # There is no text encoder in this checkpoint, so we build the model
+        # fully offline (pretrained=None avoids any download) and just load
+        # the weights on top.
+        # ---------------------------------------------------------------
+        backbone_name = "ViT-B-16-SigLIP"  # confirmed: 224px, embed_dim=768, 12 layers
+
+        print(f"[CLIP] Building backbone architecture: {backbone_name}")
+        clip_model, _, preprocess = open_clip.create_model_and_transforms(
+            backbone_name, pretrained=None
+        )
+        self._preprocess = preprocess
+
+        class _SiglipClassifier(nn.Module):
+            def __init__(self, visual_encoder, embed_dim=768, num_classes=2):
+                super().__init__()
+                self.visual = visual_encoder
+                self.head = nn.Sequential(
+                    nn.LayerNorm(embed_dim),
+                    nn.Dropout(0.0),
+                    nn.Linear(embed_dim, num_classes),
+                )
+
+            def forward(self, pixel_values):
+                features = self.visual(pixel_values)
+                return self.head(features)
+
+        self._model = _SiglipClassifier(clip_model.visual)
+
+        print(f"[CLIP] Loading fine-tuned weights: {model_path}")
+        print(f"[CLIP] Device: {self.device}")
+
+        state_dict = torch.load(model_path, map_location=self.device, weights_only=False)
+        if isinstance(state_dict, dict) and "state_dict" in state_dict:
+            state_dict = state_dict["state_dict"]
+        elif isinstance(state_dict, dict) and "model_state_dict" in state_dict:
+            state_dict = state_dict["model_state_dict"]
+
+        missing, unexpected = self._model.load_state_dict(state_dict, strict=False)
+        if missing:
+            print(f"[CLIP] Warning: missing keys when loading state_dict: {missing}")
+        if unexpected:
+            print(f"[CLIP] Warning: unexpected keys when loading state_dict: {unexpected}")
+        if not missing and not unexpected:
+            print("[CLIP] All keys matched exactly.")
+
+        self._model.to(self.device)
+        self._model.eval()
+
+        # Class index convention — VERIFY with a known wet/dry image before
+        # trusting results. This assumes alphabetical ImageFolder ordering
+        # ("dry" < "wet"), which is the common default. If predictions come
+        # out inverted, flip these two indices.
+        self._dry_index = 0
+        self._wet_index = 1
+
+        print("[CLIP] Model loaded.")
+
+    def _predict_one(self, path: str) -> tuple[str, float]:
+        from PIL import Image
+
+        img = cv2.imread(path)
+        if img is None:
+            raise ValueError(f"Could not read image: {path}")
+
+        if self.use_enhancement:
+            img = self.enhance_image(img)
+
+        image = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+
+        pixel_values = self._preprocess(image).unsqueeze(0).to(self.device)
+
+        with self._torch.inference_mode():
+            logits = self._model(pixel_values)
+            probs = self._torch.softmax(logits, dim=1)[0]
+            dry_prob = float(probs[self._dry_index].item())
+            wet_prob = float(probs[self._wet_index].item())
+
+        if wet_prob >= dry_prob:
+            return "Yes", wet_prob
+        return "No", dry_prob
+
+    def _try_check_images(self, image_paths, few_shot_examples=None):
+        import json as _json
+
+        try:
+            results = {}
+
+            # CLIP is a trained local model; the old API few-shot images are
+            # intentionally not injected into the model. The fine-tuned weights
+            # themselves are the learned knowledge used for classification.
+            for i, path in enumerate(image_paths, 1):
+                if not os.path.exists(path):
+                    results[f"image_{i}"] = {
+                        "answer": "Error",
+                        "confidence": None,
+                    }
+                    continue
+
+                try:
+                    answer, confidence = self._predict_one(path)
+                    results[f"image_{i}"] = {
+                        "answer": answer,
+                        "confidence": round(confidence, 6),
+                    }
+                except Exception as e:
+                    results[f"image_{i}"] = {
+                        "answer": "Error",
+                        "confidence": None,
+                    }
+                    print(f"[CLIP] Error on {path}: {e}")
+
+            return _json.dumps(results)
+
+        except Exception as e:
+            return f"Error: {e}"
+
 # ══════════════════════════════════════════════════════════════════════════════
 #  Attach interfaces + memory as class attributes
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1115,6 +1290,7 @@ class _Local(WaterDetector):
 WaterDetector.Gemini       = _Gemini
 WaterDetector.Groq         = _Groq
 WaterDetector.Local        = _Local
+WaterDetector.CLIP         = _CLIP
 WaterDetector.Memory       = TrainingMemory
 WaterDetector.SessionMemory = ShortTermMemory
 
@@ -1183,8 +1359,15 @@ def _build_provider(args) -> WaterDetector:
     elif p == "local":
         backend = getattr(args, "backend", "ollama")
         return _Local(backend=backend, **kwargs)
+    elif p == "clip":
+        return _CLIP(
+            model_path=args.clip_model_path,
+            device=args.clip_device,
+            use_enhancement=args.enhance,
+            short_term_memory=stm,
+        )
 
-    raise SystemExit(f"❌ provider غير معروف: {args.provider}  (groq | gemini | local)")
+    raise SystemExit(f"❌ provider غير معروف: {args.provider}  (groq | gemini | local | clip)")
 
 
 def main():
@@ -1209,7 +1392,7 @@ def main():
 
     # ── Provider ──────────────────────────────────────────────────────────────
     parser.add_argument("--provider", default="groq",
-                        choices=["groq", "gemini", "local"],
+                        choices=["groq", "gemini", "local", "clip"],
                         help="الـ AI provider (افتراضي: groq).")
     parser.add_argument("--model", default="llama-3.2-11b-vision-preview",
                         help="اسم الموديل.")
@@ -1217,6 +1400,10 @@ def main():
                         help="API key (أو استخدم GROQ_API_KEY / GENAI_API_KEY كمتغير بيئة).")
     parser.add_argument("--backend", default="ollama", choices=["ollama", "lm_studio"],
                         help="Local backend (افتراضي: ollama).")
+    parser.add_argument("--clip-model-path", default="./clip_water_model", metavar="PATH",
+                        help="مسار فولدر الـ fine-tuned CLIP (افتراضي: ./clip_water_model).")
+    parser.add_argument("--clip-device", default=None, choices=["cpu", "cuda"],
+                        help="جهاز CLIP: cpu أو cuda. لو لم تحدده يستخدم CUDA تلقائياً إن كانت متاحة.")
 
     # ── Images ────────────────────────────────────────────────────────────────
     parser.add_argument("--images", nargs="+", metavar="IMG",
@@ -1245,6 +1432,9 @@ def main():
 
     print(f"   Provider       : {args.provider.upper()}")
     print(f"   Model          : {args.model}")
+    if args.provider.lower() == "clip":
+        print(f"   CLIP weights   : {args.clip_model_path}")
+        print(f"   CLIP device    : {args.clip_device or 'auto'}")
     print(f"   Images         : {len(args.images)} صورة")
     print(f"   Failed (water) : {args.failed_has_water}")
     print(f"   Failed (dry)   : {args.failed_no_water}\n")
@@ -1303,10 +1493,13 @@ if __name__ == "__main__":
 
     load_dotenv()
     ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
-    ai2 = WaterDetector.Groq(model="meta-llama/llama-4-scout-17b-16e-instruct")
+    ai2 = WaterDetector.Groq(model="siglip_leak_classifier.pt")
     image_list = [
-        "results/2511TL005663ISI_0.png"
+        "results/blob_e5312fd48b.png"
     ]
+    ai3 = WaterDetector.CLIP(model_path="siglip_leak_classifier.pt", device="cuda")
+
+
     
     '''
     # ── حفظ نسخة محسّنة من كل صورة في فولدر enhanced/ ─────────────────────────
@@ -1323,7 +1516,10 @@ if __name__ == "__main__":
         else:
             print(f"❌ فشل حفظ: {_out}")
     '''
-    res1= ai2.run(image_paths=image_list)
+
+
+
+    res1= ai3.run(image_paths=image_list)
     res = check_images_status(res1)
     print(res1)
     print(res)
