@@ -1492,10 +1492,12 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
 
     load_dotenv()
-    ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
-    ai2 = WaterDetector.Groq(model="siglip_leak_classifier.pt")
+    #ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
+    #ai2 = WaterDetector.Groq(model="siglip_leak_classifier.pt")
     image_list = [
-        "results/blob_e5312fd48b.png"
+        "results/2511TL005663ISI_0.jpg",
+        "results/2511TL005663ISI_1.jpg",
+        "results/2511TL005663ISI_2.jpg"
     ]
     ai3 = WaterDetector.CLIP(model_path="siglip_leak_classifier.pt", device="cuda")
 

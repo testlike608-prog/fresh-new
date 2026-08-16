@@ -1,6 +1,14 @@
 {
   "image_1": {
-    "answer": "Error",
-    "confidence": null
+    "answer": "No",
+    "confidence": 0.709094
+  },
+  "image_2": {
+    "answer": "No",
+    "confidence": 0.797714
+  },
+  "image_3": {
+    "answer": "No",
+    "confidence": 0.78653
   }
 }
