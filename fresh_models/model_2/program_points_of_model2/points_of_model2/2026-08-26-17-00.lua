@@ -1,0 +1,16 @@
+PTP(Homming,100,500,0)
+PTP(cam_parq,100,500,0)
+PTP(cam_relese,100,500,0)
+PTP(model2_prepoint1,100,500,0)
+Lin(model2_point1,100,500,0,0)
+--switch camera
+Lin(model2_point2,100,500,0,0)
+Lin(model2_point3,100,500,0,0)
+Lin(model2_point4,100,500,0,0)
+Lin(model2_point4_res,100,500,0,0)
+Lin(model2_point4_res2,100,500,0,0)
+Lin(model2_point5,100,500,0,0)
+Lin(model2_point4_res2,100,500,0,0)
+Lin(model2_point5_re2,100,500,0,0)
+PTP(Homming,100,500,0)
+

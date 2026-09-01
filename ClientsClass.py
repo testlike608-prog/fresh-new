@@ -360,48 +360,57 @@ class App():
 
     def program_1(self):
         log = _get_thread_logger()
-        homing  = self.get_points_from_db("water1")
-        _10kg_relif1= self.get_points_from_db("10kg_relif1")
-        _10kg_relif2= self.get_points_from_db("10kg_relif2")
-        _10kg_relif3= self.get_points_from_db("10kg_relif3")
-        _10kg_1 = self.get_points_from_db("10kg_1")
-        _10kg_2 = self.get_points_from_db("10kg_2")
-        _10kg_3 = self.get_points_from_db("10kg_3")
-        ready   = self.get_points_from_db("ready")
+        homing  = self.get_points_from_db("Homming")
+        cam_parq= self.get_points_from_db("cam_parq")
+        cam_relese= self.get_points_from_db("cam_relese")
+        model1_prepoint1= self.get_points_from_db("model1_prepoint1")
+        model1_point1 = self.get_points_from_db("model1_point1")
+        model1_point2 = self.get_points_from_db("model1_point2")
+        model1_point3 = self.get_points_from_db("model1_point3")
+        model1_point4 = self.get_points_from_db("model1_point4")
+        model1_point5   = self.get_points_from_db("model1_point5")
+        model1_point5_re   = self.get_points_from_db("model1_point5_re")
+        model1_point5_re2   = self.get_points_from_db("model1_point5_re2")
+        homming2   = self.get_points_from_db("Homming2")
+        
 
         # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
-        self.switch_camera()
-        self.robot.MoveJ(joint_pos=ready,   tool=0, user=1, vel=60, acc=100)
-        self.robot.MoveJ(joint_pos=_10kg_relif3, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=_10kg_relif2, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=_10kg_relif1, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=model1_prepoint1, tool=0, user=1, vel=100, acc=100)
         # Vision test 1
-        self._set_stage(AppStage.vision_stage(0), step=1)
-        self.robot.MoveJ(joint_pos=_10kg_1, tool=0, user=1, vel=60, acc=100)
-        time.sleep(1)
+        
+        self._set_stage(AppStage.vision_stage(1), step=1)
+        self.robot.MoveL(joint_pos=model1_point1, tool=0, user=1, vel=60, acc=100)
+        #time.sleep(1)
         img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
-        time.sleep(1)
-        self.robot.MoveJ(joint_pos=_10kg_relif1, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=_10kg_relif2, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=_10kg_relif3, tool=0, user=1, vel=100, acc=100)
-        # Vision test 2
-        #self._set_stage(AppStage.vision_stage(1), step=2)
-        #self.robot.MoveJ(joint_pos=_10kg_2, tool=0, user=1, vel=60, acc=100)
         #time.sleep(1)
-        #img1 = ct.trigger(name=self.barcode + "_1")
-        #time.sleep(1)
-        #self.robot.MoveJ(joint_pos=_10kg_relif2, tool=0, user=1, vel=60, acc=100)        
+        self.switch_camera()
+        self._set_stage(AppStage.vision_stage(2), step=2)
+        self.robot.MoveL(joint_pos=model1_point2, tool=0, user=1, vel=100, acc=100)
 
-        # Vision test 3
+        img1 = ct.trigger(name=self.barcode + "_1") 
+        self.switch_camera()
+
+        self._set_stage(AppStage.vision_stage(3), step=3)
+        self.robot.MoveL(joint_pos= model1_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = ct.trigger(name=self.barcode + "_2")
+        self._set_stage(AppStage.vision_stage(4), step=4)
+        self.robot.MoveL(joint_pos=model1_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_3")
+   
         self.switch_camera()                           # BUG-010: sync
-        self._set_stage(AppStage.vision_stage(2), step=3)
-        self.robot.MoveJ(joint_pos=ready,   tool=0, user=1, vel=100, acc=100)
-        #self.robot.MoveJ(joint_pos=_10kg_3, tool=0, user=1, vel=100, acc=100)
-        #img2 = ct.trigger(name=self.barcode + "_2")
-        #time.sleep(1)
-        #img0 = ct.trigger(name=self.barcode + "_5")
-        # Return home
-        self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+        self._set_stage(AppStage.vision_stage(5), step=5)
+        self.robot.MoveL(joint_pos=model1_point5,   tool=0, user=1, vel=100, acc=100)
+        img4 = ct.trigger(name=self.barcode + "_4")
+        self.switch_camera() 
+        self.robot.MoveL(joint_pos=model1_point5_re, tool=0, user=1, vel=100, acc=100)
+       
+        self.robot.MoveL(joint_pos=model1_point5_re2,  tool=0, user=1, vel=100, acc=100)
+
+        self.robot.MoveL(joint_pos=homming2,  tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
         # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
         self._set_stage(AppStage.REPORTING)
@@ -441,16 +450,361 @@ class App():
         log.info(f"[program_1] Done — barcode={self.barcode}  result={result}")
 
     def program_2(self):
-        pass
+        log = _get_thread_logger()
+        homing  = self.get_points_from_db("Homming")
+        cam_parq= self.get_points_from_db("cam_parq")
+        cam_relese= self.get_points_from_db("cam_relese")
+        model2_prepoint1= self.get_points_from_db("model2_prepoint1")
+        model2_point1 = self.get_points_from_db("model2_point1")
+        model2_point2 = self.get_points_from_db("model2_point2")
+        model2_point3 = self.get_points_from_db("model2_point3")
+        model2_point4 = self.get_points_from_db("model2_point4")
+        model2_point4_res = self.get_points_from_db("model2_point4_res")
+        model2_point4_res2 = self.get_points_from_db("model2_point4_res2")
+        model2_point5   = self.get_points_from_db("model2_point5")
+        model2_point5_re2   = self.get_points_from_db("model2_point5_re2")
+
+        # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
+        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=model2_prepoint1, tool=0, user=1, vel=100, acc=100)
+        # Vision test 1
+        
+        self._set_stage(AppStage.vision_stage(1), step=1)
+        self.robot.MoveL(joint_pos=model2_point1, tool=0, user=1, vel=60, acc=100)
+        #time.sleep(1)
+        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
+        #time.sleep(1)
+        self.switch_camera()
+
+        self._set_stage(AppStage.vision_stage(2), step=2)
+        self.robot.MoveL(joint_pos=model2_point2, tool=0, user=1, vel=100, acc=100)
+        img1 = ct.trigger(name=self.barcode + "_1") 
+        self._set_stage(AppStage.vision_stage(3), step=3)
+        self.robot.MoveL(joint_pos= model2_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = ct.trigger(name=self.barcode + "_2")
+        self._set_stage(AppStage.vision_stage(4), step=4)
+        self.robot.MoveL(joint_pos=model2_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_3")
+        self.robot.MoveL(joint_pos=model2_point4_res,   tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model2_point4_res2, tool=0, user=1, vel=100, acc=100)
+        self._set_stage(AppStage.vision_stage(5), step=5)
+        self.robot.MoveL(joint_pos=model2_point5,  tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_4")
+        self.robot.MoveL(joint_pos=model2_point4_res2, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model2_point5_re2, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+
+        # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
+        self._set_stage(AppStage.REPORTING)
+        image_list = [p for p in [img0] if p]
+        if not image_list:
+            log.error(f"[program_2] Camera trigger failed — no image captured for barcode={self.barcode}")
+            res    = "Error: no captured image"
+            result = "error"
+        else:
+            res    = self._ai_provider.run(image_paths=image_list)
+            result = self.check_images_status(res)
+        log.info(f"[program_2] Done — model answer — barcode={self.barcode}  result={res}")
+        ex.result_reporting(ID=self.barcode, result=result)
+
+        # Update stats
+        with self._state_lock:
+            if result == "pass":
+                self._stats["pass"]   += 1
+            elif result == "fail":
+                self._stats["fail"]   += 1
+            else:
+                self._stats["errors"] += 1
+
+        # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
+        self.robot.SetDO(self._cfg.get(key="test_done"),   1)
+        self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
+        if result == "pass":
+            self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
+            time.sleep(self._cfg.get("signal_pass_period", 0.5))
+            self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
+        elif result == "fail":
+            self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
+            time.sleep(self._cfg.get("signal_fail_period", 0.5))
+            self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
+
+        self._set_stage(AppStage.DONE)
+        log.info(f"[program_2] Done — barcode={self.barcode}  result={result}")
+
+                
 
     def program_3(self):
-        pass
+        log = _get_thread_logger()
+        homing  = self.get_points_from_db("Homming")
+        cam_parq= self.get_points_from_db("cam_parq")
+        cam_relese= self.get_points_from_db("cam_relese")
+        model3_prepoint1= self.get_points_from_db("model3_prepoint1")
+        model3_point1 = self.get_points_from_db("model3_point1")
+        model3_point2 = self.get_points_from_db("model3_point2")
+        model3_point3 = self.get_points_from_db("model3_point3")
+        model3_point4 = self.get_points_from_db("model3_point4")
+        model3_point4_res = self.get_points_from_db("model3_point4_res")
+        model3_point4_res2 = self.get_points_from_db("model3_point4_res2")
+        model3_point5   = self.get_points_from_db("model3_point5")
+        model3_point5_res   = self.get_points_from_db("model3_point5_res")
+        model3_point6   = self.get_points_from_db("model3_point6")
+
+        # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
+        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=model3_prepoint1, tool=0, user=1, vel=100, acc=100)
+        # Vision test 1
+        
+        self._set_stage(AppStage.vision_stage(1), step=1)
+        self.robot.MoveL(joint_pos=model3_point1, tool=0, user=1, vel=60, acc=100)
+        time.sleep(1)
+        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
+        time.sleep(1)
+        self.switch_camera()
+
+        self._set_stage(AppStage.vision_stage(2), step=2)
+        self.robot.MoveL(joint_pos=model3_point2, tool=0, user=1, vel=100, acc=100)
+        img1 = ct.trigger(name=self.barcode + "_1") 
+        self._set_stage(AppStage.vision_stage(3), step=3)
+        self.robot.MoveL(joint_pos= model3_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = ct.trigger(name=self.barcode + "_2")
+        self._set_stage(AppStage.vision_stage(4), step=4)
+        self.robot.MoveL(joint_pos=model3_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_3")
+        self.robot.MoveL(joint_pos=model3_point4_res,   tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model3_point4_res2, tool=0, user=1, vel=100, acc=100)
+        self._set_stage(AppStage.vision_stage(5), step=5)
+        self.robot.MoveL(joint_pos=model3_point5,  tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_4")
+        self._set_stage(AppStage.vision_stage(6), step=6)
+        self.robot.MoveL(joint_pos=model3_point6, tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_5")
+        self.robot.MoveL(joint_pos=model3_point5, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model3_point4_res2, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model3_point5_res, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+
+        # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
+        self._set_stage(AppStage.REPORTING)
+        image_list = [p for p in [img0] if p]
+        if not image_list:
+            log.error(f"[program_3] Camera trigger failed — no image captured for barcode={self.barcode}")
+            res    = "Error: no captured image"
+            result = "error"
+        else:
+            res    = self._ai_provider.run(image_paths=image_list)
+            result = self.check_images_status(res)
+        log.info(f"[program_3] Done — model answer — barcode={self.barcode}  result={res}")
+        ex.result_reporting(ID=self.barcode, result=result)
+
+        # Update stats
+        with self._state_lock:
+            if result == "pass":
+                self._stats["pass"]   += 1
+            elif result == "fail":
+                self._stats["fail"]   += 1
+            else:
+                self._stats["errors"] += 1
+
+        # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
+        self.robot.SetDO(self._cfg.get(key="test_done"),   1)
+        self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
+        if result == "pass":
+            self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
+            time.sleep(self._cfg.get("signal_pass_period", 0.5))
+            self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
+        elif result == "fail":
+            self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
+            time.sleep(self._cfg.get("signal_fail_period", 0.5))
+            self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
+
+        self._set_stage(AppStage.DONE)
+        log.info(f"[program_3] Done — barcode={self.barcode}  result={result}")
+        
 
     def program_4(self):
-        pass
+        log = _get_thread_logger()
+        homing  = self.get_points_from_db("Homming")
+        cam_parq= self.get_points_from_db("cam_parq")
+        cam_relese= self.get_points_from_db("cam_relese")
+        model4_prepoint1= self.get_points_from_db("model4_prepoint1")
+        model4_point1 = self.get_points_from_db("model4_point1")
+        model4_point2 = self.get_points_from_db("model4_point2")
+        model4_point3 = self.get_points_from_db("model4_point3")
+        model4_point4 = self.get_points_from_db("model4_point4")
+        model4_point4_res = self.get_points_from_db("model4_point4_res")
+        model4_point4_res2 = self.get_points_from_db("model4_point4_res2")
+        model4_point4_res3 = self.get_points_from_db("model4_point4_res3")
+        model4_point4_res4 = self.get_points_from_db("model4_point4_res4")
+        model4_point5   = self.get_points_from_db("model4_point5")
+
+        # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
+        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=model4_prepoint1, tool=0, user=1, vel=100, acc=100)
+        # Vision test 1
+        
+        self._set_stage(AppStage.vision_stage(1), step=1)
+        self.robot.MoveL(joint_pos=model4_point1, tool=0, user=1, vel=60, acc=100)
+        time.sleep(1)
+        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
+        self._set_stage(AppStage.vision_stage(2), step=2)
+        self.robot.MoveL(joint_pos=model4_point2, tool=0, user=1, vel=100, acc=100)
+        img1 = ct.trigger(name=self.barcode + "_1") 
+        self._set_stage(AppStage.vision_stage(3), step=3)
+        self.robot.MoveL(joint_pos= model4_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = ct.trigger(name=self.barcode + "_2")
+        self._set_stage(AppStage.vision_stage(4), step=4)
+        self.robot.MoveL(joint_pos=model4_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_3")
+        self.robot.MoveL(joint_pos=model4_point4_res,   tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model4_point4_res2, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model4_point4_res3, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model4_point4_res4, tool=0, user=1, vel=100, acc=100)
+        self._set_stage(AppStage.vision_stage(5), step=5)
+        self.robot.MoveL(joint_pos=model4_point5,  tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_4")
+        self.robot.MoveL(joint_pos=model4_point4_res4, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model4_point4_res3, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model4_point4_res2, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=model4_prepoint1, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+
+        # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
+        self._set_stage(AppStage.REPORTING)
+        image_list = [p for p in [img0] if p]
+        if not image_list:
+            log.error(f"[program_4] Camera trigger failed — no image captured for barcode={self.barcode}")
+            res    = "Error: no captured image"
+            result = "error"
+        else:
+            res    = self._ai_provider.run(image_paths=image_list)
+            result = self.check_images_status(res)
+        log.info(f"[program_4] Done — model answer — barcode={self.barcode}  result={res}")
+        ex.result_reporting(ID=self.barcode, result=result)
+
+        # Update stats
+        with self._state_lock:
+            if result == "pass":
+                self._stats["pass"]   += 1
+            elif result == "fail":
+                self._stats["fail"]   += 1
+            else:
+                self._stats["errors"] += 1
+
+        # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
+        self.robot.SetDO(self._cfg.get(key="test_done"),   1)
+        self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
+        if result == "pass":
+            self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
+            time.sleep(self._cfg.get("signal_pass_period", 0.5))
+            self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
+        elif result == "fail":
+            self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
+            time.sleep(self._cfg.get("signal_fail_period", 0.5))
+            self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
+
+        self._set_stage(AppStage.DONE)
+        log.info(f"[program_4] Done — barcode={self.barcode}  result={result}")
 
     def program_5(self):
-        pass
+        log = _get_thread_logger()
+        homing  = self.get_points_from_db("Homming")
+        cam_parq= self.get_points_from_db("cam_parq")
+        cam_relese= self.get_points_from_db("cam_relese")
+        model5_prepoint1= self.get_points_from_db("model5_prepoint1")
+        model5_point1 = self.get_points_from_db("model5_point1")
+        model5_point2 = self.get_points_from_db("model5_point2")
+        model5_point2_res = self.get_points_from_db("model5_point2_res")
+        model5_point3 = self.get_points_from_db("model5_point3")
+        model5_point4 = self.get_points_from_db("model5_point4")
+        model5_point4_res = self.get_points_from_db("model5_point4_res")
+        model5_point4_res2 = self.get_points_from_db("model5_point4_res2")
+        model5_point5 = self.get_points_from_db("model5_point5")
+        model5_point6   = self.get_points_from_db("model5_point6")
+        model5_point7   = self.get_points_from_db("model5_point7")
+
+
+        # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
+        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=model5_prepoint1, tool=0, user=1, vel=100, acc=100)
+        # Vision test 1
+        
+        self._set_stage(AppStage.vision_stage(1), step=1)
+        self.robot.MoveL(joint_pos=model5_point1, tool=0, user=1, vel=60, acc=100)
+        time.sleep(1)
+        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
+        self._set_stage(AppStage.vision_stage(2), step=2)
+        self.robot.MoveL(joint_pos=model5_point2, tool=0, user=1, vel=100, acc=100)
+        img1 = ct.trigger(name=self.barcode + "_1") 
+        self.robot.MoveL(joint_pos=model5_point2_res, tool=0, user=1, vel=100, acc=100)
+        self._set_stage(AppStage.vision_stage(3), step=3)
+        self.robot.MoveL(joint_pos= model5_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = ct.trigger(name=self.barcode + "_2")
+        self._set_stage(AppStage.vision_stage(4), step=4)
+        self.robot.MoveL(joint_pos=model5_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_3")
+        self.robot.MoveL(joint_pos=model5_point4_res,   tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model5_point4_res2, tool=0, user=1, vel=100, acc=100)
+        self._set_stage(AppStage.vision_stage(5), step=5)
+        self.robot.MoveL(joint_pos=model5_point5,  tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_4")
+        self._set_stage(AppStage.vision_stage(6), step=6)
+        self.robot.MoveL(joint_pos=model5_point6, tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_5")
+        self._set_stage(AppStage.vision_stage(7), step=6)
+        self.robot.MoveL(joint_pos=model5_point7, tool=0, user=1, vel=100, acc=100)
+        img3 = ct.trigger(name=self.barcode + "_6")
+        self.robot.MoveL(joint_pos=model5_point5, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveL(joint_pos=model5_point4_res2, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=model5_point4_res, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=model5_prepoint1, tool=0, user=1, vel=100, acc=100)
+        self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+
+        # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
+        self._set_stage(AppStage.REPORTING)
+        image_list = [p for p in [img0] if p]
+        if not image_list:
+            log.error(f"[program_5] Camera trigger failed — no image captured for barcode={self.barcode}")
+            res    = "Error: no captured image"
+            result = "error"
+        else:
+            res    = self._ai_provider.run(image_paths=image_list)
+            result = self.check_images_status(res)
+        log.info(f"[program_5] Done — model answer — barcode={self.barcode}  result={res}")
+        ex.result_reporting(ID=self.barcode, result=result)
+
+        # Update stats
+        with self._state_lock:
+            if result == "pass":
+                self._stats["pass"]   += 1
+            elif result == "fail":
+                self._stats["fail"]   += 1
+            else:
+                self._stats["errors"] += 1
+
+        # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
+        self.robot.SetDO(self._cfg.get(key="test_done"),   1)
+        self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
+        if result == "pass":
+            self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
+            time.sleep(self._cfg.get("signal_pass_period", 0.5))
+            self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
+        elif result == "fail":
+            self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
+            time.sleep(self._cfg.get("signal_fail_period", 0.5))
+            self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
+
+        self._set_stage(AppStage.DONE)
+        log.info(f"[program_5] Done — barcode={self.barcode}  result={result}")
+
 
     # ── Sequence ──────────────────────────────────────────────────────
 
@@ -591,7 +945,7 @@ class App():
 
             # اتصل بالروبوت
             self.robot = RPC(self.robot_ip)
-            homing = self.get_points_from_db("water1")
+            homing = self.get_points_from_db("Homming")
             self.robot.MoveJ(joint_pos=homing, tool=0, user=1, vel=100, acc=100)
             self.robot.SetDO(self._cfg.get(key="test_done"), 1)
 
@@ -677,7 +1031,7 @@ class App():
 
         # BUG-050: مسح queue الباركودات القديمة
         sc.reset_queue()
-
+        sc.start_listener()
         self._main_thread = threading.Thread(
             target=self._run_main,
             name="app-main",
@@ -700,6 +1054,7 @@ class App():
         self._save_session_stats()   # حفظ الإحصائيات قبل الإيقاف
         self._running = False        # فوراً — مش نستنى الـ thread finally
         self._stop_app.set()
+        sc.stop_listener()
         if wait and self._main_thread is not None:
             self._main_thread.join(timeout=timeout)
 

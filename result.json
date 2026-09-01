@@ -1,14 +1,18 @@
 {
   "image_1": {
     "answer": "No",
-    "confidence": 0.709094
+    "confidence": 0.994703
   },
   "image_2": {
-    "answer": "No",
-    "confidence": 0.797714
+    "answer": "Yes",
+    "confidence": 0.571915
   },
   "image_3": {
     "answer": "No",
-    "confidence": 0.78653
+    "confidence": 0.995856
+  },
+  "image_4": {
+    "answer": "No",
+    "confidence": 0.972698
   }
 }

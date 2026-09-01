@@ -1490,38 +1490,40 @@ def check_images_status(images_data):
 
 if __name__ == "__main__":
     from dotenv import load_dotenv
-
-    load_dotenv()
-    #ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
-    #ai2 = WaterDetector.Groq(model="siglip_leak_classifier.pt")
-    image_list = [
-        "results/2511TL005663ISI_0.jpg",
-        "results/2511TL005663ISI_1.jpg",
-        "results/2511TL005663ISI_2.jpg"
-    ]
-    ai3 = WaterDetector.CLIP(model_path="siglip_leak_classifier.pt", device="cuda")
-
-
-    
-    '''
-    # ── حفظ نسخة محسّنة من كل صورة في فولدر enhanced/ ─────────────────────────
-    enhanced_dir = "enhanced"
-    os.makedirs(enhanced_dir, exist_ok=True)
-    for _p in image_list:
-        _img = cv2.imread(_p)
-        if _img is None:
-            print(f"⚠️ متقريتش الصورة: {_p}")
-            continue
-        _out = os.path.join(enhanced_dir, os.path.basename(_p))
-        if cv2.imwrite(_out, ai2.enhance_image(_img)):
-            print(f"✅ الصورة المحسّنة اتحفظت: {_out}")
-        else:
-            print(f"❌ فشل حفظ: {_out}")
-    '''
+    ai3 = WaterDetector.CLIP(model_path="water_siglip_best_loss_v4.pth", device="cuda")
+    while (1):
+        load_dotenv()
+        #ai = WaterDetector.Gemini(model="gemini-2.5-flash-lite")
+        #ai2 = WaterDetector.Groq(model="siglip_leak_classifier.pt")
+        image_list = [
+            "results/2511TL005663ISI_0.jpg",
+            "results/2511TL005663ISI_1.jpg",
+            "results/2511TL005663ISI_2.jpg",
+            "result/test.jpg"
+        ]
+        
 
 
+        
+        '''
+        # ── حفظ نسخة محسّنة من كل صورة في فولدر enhanced/ ─────────────────────────
+        enhanced_dir = "enhanced"
+        os.makedirs(enhanced_dir, exist_ok=True)
+        for _p in image_list:
+            _img = cv2.imread(_p)
+            if _img is None:
+                print(f"⚠️ متقريتش الصورة: {_p}")
+                continue
+            _out = os.path.join(enhanced_dir, os.path.basename(_p))
+            if cv2.imwrite(_out, ai2.enhance_image(_img)):
+                print(f"✅ الصورة المحسّنة اتحفظت: {_out}")
+            else:
+                print(f"❌ فشل حفظ: {_out}")
+        '''
 
-    res1= ai3.run(image_paths=image_list)
-    res = check_images_status(res1)
-    print(res1)
-    print(res)
+
+
+        res1= ai3.run(image_paths=image_list)
+        res = check_images_status(res1)
+        print(res1)
+        print(res)
