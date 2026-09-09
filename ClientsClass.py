@@ -949,7 +949,25 @@ class App():
             self.robot.MoveJ(joint_pos=homing, tool=0, user=1, vel=100, acc=100)
             self.robot.SetDO(self._cfg.get(key="test_done"), 1)
 
-            last = 0
+            # BUG-FIX: كنا بنعمل last = 0 ثابت هنا، فلو DI0 كانت أصلاً 1 وقت
+            # الـ Start (مش ترانزيشن حقيقي، هي كانت طالعة من الأساس)، أول
+            # قراءة في اللوب تحت كانت بتتفسّر غلط إنها positive edge (0→1)
+            # وتشغّل السيكوانس فورًا من غير أي إشارة حقيقية جديدة.
+            # الحل: ناخد قراءة أولية حقيقية من DI0 هنا ونخلي last = القيمة
+            # دي (مش صفر ثابت) — فبعد كده منطق الـ positive edge (DI0==1 and
+            # last==0) هيفضل شغال صح زي ما هو تمامًا، وهيبدأ بس لما فعلاً
+            # تحصل نقلة من 0 لـ 1 بعد اللحظة دي.
+            try:
+                ret = self.robot.GetDI(self._cfg.get(key="input_trigger"), 0)
+                if isinstance(ret, (list, tuple)):
+                    last = int(ret[1]) if len(ret) > 1 else int(ret[0])
+                else:
+                    last = int(ret) if ret is not None else 0
+            except Exception as e:
+                log.warning(f"[App] Initial GetDI read failed: {e} — defaulting last=0")
+                last = 0
+            log.info(f"[App] Initial DI0 state = {last} (last synced to avoid false trigger on start)")
+
             self._set_stage(AppStage.IDLE)
             log.info("[App] Ready — waiting for trigger DI0")
 
