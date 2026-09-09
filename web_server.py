@@ -222,28 +222,41 @@ async def lifespan(app: FastAPI):
     sys.stdout = _StreamToLogger(logging.getLogger("stdout"), logging.INFO)
     sys.stderr = _StreamToLogger(logging.getLogger("stderr"), logging.WARNING)
 
-    # 3. Create App instance
-    try:
-        app_ref = cc.App()
-        debug_monitor.start(app_ref=app_ref, interval=2.0, force=True, verbose_console=False)
-        log.info("=== web_server: App created (STOPPED) — press Start in dashboard ===")
-    except Exception as e:
-        app_init_error = str(e)
-        log.exception(f"Could not create App: {e}")
+    # 3. Create App instance in the background (BUG-FIX: camera + AI-model
+    #    loading (cv2.VideoCapture / torch+CUDA+CLIP weights) can take several
+    #    seconds. Doing this before `yield` blocked the whole HTTP server from
+    #    accepting connections, which made the dashboard feel stuck/slow to
+    #    open. We now let uvicorn start accepting requests immediately and
+    #    finish the heavy init in a background task; app_ref stays None (the
+    #    dashboard already handles that state) until it's ready.
+    async def _init_app_ref():
+        global app_ref, app_init_error
+        try:
+            t0 = time.time()
+            new_app = await asyncio.to_thread(cc.App)
+            app_ref = new_app
+            debug_monitor.start(app_ref=app_ref, interval=2.0, force=True, verbose_console=False)
+            log.info(f"=== web_server: App created (STOPPED) in {time.time() - t0:.1f}s — press Start in dashboard ===")
+        except Exception as e:
+            app_init_error = str(e)
+            log.exception(f"Could not create App: {e}")
+
+    init_task = asyncio.create_task(_init_app_ref(), name="app-init")
 
     # 4. Start background async tasks
     state_task = asyncio.create_task(_state_broadcaster(), name="state-broadcaster")
     log_task   = asyncio.create_task(_log_broadcaster(),   name="log-broadcaster")
 
-    log.info("=== web_server: listening on http://0.0.0.0:8000 ===")
+    log.info("=== web_server: listening on http://0.0.0.0:8000 (dashboard ready; camera/AI loading in background) ===")
 
     yield  # ← server runs here ←
 
     # 5. Graceful shutdown
     state_task.cancel()
     log_task.cancel()
+    init_task.cancel()
     try:
-        await asyncio.gather(state_task, log_task, return_exceptions=True)
+        await asyncio.gather(state_task, log_task, init_task, return_exceptions=True)
     except Exception:
         pass
 
