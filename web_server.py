@@ -157,6 +157,7 @@ async def ping(sid):
 # ════════════════════════════════════════════════════════════════════
 app_ref: Optional[cc.App] = None
 app_init_error: Optional[str] = None
+_app_init_task: Optional[asyncio.Task] = None   # background camera+AI init task (see lifespan)
 
 
 # ════════════════════════════════════════════════════════════════════
@@ -233,15 +234,18 @@ async def lifespan(app: FastAPI):
         global app_ref, app_init_error
         try:
             t0 = time.time()
+            log.info("=== web_server: initializing camera + AI model (كاميرا/موديل الـ AI بيتحمّلوا — قد ياخد كذا ثانية) ===")
             new_app = await asyncio.to_thread(cc.App)
             app_ref = new_app
             debug_monitor.start(app_ref=app_ref, interval=2.0, force=True, verbose_console=False)
-            log.info(f"=== web_server: App created (STOPPED) in {time.time() - t0:.1f}s — press Start in dashboard ===")
+            log.info(f"=== web_server: App created (STOPPED) in {time.time() - t0:.1f}s — جاهز، اضغط Start ===")
         except Exception as e:
             app_init_error = str(e)
             log.exception(f"Could not create App: {e}")
 
-    init_task = asyncio.create_task(_init_app_ref(), name="app-init")
+    global _app_init_task
+    _app_init_task = asyncio.create_task(_init_app_ref(), name="app-init")
+    init_task = _app_init_task
 
     # 4. Start background async tasks
     state_task = asyncio.create_task(_state_broadcaster(), name="state-broadcaster")
@@ -307,9 +311,18 @@ async def get_state():
 @app.post("/api/start")
 async def start_app():
     """يشغّل البرنامج (non-blocking — App.start() يرجع فوراً).
-    start() هي اللي بتتحكم في race conditions — مش محتاجين نعمل check هنا."""
+    start() هي اللي بتتحكم في race conditions — مش محتاجين نعمل check هنا.
+
+    BUG-FIX: لو المستخدم دوس Start بدري قبل ما الكاميرا/موديل الـ AI
+    يخلصوا تحميل (بيحصل في background عند تشغيل السيرفر)، كان بيرجع
+    error فورًا. دلوقتي بننتظر نفس الـ init task يخلص (لو لسه شغال)
+    بدل ما نرمي error، فالمستخدم مضطرش "يصبر شوية" يدوي قبل الضغط."""
+    global app_ref
     if app_ref is None:
-        raise HTTPException(500, app_init_error or "App not initialised")
+        if _app_init_task is not None and not _app_init_task.done():
+            await _app_init_task   # ينتظر التهيئة تخلص بدل ما يرمي error فورًا
+        if app_ref is None:
+            raise HTTPException(500, app_init_error or "App not initialised")
     ok = await asyncio.to_thread(app_ref.start)
     if ok is False:
         raise HTTPException(503, "Previous run thread is still stopping — try again in a moment")

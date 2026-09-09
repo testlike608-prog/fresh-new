@@ -776,13 +776,33 @@ function toggleTheme() {
 
 /* ─── Start / Stop ───────────────────────────────────────── */
 async function doStart() {
-  document.getElementById('btn-start').disabled = true;
-  document.getElementById('btn-stop').disabled  = true;
+  const startBtn = document.getElementById('btn-start');
+  const stopBtn  = document.getElementById('btn-stop');
+  const origText = startBtn.textContent;
+  startBtn.disabled = true;
+  stopBtn.disabled   = true;
+  // BUG-FIX: أول ما السيرفر يفتح، الكاميرا + موديل الـ AI بيتحمّلوا في
+  // الخلفية (ممكن ياخد كذا ثانية). لو المستخدم دوس Start قبل ما يخلصوا،
+  // السيرفر دلوقتي بينتظرهم بدل ما يرمي error — فنوضح ده في الزرار
+  // بدل ما يفضل معلّق من غير تفسير.
+  startBtn.textContent = '⏳ جاري التجهيز (كاميرا / AI)...';
   try {
     const r = await fetch('/api/start', {method:'POST'});
     const d = await r.json();
-    if (!d.ok && !d.msg) alert('فشل التشغيل — راجع الـ logs');
-  } catch(e) { alert('خطأ: ' + e); }
+    if (!r.ok) {
+      alert('فشل التشغيل: ' + (d.detail || 'راجع الـ logs'));
+      startBtn.disabled = false;
+      stopBtn.disabled  = true;
+    } else if (!d.ok && !d.msg) {
+      alert('فشل التشغيل — راجع الـ logs');
+      startBtn.disabled = false;
+    }
+  } catch(e) {
+    alert('خطأ: ' + e);
+    startBtn.disabled = false;
+  } finally {
+    startBtn.textContent = origText;
+  }
 }
 async function doStop() {
   document.getElementById('btn-start').disabled = true;
