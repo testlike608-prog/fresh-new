@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0",
     "created_at": "",
-    "modified_at": "2026-08-30T11:55:32.200006"
+    "modified_at": "2026-09-24T14:52:12.583644"
   },
   "password_hash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
   "cobot_ip": "192.168.57.2",
@@ -18,7 +18,7 @@
   "AI_Agent": "clip",
   "ai_model": "meta-llama/llama-4-scout-17b-16e-instruct",
   "ai_enhancement": false,
-  "clip_model_path": "siglip_leak_classifier.pt",
+  "clip_model_path": "water_siglip_best_loss_v4.pth",
   "clip_device": "cuda",
   "watchdog_interval": 2.0,
   "reconnect_check_interval": 3.0,

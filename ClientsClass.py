@@ -812,8 +812,8 @@ class App():
         log = _get_thread_logger()
 
         # اتحرك لنقطة المسح — BUG-013: "CamScan" → "cam" (اسم موجود فعلاً في DB)
-        barcode_point = self.get_points_from_db("CamScan")
-        self.robot.MoveJ(barcode_point, 0, 1, vel=100, acc=100)
+        # barcode_point = self.get_points_from_db("CamScan")
+        # self.robot.MoveJ(barcode_point, 0, 1, vel=100, acc=100)
 
         # شغّل وضع القراءة
         scan_mode = self._cfg.get(key="scan_mode")
