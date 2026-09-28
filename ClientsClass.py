@@ -318,10 +318,13 @@ class App():
         يرجع None لو البرنامج وقف (self._stop_app.is_set()).
         """
         log = _get_thread_logger()
+        log.info("Getting barcode")
         while not self._stop_app.is_set():
             try:
-                barcode = sc.queue_barcode.get(timeout=0.5)
+                log.info("Try to get barcode")
+                barcode = sc.queue_barcode.get()
                 sc.queue_barcode.task_done()
+                log.info(f"the barcode{barcode}")
                 return barcode
             except queue.Empty:
                 continue
@@ -810,7 +813,7 @@ class App():
 
     def start_sequence(self):
         log = _get_thread_logger()
-
+        log.info("enter the equance ")
         # اتحرك لنقطة المسح — BUG-013: "CamScan" → "cam" (اسم موجود فعلاً في DB)
         # barcode_point = self.get_points_from_db("CamScan")
         # self.robot.MoveJ(barcode_point, 0, 1, vel=100, acc=100)
@@ -822,8 +825,10 @@ class App():
         elif scan_mode == "manual":
             sc.start_listener()
 
+        
+        log.info(f"scanner is started")
         # انتظر الباركود
-        self._set_stage(AppStage.IDLE)
+        #self._set_stage(AppStage.IDLE)
         self.barcode = self.get_barcode_from_scanner()
 
         if self._stop_app.is_set() or self.barcode is None:
@@ -974,6 +979,7 @@ class App():
             while not self._stop_app.is_set():
                 try:
                     ret = self.robot.GetDI(self._cfg.get(key="input_trigger"), 0)
+                    log.info(f"input is {ret}")
                     if isinstance(ret, (list, tuple)):
                         DI0 = int(ret[1]) if len(ret) > 1 else int(ret[0])
                     else:
@@ -1049,7 +1055,7 @@ class App():
 
         # BUG-050: مسح queue الباركودات القديمة
         sc.reset_queue()
-        sc.start_listener()
+        #sc.start_listener()
         self._main_thread = threading.Thread(
             target=self._run_main,
             name="app-main",

@@ -18,7 +18,10 @@ from barcode_utils import normalize_barcode
 
 # ─── إعدادات ─────────────────────────────────────────────────────────────────
 # جزء من اسم الإسكانر (شغّل: python3 scanner.py --list علشان تعرفه)
-SCANNER_NAME = os.environ.get("SCANNER_NAME", "USB Adapter USB Device")
+SCANNER_NAME = os.environ.get("SCANNER_NAME", "")
+SCANNER_VENDOR_ID = 0x05e0
+SCANNER_PRODUCT_ID = 0x1200
+
 # True = الإسكانر يبقى حصري للبرنامج (الباركود ما يتكتبش في أي شباك تاني)
 GRAB_DEVICE = True
 
@@ -65,17 +68,34 @@ _ENTER_KEYS = {ecodes.KEY_ENTER, ecodes.KEY_KPENTER}
 
 
 def _find_scanner():
-    """يدور على جهاز الإسكانر بالاسم."""
-    if not SCANNER_NAME:
-        raise RuntimeError(
-            "SCANNER_NAME مش متحدد — شغّل: python3 scanner.py --list"
-        )
+    """يدور على Symbol barcode scanner باستخدام USB VID/PID."""
     for path in list_devices():
-        dev = InputDevice(path)
-        if SCANNER_NAME.lower() in dev.name.lower():
-            return dev
-        dev.close()
+        try:
+            dev = InputDevice(path)
+
+            # evdev device infoaa
+            info = dev.info
+
+            if (
+                info.vendor == SCANNER_VENDOR_ID
+                and info.product == SCANNER_PRODUCT_ID
+            ):
+                return dev
+
+            # fallback بالاسم لو احتجناه
+            if SCANNER_NAME and SCANNER_NAME.lower() in dev.name.lower():
+                return dev
+
+            dev.close()
+
+        except Exception as e:
+            try:
+                dev.close()
+            except Exception:
+                pass
+
     return None
+
 
 
 def _handle_barcode():
