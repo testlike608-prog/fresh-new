@@ -1,71 +1,91 @@
-import keyboard
 import time
 import queue
 import threading
+import logging
 
 from barcode_utils import normalize_barcode
 
-# ─── Public API (للاستخدام من باقي الموديولز) ────────────────────────────────
+log = logging.getLogger("scanner")
+
+# --- Keyboard: optional ---
+# Works on Linux (root) and Windows (host).
+# Inside Docker on Windows without usbipd-win: fails gracefully with warning only.
+try:
+    import keyboard
+    _KEY_DOWN = keyboard.KEY_DOWN
+    _KEYBOARD_AVAILABLE = True
+except Exception as _kb_err:
+    keyboard = None          # type: ignore
+    _KEY_DOWN = "down"
+    _KEYBOARD_AVAILABLE = False
+    log.warning(
+        "keyboard library unavailable (%s) -- "
+        "HID scanner disabled, use camera scanner or manual input",
+        _kb_err
+    )
+
+# --- Public API ---
 queue_barcode = queue.Queue()
 flag_barcode = False
 
-# ─── Internal state ──────────────────────────────────────────────────────────
+# --- Internal state ---
 _recorded_keys = []
 _listener_started = False
 _listener_lock = threading.Lock()
-_hook_ref = None      # مرجع الـ hook المسجل — لإلغاء تسجيله بدقة
+_hook_ref = None
 
-last_barcode = None  # لتخزين آخر
+last_barcode = None
 
 
 def _on_key_event(e):
-    """Callback اللي بيتنادى مع كل ضغطة على الكيبورد."""
+    """Called on every key event from the barcode scanner (HID keyboard mode)."""
     global flag_barcode, last_barcode
 
-    if e.event_type == keyboard.KEY_DOWN:
-        if e.name == 'enter':  # عادة الإسكانر يرسل زر Enter بعد قراءة الباركود
+    if e.event_type == _KEY_DOWN:
+        if e.name == 'enter':
             raw = "".join(_recorded_keys)
             _recorded_keys.clear()
             if raw:
                 barcode = normalize_barcode(raw)
-                if not barcode:
-                    pass  # فضي بعد الـ normalize — تجاهل
-                #elif barcode == last_barcode:
-                    #print(f"تم قراءة نفس الباركود مرة أخرى: {barcode} — تجاهل")
-                else:
+                if barcode:
                     if raw != barcode:
-                        print(f"QR→SN: {raw!r}  →  {barcode!r}")
+                        log.info("QR->SN: %r -> %r", raw, barcode)
                     queue_barcode.put(barcode)
                     last_barcode = barcode
                     flag_barcode = True
-                    print(f"تمت قراءة الباركود: {barcode}")
-        elif len(e.name) == 1:  # لتجاهل أزرار زي Shift و CapsLock
+                    log.info("Barcode scanned: %s", barcode)
+        elif len(e.name) == 1:
             _recorded_keys.append(e.name)
 
 
 def start_listener():
-    """تشغيل الـ keyboard hook في الباك جراوند (مش blocking)."""
+    """Start keyboard hook in background thread (non-blocking)."""
     global _listener_started, _hook_ref
+    if not _KEYBOARD_AVAILABLE:
+        log.warning("HID scanner disabled -- keyboard not available on this platform")
+        return
     with _listener_lock:
         if _listener_started:
             return
         try:
             _hook_ref = keyboard.hook(_on_key_event)
             _listener_started = True
-            print("Scanner listener started — waiting for barcode...")
-        except Exception as e:
-            print(f"⚠ Scanner listener could not start: {e}")
+            log.info("Scanner listener started -- waiting for barcode...")
+        except Exception as exc:
+            log.warning("Scanner listener could not start: %s", exc)
 
 
 def stop_listener():
-    """إيقاف الـ keyboard hook — بيشيل الـ hook بتاعنا بس."""
+    """Stop keyboard hook (only our hook, not all hooks)."""
     global _listener_started, _hook_ref
+    if not _KEYBOARD_AVAILABLE:
+        return
     with _listener_lock:
         if not _listener_started:
             return
         try:
             if _hook_ref is not None:
-                keyboard.unhook(_hook_ref)   # BUG-022: unhook بتاعنا بس
+                keyboard.unhook(_hook_ref)
                 _hook_ref = None
         except Exception:
             pass
@@ -73,13 +93,12 @@ def stop_listener():
 
 
 def is_listener_running() -> bool:
-    """فانكشن عامة بتحل محل الوصول المباشر لـ _listener_started."""
     with _listener_lock:
         return _listener_started
 
 
 def reset_queue():
-    """تصفير الكيو والعلم قبل عملية فحص جديدة."""
+    """Clear barcode queue and flag before a new inspection cycle."""
     global flag_barcode
     flag_barcode = False
     while not queue_barcode.empty():
@@ -89,10 +108,18 @@ def reset_queue():
             break
 
 
-# ─── Standalone mode (لو شغلت الملف لوحده للاختبار) ─────────────────────────
+# --- Standalone test ---
 if __name__ == "__main__":
-    print("في انتظار قراءة الباركود (سيتم التقاطه ككيبورد)...")
-    print("اضغط ESC لإيقاف البرنامج.")
+    logging.basicConfig(level=logging.INFO)
+    print("Waiting for barcode (HID keyboard mode)...")
+    print("Press Ctrl+C to stop.")
     start_listener()
-    keyboard.wait('esc')
+    try:
+        if _KEYBOARD_AVAILABLE:
+            keyboard.wait('esc')
+        else:
+            while True:
+                time.sleep(1)
+    except KeyboardInterrupt:
+        pass
     stop_listener()
