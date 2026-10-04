@@ -106,6 +106,7 @@ input,select,textarea{font-family:inherit}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:14px;font-size:12px;font-weight:700;letter-spacing:.5px}
 .badge-running{background:rgba(16,185,129,.12);color:var(--success);border:1px solid var(--success)}
 .badge-stopped{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid var(--danger)}
+.badge-busy{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid #f59e0b}
 /* ═══════════════════════════════════════════════════════
    Connection cards
 ═══════════════════════════════════════════════════════ */
@@ -758,13 +759,16 @@ async function doStart() {
   try {
     const r = await fetch('/api/start', {method:'POST'});
     const d = await r.json();
-    if (!d.ok && !d.msg) alert('فشل التشغيل — راجع الـ logs');
+    if (!r.ok || !d.ok) alert(d.detail || 'فشل التشغيل — راجع الـ logs');
   } catch(e) { alert('خطأ: ' + e); }
 }
 async function doStop() {
   document.getElementById('btn-start').disabled = true;
   document.getElementById('btn-stop').disabled  = true;
-  try { await fetch('/api/stop', {method:'POST'}); } catch(e){}
+  try {
+    const r = await fetch('/api/stop', {method:'POST'});
+    if (!r.ok) { const d = await r.json(); alert(d.detail || 'Stop فشل — راجع الـ logs'); }
+  } catch(e){}
 }
 
 /* ─── Reset Stats ────────────────────────────────────────── */
@@ -795,16 +799,24 @@ function openResultsFile() { window.open('/api/reports/file','_blank'); }
 /* ─── Render state ───────────────────────────────────────── */
 function renderState(s) {
   const running = !!s.is_running;
+  const rs = s.run_state || (running ? 'RUNNING' : 'STOPPED');
 
-  // Running badge
+  // Running badge — STARTING / RUNNING / STOPPING / STOPPED
+  const RS = {
+    STARTING: ['badge badge-busy',    '⏳ STARTING', 'var(--warning, #f59e0b)', 'بيفتح الكاميرا والكوبوت...'],
+    RUNNING:  ['badge badge-running', '▶ RUNNING',  'var(--success)',          'شغّال — ينتظر إشارة DI0'],
+    STOPPING: ['badge badge-busy',    '⏳ STOPPING', 'var(--warning, #f59e0b)', 'بيقفل الكاميرا والكوبوت...'],
+    STOPPED:  ['badge badge-stopped', '⏹ STOPPED',  'var(--danger)',           s.last_error ? ('متوقف — ' + s.last_error) : 'متوقف — اضغط Start'],
+  }[rs] || ['badge badge-stopped', rs, 'var(--danger)', ''];
   const badge = document.getElementById('running-badge');
   const sub   = document.getElementById('running-sub');
-  badge.className  = running ? 'badge badge-running' : 'badge badge-stopped';
-  badge.textContent= running ? '▶ RUNNING' : '⏹ STOPPED';
-  sub.style.color  = running ? 'var(--success)' : 'var(--danger)';
-  sub.textContent  = running ? 'شغّال — ينتظر إشارة DI0' : 'متوقف — اضغط Start';
-  document.getElementById('btn-start').disabled = running;
-  document.getElementById('btn-stop').disabled  = !running;
+  badge.className  = RS[0];
+  badge.textContent= RS[1];
+  sub.style.color  = RS[2];
+  sub.textContent  = RS[3];
+  // Start متاح بس لما كل حاجة اتقفلت فعلاً، و Stop متاح وهو بيفتح أو شغّال
+  document.getElementById('btn-start').disabled = rs !== 'STOPPED';
+  document.getElementById('btn-stop').disabled  = !(rs === 'RUNNING' || rs === 'STARTING');
 
   // Connections
   const conns    = s.connections || {};

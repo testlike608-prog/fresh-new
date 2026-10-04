@@ -41,6 +41,7 @@ class CameraHub(ABC):
     بيوفر:
       - State management  : thread، locks، latest frame
       - start() / stop()  : lifecycle كامل مع thread safety
+      - astart() / astop(): نفس الكلام بس async (للـ session)
       - restart()         : stop + start بـ camera_index جديد
       - get_frame()       : يرجع نسخة من آخر فريم بأمان
       - is_running()      : حالة الـ thread
@@ -113,12 +114,26 @@ class CameraHub(ABC):
         """
         يبدأ التقاط الفريمات في ثريد خلفي.
         لو شغالة بالفعل مش بيعمل حاجة.
+        لو ثريد قديم لسه ماسك الجهاز (stop فشل) → RuntimeError بدل ما نفتح الجهاز مرتين.
         """
         with self._lock:
             if self._thread is not None and self._thread.is_alive():
-                log.debug(f"{self._log_name}: start() — شغالة بالفعل")
-                return
+                if not self._stop_event.is_set():
+                    log.debug(f"{self._log_name}: start() — شغالة بالفعل")
+                    return
+                old = self._thread
+            else:
+                old = None
 
+        if old is not None:
+            # ثريد قديم بيقفل — استناه يحرر الـ USB قبل ما نفتح تاني
+            old.join(timeout=self.STOP_TIMEOUT)
+            if old.is_alive():
+                raise RuntimeError(
+                    f"{self._log_name}: الثريد القديم لسه ماسك الكاميرا — مش هفتحها مرتين"
+                )
+
+        with self._lock:
             if camera_index is not None:
                 self._cam_index = camera_index
             elif self._cam_index is None:
@@ -128,6 +143,7 @@ class CameraHub(ABC):
                 except Exception:
                     self._cam_index = self.DEFAULT_CAM_INDEX
 
+            self._clear_frame()
             self._stop_event.clear()
             self._thread = threading.Thread(
                 target=self._capture_loop,
@@ -138,32 +154,70 @@ class CameraHub(ABC):
             self._thread.start()
             log.info(f"{self._log_name}: بدأت (كاميرا {self._cam_index})")
 
-    def stop(self, timeout: float = 3.0):
-        """يوقف الكاميرا وينتظر الثريد ينتهي."""
+    STOP_TIMEOUT = 5.0
+
+    def stop(self, timeout: float | None = None) -> bool:
+        """
+        يوقف الكاميرا وينتظر الثريد ينتهي ويحرر الجهاز.
+        يرجع True لو اتقفلت فعلاً، False لو الثريد لسه عايش بعد الـ timeout
+        (في الحالة دي بنسيب الـ reference عشان start() ما تفتحش الجهاز مرتين).
+        """
+        timeout = self.STOP_TIMEOUT if timeout is None else timeout
         with self._lock:
-            if self._thread is None or not self._thread.is_alive():
-                log.debug(f"{self._log_name}: stop() — مش شغالة")
-                return
-            self._stop_event.set()
             t = self._thread
+            if t is None or not t.is_alive():
+                self._thread = None
+                self._clear_frame()
+                return True
+            self._stop_event.set()
 
         t.join(timeout=timeout)
         if t.is_alive():
-            log.warning(f"{self._log_name}: الثريد لم ينتهِ في الوقت المحدد")
-        else:
-            log.info(f"{self._log_name}: أوقفت بنجاح")
+            log.warning(f"{self._log_name}: الثريد لم ينتهِ في {timeout}s")
+            return False
 
         with self._lock:
-            self._thread = None
+            if self._thread is t:
+                self._thread = None
+        self._clear_frame()
+        log.info(f"{self._log_name}: أوقفت بنجاح")
+        return True
+
+    async def astart(self, timeout: float = 5.0) -> bool:
+        """نسخة async: start + انتظار أول فريم من غير ما توقف الـ event loop."""
+        import asyncio
+        # start() نفسها مش blocking (بتعمل spawn لثريد بس) — بنناديها مباشرة
+        # عشان لو حصل cancel في النص ما يبقاش في ثريد بيتفتح بعد ما الـ session قفلت.
+        self.start()
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + timeout
+        while loop.time() < deadline:
+            if self.has_frame():
+                log.info(f"{self._log_name}: ✓ أول فريم اتقرأ")
+                return True
+            if not self.is_running():
+                break
+            await asyncio.sleep(0.05)
+        log.error(f"{self._log_name}: ✗ مفيش فريم خلال {timeout}s")
+        return False
+
+    async def astop(self, timeout: float | None = None) -> bool:
+        import asyncio
+        return await asyncio.to_thread(self.stop, timeout)
+
+    def has_frame(self) -> bool:
+        with self._frame_lock:
+            return self._latest_frame is not None
 
     def restart(self, camera_index: int | None = None) -> bool:
         """
         يوقف الكاميرا ويشغّلها تاني برقم جديد (اختياري).
         يرجع True لو نجح وجه أول فريم، False لو فشل.
         """
-        idx = camera_index or self._cam_index
+        idx = camera_index if camera_index is not None else self._cam_index
         log.info(f"{self._log_name}: restarting (camera {idx})...")
-        self.stop(timeout=3.0)
+        if not self.stop():
+            return False
         time.sleep(0.2)  # استنى الـ driver يحرر الكاميرا
         self.start(camera_index=idx)
         ok = self.wait_for_frame(timeout=6.0)
@@ -370,11 +424,13 @@ class _UseePlus(CameraHub):
                 item = decode_q.get()
                 if item is None:
                     break
-                arr     = np.frombuffer(item, dtype=np.uint8)
-                decoded = cv2.imdecode(arr, cv2.IMREAD_COLOR)
-                if decoded is not None:
-                    self._set_frame(decoded)
-                decode_q.task_done()
+                try:
+                    arr     = np.frombuffer(item, dtype=np.uint8)
+                    decoded = cv2.imdecode(arr, cv2.IMREAD_COLOR)
+                    if decoded is not None and not self._stop_event.is_set():
+                        self._set_frame(decoded)
+                except Exception as e:
+                    log.debug(f"{self._log_name}: decode error: {e}")
 
         dec_thread = threading.Thread(
             target=_decode_worker, name="cam-useeplus-decode", daemon=True
@@ -478,15 +534,23 @@ class _UseePlus(CameraHub):
         except Exception as e:
             log.error(f"{self._log_name}: خطأ غير متوقع: {e}")
         finally:
+            # فضّي الـ queue عشان الـ sentinel يدخل حتى لو كانت مليانة
+            while True:
+                try:
+                    decode_q.get_nowait()
+                except queue.Empty:
+                    break
             decode_q.put(None)
             dec_thread.join(timeout=2.0)
-            try:
-                dev.set_interface_altsetting(
-                    interface=self.INTERFACE, alternate_setting=0
-                )
-                usb.util.dispose_resources(dev)
-            except Exception:
-                pass
+            for _step in (
+                lambda: dev.set_interface_altsetting(interface=self.INTERFACE, alternate_setting=0),
+                lambda: usb.util.release_interface(dev, self.INTERFACE),
+                lambda: usb.util.dispose_resources(dev),
+            ):
+                try:
+                    _step()
+                except Exception:
+                    pass
             self._clear_frame()
             log.info(
                 f"{self._log_name}: الكاميرا اتقفلت. (recoveries={recovery_count})"

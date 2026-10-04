@@ -79,44 +79,67 @@ def start(camera_index: int = 0, save_dir: str = DEFAULT_SAVE_DIR,
 
 
 def stop():
-    """يوقف الكاميرا."""
+    """يوقف الكاميرا وينساها."""
+    global _cam
     if _cam is not None and _cam.is_running():
         _cam.stop()
+    _cam = None
 
 
-# ── الـ trigger ────────────────────────────────────────────────────────────────
-def trigger(save_path: str = None, name: str = "capture") -> str | None:
+def release():
+    """ينسى الكاميرا (من غير ما يقفلها) — الـ session هي اللي بتقفلها."""
+    global _cam
+    _cam = None
+
+
+# ── الـ capture (stateless — اللي بتستخدمه الـ session) ──────────────────────
+def capture(camera: CameraHub, name: str = "capture", save_dir: str | None = None) -> str | None:
     """
-    يلتقط الفريم الحالي ويحفظه فوراً.
-
-    :param save_path: مسار كامل للصورة — لو None يُولَّد تلقائياً
-    :param name: اسم الصورة (بدون امتداد)
-    :return: المسار اللي اتحفظت فيه الصورة، أو None لو فشل
+    يحفظ الفريم الحالي من camera ويرجع المسار (أو None).
+    blocking (cv2.imwrite) — نادِه بـ asyncio.to_thread من الكود الـ async.
     """
     global _counter
+
+    frame = camera.get_frame() if camera is not None else None
+    if frame is None:
+        log.warning("capture_trigger: ⚠️ مفيش فريم — الكاميرا شغالة؟")
+        return None
+
+    save_dir = save_dir or _save_dir
+    ts = time.strftime("%Y%m%d_%H%M%S")
+    with _counter_lock:
+        _counter += 1
+        n = _counter
+    # BUG-016: ts و n في الاسم عشان الصور ما تكتبش فوق بعض
+    save_path = os.path.join(save_dir, f"{name}_{ts}_{n}.jpg")
+    os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
+
+    if cv2.imwrite(save_path, frame):
+        log.info(f"capture_trigger: 📸 تم الحفظ → {save_path}")
+        return save_path
+    log.error(f"capture_trigger: ❌ فشل الحفظ في {save_path}")
+    return None
+
+
+# ── الـ trigger (الـ API القديم — بيستخدم الكاميرا اللي اتعملها start) ──────
+def trigger(save_path: str = None, name: str = "capture") -> str | None:
+    """
+    يلتقط الفريم الحالي من الكاميرا اللي اتعملها start() ويحفظه.
+    :param save_path: مسار كامل للصورة — لو None يُولَّد تلقائياً
+    """
+    if save_path is None:
+        return capture(_cam, name=name)
 
     frame = _cam.get_frame() if _cam is not None else None
     if frame is None:
         log.warning("capture_trigger: ⚠️ مفيش فريم — الكاميرا شغالة؟")
         return None
-
-    if save_path is None:
-        ts = time.strftime("%Y%m%d_%H%M%S")
-        with _counter_lock:
-            _counter += 1
-            n = _counter
-        # BUG-016: ts و n كانوا بيتحسبوا لكن مش بيتستخدموا → كل الصور بنفس الاسم
-        save_path = os.path.join(_save_dir, f"{name}_{ts}_{n}.jpg")
-
     os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
-
-    ok = cv2.imwrite(save_path, frame)
-    if ok:
+    if cv2.imwrite(save_path, frame):
         log.info(f"capture_trigger: 📸 تم الحفظ → {save_path}")
         return save_path
-    else:
-        log.error(f"capture_trigger: ❌ فشل الحفظ في {save_path}")
-        return None
+    log.error(f"capture_trigger: ❌ فشل الحفظ في {save_path}")
+    return None
 
 
 # ── تشغيل مباشر ───────────────────────────────────────────────────────────────

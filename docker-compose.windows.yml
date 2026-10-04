@@ -1,0 +1,61 @@
+# ================================================================
+#  Water Inspection System -- docker-compose.windows.yml
+#  Full Windows / Mac (Docker Desktop) support
+#
+#  Usage:
+#    docker compose -f docker-compose.windows.yml up -d
+#
+#  Differences from Linux docker-compose.yml:
+#    - No network_mode: host  (not supported on Windows)
+#    - Port mapping instead   (8000:8000)
+#    - privileged: true       (needed for USB/HID after usbipd-win)
+#    - extra_hosts            (lets container reach Windows host + Cobot)
+#    - devices commented out  (uncomment after usbipd-win setup)
+# ================================================================
+
+services:
+  water-inspection:
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-username/water-inspection}:latest
+    # To build locally instead:
+    # build: .
+
+    container_name: water-inspection
+
+    # ── Web server port ───────────────────────────────────────────
+    ports:
+      - "8000:8000"
+
+    # ── Data volume: ./data on Windows <-> /app/data in container ─
+    volumes:
+      - ./data:/app/data
+
+    # ── Environment variables ─────────────────────────────────────
+    env_file:
+      - .env
+    environment:
+      - DATA_DIR=/app/data
+      - PYTHONUNBUFFERED=1
+
+    # ── Network: reach Windows host + Cobot ──────────────────────
+    # host.docker.internal resolves to the Windows machine IP
+    # The Cobot at 192.168.57.2 is reachable if Windows has a
+    # network adapter connected to that subnet.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    # ── USB Camera / Barcode scanner ─────────────────────────────
+    # Requires usbipd-win. Run in PowerShell (Admin) first:
+    #   winget install --interactive --exact dorssel.usbipd-win
+    #   usbipd list
+    #   usbipd attach --wsl --busid <BUSID-OF-CAMERA>
+    #   usbipd attach --wsl --busid <BUSID-OF-SCANNER>
+    # Then uncomment the lines below:
+    # devices:
+    #   - /dev/video0:/dev/video0
+    #   - /dev/video1:/dev/video1
+    #   - /dev/input:/dev/input
+
+    # ── Privileged: required for USB/HID device access ───────────
+    privileged: true
+
+    restart: unless-stopped

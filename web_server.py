@@ -129,8 +129,7 @@ async def connect(sid, environ):
     """لما client يتصل نبعتله snapshot فوري."""
     if app_ref is not None:
         try:
-            state = await asyncio.to_thread(app_ref.get_state_snapshot)
-            await sio.emit("state_update", state, to=sid)
+            await sio.emit("state_update", app_ref.get_state_snapshot(), to=sid)
         except Exception:
             pass
 
@@ -161,8 +160,7 @@ async def _state_broadcaster():
         try:
             await asyncio.sleep(0.5)
             if app_ref is not None:
-                state = await asyncio.to_thread(app_ref.get_state_snapshot)
-                await sio.emit("state_update", state)
+                await sio.emit("state_update", app_ref.get_state_snapshot())
         except asyncio.CancelledError:
             break
         except Exception:
@@ -203,7 +201,8 @@ async def lifespan(app: FastAPI):
     bridge = _AsyncBridgeHandler(loop, _log_queue)
     bridge.setLevel(logging.DEBUG)
     for name in ("threadlog", "debug_monitor", "camera_hub", "camera_barcode",
-                 "camera_hub_useeplus", "live_image", "stdout", "stderr", ""):
+                 "camera_hub_useeplus", "live_image", "robot_link",
+                 "capture_trigger", "scanner", "stdout", "stderr", ""):
         lg = logging.getLogger(name)
         if not any(isinstance(h, _AsyncBridgeHandler) for h in lg.handlers):
             lg.addHandler(bridge)
@@ -241,7 +240,7 @@ async def lifespan(app: FastAPI):
         pass
 
     if app_ref is not None and app_ref.is_running:
-        await asyncio.to_thread(app_ref.stop, True, 8.0)  # BUG-049: انتظار الـ thread
+        await app_ref.stop()          # بيستنى الكاميرا والكوبوت يتقفلوا فعلاً
 
     if hasattr(sys, "_original_stdout"):
         sys.stdout = sys._original_stdout
@@ -281,30 +280,37 @@ async def get_state():
     """Snapshot of current app state."""
     if app_ref is None:
         return {"error": app_init_error or "App not initialised", "is_running": False}
-    return await asyncio.to_thread(app_ref.get_state_snapshot)
+    return app_ref.get_state_snapshot()
 
 
 @app.post("/api/start")
 async def start_app():
-    """يشغّل البرنامج (non-blocking — App.start() يرجع فوراً).
-    start() هي اللي بتتحكم في race conditions — مش محتاجين نعمل check هنا."""
+    """
+    يبدأ session جديدة (كاميرا + كوبوت + AI من الأول) ويرجع فوراً.
+    الفتح بيكمل في الخلفية — الـ dashboard بيتابع run_state (STARTING → RUNNING).
+    """
     if app_ref is None:
         raise HTTPException(500, app_init_error or "App not initialised")
-    ok = await asyncio.to_thread(app_ref.start)
-    if ok is False:
-        raise HTTPException(503, "Previous run thread is still stopping — try again in a moment")
-    return {"ok": bool(ok)}
+    ok = await app_ref.start()
+    if not ok:
+        raise HTTPException(409, "Previous session is still stopping — try again in a moment")
+    return {"ok": True, "run_state": app_ref.run_state}
 
 
 @app.post("/api/stop")
 async def stop_app():
-    """يوقف البرنامج."""
+    """
+    يوقف كل حاجة: StopMotion → cancel → قفل الكاميرا والكوبوت.
+    بيرجع بعد ما الـ teardown يخلص فعلاً (run_state = STOPPED).
+    """
     if app_ref is None:
         raise HTTPException(500, "App not initialised")
     if not app_ref.is_running:
         return {"ok": True, "msg": "already stopped"}
-    app_ref.stop()
-    return {"ok": True}
+    ok = await app_ref.stop()
+    if not ok:
+        raise HTTPException(504, "Stop timed out — check logs (camera/robot did not close)")
+    return {"ok": True, "run_state": app_ref.run_state}
 
 
 # ════════════════════════════════════════════════════════════════════
@@ -335,7 +341,7 @@ async def download_report():
 async def inject_barcode(body: dict):
     """حقن باركود يدوي من الـ dashboard."""
     # BUG-029: تحقق إن البرنامج شغّال قبل حقن الباركود
-    if app_ref is None or not app_ref.is_running:
+    if app_ref is None or app_ref.run_state != "RUNNING":
         raise HTTPException(400, "App is not running — press Start first")
 
     barcode = (body.get("barcode") or "").strip()
@@ -368,10 +374,11 @@ async def camera_frame_jpg():
     آخر فريم من كاميرا الـ App كـ JPEG.
     Frontend بيستخدمه في <img src="...?t=timestamp"> للتحديث المستمر.
     """
-    if app_ref is None:
-        raise HTTPException(503, "App not initialised")
+    cam = app_ref.camera if app_ref is not None else None
+    if cam is None:
+        raise HTTPException(503, "Camera not running — press Start")
     try:
-        frame = app_ref._camera.get_frame()
+        frame = cam.get_frame()
         if frame is None:
             raise HTTPException(503, "No camera frame — camera not running")
         data = await asyncio.to_thread(_encode_frame_jpeg, frame)
@@ -388,11 +395,12 @@ async def camera_frame_jpg():
 
 @app.get("/api/camera/status")
 async def camera_status():
-    if app_ref is None:
+    cam = app_ref.camera if app_ref is not None else None
+    if cam is None:
         return {"running": False, "has_frame": False}
     try:
-        running   = app_ref._camera.is_running()
-        has_frame = app_ref._camera.get_frame() is not None
+        running   = cam.is_running()
+        has_frame = cam.has_frame()
         return {"running": running, "has_frame": has_frame}
     except Exception as e:
         return {"running": False, "has_frame": False, "error": str(e)}
@@ -452,18 +460,11 @@ async def update_config(body: dict):
 
     changed = await asyncio.to_thread(config.update_many, body)
 
-    # لو camera_index أو camera_type اتغير → restart camera
-    if ("camera_index" in body or "camera_type" in body) and app_ref is not None:
-        try:
-            new_idx = int(body.get("camera_index", config.get("camera_index", 0)))
-            if app_ref._camera.is_running():
-                asyncio.create_task(
-                    asyncio.to_thread(app_ref._camera.restart, new_idx)
-                )
-        except Exception:
-            pass
+    # أي تغيير (كاميرا، AI، IPs…) بيتطبق مع الـ Start الجاي —
+    # الـ session بتقرأ الـ config من الأول وتفتح كل حاجة جديدة.
+    restart_required = bool(changed) and app_ref is not None and app_ref.is_running
 
-    return {"ok": True, "changed": changed}
+    return {"ok": True, "changed": changed, "restart_required": restart_required}
 
 
 @app.post("/api/config/set_password")
@@ -516,7 +517,11 @@ async def list_threads():
         {"name": t.name, "alive": t.is_alive(), "daemon": t.daemon}
         for t in threading.enumerate()
     ]
-    return {"count": len(threads), "threads": threads}
+    tasks = [
+        {"name": t.get_name(), "done": t.done()}
+        for t in asyncio.all_tasks()
+    ]
+    return {"count": len(threads), "threads": threads, "tasks": tasks}
 
 
 # ════════════════════════════════════════════════════════════════════
