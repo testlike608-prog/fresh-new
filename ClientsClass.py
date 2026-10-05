@@ -412,7 +412,7 @@ class App():
        
         self.robot.MoveL(joint_pos=model1_point5_re2,  tool=0, user=1, vel=100, acc=100)
 
-        self.robot.MoveL(joint_pos=homming2,  tool=0, user=1, vel=100, acc=100)
+    #self.robot.MoveL(joint_pos=homming2,  tool=0, user=1, vel=100, acc=100)
         self.robot.MoveL(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
         # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
@@ -819,26 +819,26 @@ class App():
         # self.robot.MoveJ(barcode_point, 0, 1, vel=100, acc=100)
 
         # شغّل وضع القراءة
-        scan_mode = self._cfg.get(key="scan_mode")
-        if scan_mode == "camera":
-            camera_barcode.start(camera=self._camera)
-        elif scan_mode == "manual":
-            sc.start_listener()
+        # scan_mode = self._cfg.get(key="scan_mode")
+        # if scan_mode == "camera":
+            # camera_barcode.start(camera=self._camera)
+        # elif scan_mode == "manual":
+            # sc.start_listener()
 
         
         log.info(f"scanner is started")
         # انتظر الباركود
-        #self._set_stage(AppStage.IDLE)
+        self._set_stage(AppStage.IDLE)
         self.barcode = self.get_barcode_from_scanner()
 
         if self._stop_app.is_set() or self.barcode is None:
             return   # البرنامج وقف
 
         # وقّف وضع القراءة
-        if scan_mode == "camera":
-            camera_barcode.stop()
-        elif scan_mode == "manual":
-            sc.stop_listener()
+        # if scan_mode == "camera":
+        #     camera_barcode.stop()
+        # elif scan_mode == "manual":
+        #     sc.stop_listener()
 
         log.info(f"[Sequence] Barcode: {self.barcode}")
         self._set_stage(AppStage.BARCODE_RECEIVED)
@@ -862,9 +862,9 @@ class App():
 
         if program == 1:
             self.program_1()
-        elif program == 2:
-            self.program_2()
         elif program == 3:
+            self.program_2()
+        elif program == 2:
             self.program_3()
         elif program == 4:
             self.program_4()
@@ -1055,7 +1055,7 @@ class App():
 
         # BUG-050: مسح queue الباركودات القديمة
         sc.reset_queue()
-        #sc.start_listener()
+        sc.start_listener()
         self._main_thread = threading.Thread(
             target=self._run_main,
             name="app-main",
