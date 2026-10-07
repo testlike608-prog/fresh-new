@@ -1148,6 +1148,37 @@ class App():
     #  اللوب الرئيسي (asyncio task — مش thread)
     # ══════════════════════════════════════════════════════════════════
 
+    @staticmethod
+    def _reset_rpc_class_state():
+        """
+        يرجّع متغيرات RPC الـ **class-level** لقيمها الأصلية قبل أي اتصال جديد.
+
+        ليه ده ضروري؟
+        الـ SDK حاطط الأعلام دي على الـ class مش على الـ instance، وعامل
+        decorator على كل دالة بيقول:
+
+            if RPC.is_conect == False: return -4   # مابينفّذش حاجة
+
+        و`is_conect` بتتظبط False لو الاتصال فشل في __init__، و**عمرها ما
+        بترجع True** (لا في CloseRPC ولا في أي مكان). فلو Start واحدة بس
+        فشلت (الروبوت مقفول / كابل مفصول / IP غلط)، كل Start بعد كده —
+        مهما الروبوت رجع — بتعمل RPC جديد بس كل أمر يرجع -4 من غير تنفيذ:
+        MoveJ مابتحركش، و GetDI ترجع -4 فـ DI0 عمره ما يساوي 1 فالسيكوانس
+        عمرها ما تبدأ. والنتيجة: البرنامج ميت وبيقول إنه شغال، والحل الوحيد
+        كان إعادة تشغيل العملية.
+
+        بنصفّرهم هنا عشان Stop/Start يبقى مكافئ لإعادة تشغيل البرنامج فعلاً.
+        """
+        log = _get_thread_logger()
+        before = getattr(RPC, "is_conect", None)
+        RPC.is_conect      = True
+        RPC.SDK_state      = True
+        RPC.closeRPC_state = False
+        RPC.reconnect_flag = False
+        RPC.reconnect_lock = False
+        if before is False:
+            log.warning("[App] RPC.is_conect كانت False من محاولة سابقة — اترجعت True")
+
     async def _connect_hardware(self):
         """تشغيل الكاميرا + الاتصال بالروبوت. بيرفع Exception لو فشل."""
         log = _get_thread_logger()
@@ -1160,7 +1191,17 @@ class App():
         await asyncio.to_thread(ct.start, 0, ct.DEFAULT_SAVE_DIR, 8.0, self._camera)
 
         # ── الروبوت ────────────────────────────────────────────────────
+        self._reset_rpc_class_state()
         self.robot = await asyncio.to_thread(RPC, self.robot_ip)
+
+        # الـ SDK مابيرفعش exception لو الاتصال فشل — بيظبط is_conect=False
+        # ويخلي كل أمر يرجع -4 بصمت. فبنتشيّك هنا ونفشّل الـ Start برسالة
+        # واضحة بدل ما البرنامج يقول "شغال" وهو مش بيحرك الكوبوت.
+        if getattr(RPC, "is_conect", True) is False:
+            raise RuntimeError(
+                f"مفيش اتصال بالكوبوت على {self.robot_ip} — اتأكد من الباور "
+                f"والشبكة والـ IP في الإعدادات. (الـ SDK ظبط is_conect=False)"
+            )
         log.info(f"[App] RPC connected → {self.robot_ip}")
 
         homing = await asyncio.to_thread(self.get_points_from_db, "Homming")
@@ -1408,11 +1449,47 @@ class App():
             except Exception as e:
                 log.warning(f"[App] CloseRPC فشل: {e}")
 
-        # 6) حالة نهائية نظيفة
+        # 6) موديل الـ AI + الـ VRAM
+        #    كل Start بتحمّل موديل جديد على الـ GPU. من غير تنضيف صريح،
+        #    الـ allocator بتاع torch بيمسك البلوكات المحررة في الكاش
+        #    والـ VRAM بتزحف مع كل دورة start/stop.
+        await asyncio.to_thread(self._release_ai_provider)
+
+        # 7) حالة نهائية نظيفة
         self._running = False
         self._save_session_stats()
         self._set_stage(AppStage.IDLE)
         log.info("[App] aclose — التنضيف خلص، كل الهاردوير اتقفل")
+
+    def _release_ai_provider(self):
+        """يفضي موديل الـ AI ويرجّع الـ VRAM. آمن لو مفيش torch خالص."""
+        log = _get_thread_logger()
+        provider, self._ai_provider = self._ai_provider, None
+        if provider is None:
+            return
+        # امسح أي reference للموديل جوه الـ provider قبل الـ GC
+        for attr in ("model", "_model", "processor", "_processor",
+                     "tokenizer", "_tokenizer"):
+            if hasattr(provider, attr):
+                try:
+                    setattr(provider, attr, None)
+                except Exception:
+                    pass
+        del provider
+        try:
+            import gc
+            gc.collect()
+        except Exception:
+            pass
+        try:
+            import sys
+            torch = sys.modules.get("torch")   # مش بنعمل import لو مش محمّل
+            if torch is not None and torch.cuda.is_available():
+                torch.cuda.empty_cache()
+                torch.cuda.ipc_collect()
+                log.info("[App] CUDA cache اتفضى")
+        except Exception as e:
+            log.warning(f"[App] تنضيف الـ CUDA فشل: {e}")
 
     # ── توافق مع الكود القديم ─────────────────────────────────────────
 
