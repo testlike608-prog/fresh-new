@@ -774,40 +774,61 @@ function toggleTheme() {
   document.querySelectorAll('.theme-btn').forEach(b => b.textContent = txt);
 }
 
-/* ─── Start / Stop ───────────────────────────────────────── */
-async function doStart() {
+/* ─── Start / Stop ───────────────────────────────────────────
+   الأزرار بتتفعّل/تتقفل من renderState() على أساس lifecycle_state
+   اللي جاي من السيرفر — مش من هنا. كده مفيش حالة الزرار يفضل
+   مقفول للأبد لو الـ request فشل أو اتقطع.
+   كل Start = App جديد بالكامل (كاميرا + موديل AI + RPC)، فأول
+   Start بعد Stop بتاخد كذا ثانية في تحميل الموديل — ده متوقع.      */
+let _pendingAction = null;   // 'start' | 'stop' | null
+
+function applyButtons(lcState) {
   const startBtn = document.getElementById('btn-start');
   const stopBtn  = document.getElementById('btn-stop');
-  const origText = startBtn.textContent;
-  startBtn.disabled = true;
-  stopBtn.disabled   = true;
-  // BUG-FIX: أول ما السيرفر يفتح، الكاميرا + موديل الـ AI بيتحمّلوا في
-  // الخلفية (ممكن ياخد كذا ثانية). لو المستخدم دوس Start قبل ما يخلصوا،
-  // السيرفر دلوقتي بينتظرهم بدل ما يرمي error — فنوضح ده في الزرار
-  // بدل ما يفضل معلّق من غير تفسير.
-  startBtn.textContent = '⏳ جاري التجهيز (كاميرا / AI)...';
+  const busy = (lcState === 'STARTING' || lcState === 'STOPPING') || _pendingAction !== null;
+
+  startBtn.disabled = busy || lcState === 'RUNNING';
+  stopBtn.disabled  = busy || lcState !== 'RUNNING';
+
+  if (lcState === 'STARTING' || _pendingAction === 'start')
+    startBtn.textContent = '⏳ جاري التجهيز (كاميرا / AI)...';
+  else
+    startBtn.textContent = '▶ Start';
+
+  if (lcState === 'STOPPING' || _pendingAction === 'stop')
+    stopBtn.textContent = '⏳ جاري الإيقاف...';
+  else
+    stopBtn.textContent = '■ Stop';
+}
+
+async function doStart() {
+  _pendingAction = 'start';
+  applyButtons('STARTING');
   try {
     const r = await fetch('/api/start', {method:'POST'});
     const d = await r.json();
-    if (!r.ok) {
-      alert('فشل التشغيل: ' + (d.detail || 'راجع الـ logs'));
-      startBtn.disabled = false;
-      stopBtn.disabled  = true;
-    } else if (!d.ok && !d.msg) {
-      alert('فشل التشغيل — راجع الـ logs');
-      startBtn.disabled = false;
+    if (!r.ok || d.ok === false) {
+      alert('فشل التشغيل: ' + (d.detail || d.msg || 'راجع الـ logs'));
     }
   } catch(e) {
     alert('خطأ: ' + e);
-    startBtn.disabled = false;
   } finally {
-    startBtn.textContent = origText;
+    _pendingAction = null;
   }
 }
+
 async function doStop() {
-  document.getElementById('btn-start').disabled = true;
-  document.getElementById('btn-stop').disabled  = true;
-  try { await fetch('/api/stop', {method:'POST'}); } catch(e){}
+  _pendingAction = 'stop';
+  applyButtons('STOPPING');
+  try {
+    const r = await fetch('/api/stop', {method:'POST'});
+    const d = await r.json();
+    if (!r.ok) alert('مشكلة في الإيقاف: ' + (d.detail || d.msg || 'راجع الـ logs'));
+  } catch(e) {
+    alert('خطأ: ' + e);
+  } finally {
+    _pendingAction = null;
+  }
 }
 
 /* ─── Reset Stats ────────────────────────────────────────── */
@@ -837,17 +858,25 @@ function openResultsFile() { window.open('/api/reports/file','_blank'); }
 
 /* ─── Render state ───────────────────────────────────────── */
 function renderState(s) {
-  const running = !!s.is_running;
+  const lc      = s.lifecycle_state || (s.is_running ? 'RUNNING' : 'STOPPED');
+  const running = (lc === 'RUNNING');
+  const busy    = (lc === 'STARTING' || lc === 'STOPPING');
 
   // Running badge
   const badge = document.getElementById('running-badge');
   const sub   = document.getElementById('running-sub');
-  badge.className  = running ? 'badge badge-running' : 'badge badge-stopped';
-  badge.textContent= running ? '▶ RUNNING' : '⏹ STOPPED';
-  sub.style.color  = running ? 'var(--success)' : 'var(--danger)';
-  sub.textContent  = running ? 'شغّال — ينتظر إشارة DI0' : 'متوقف — اضغط Start';
-  document.getElementById('btn-start').disabled = running;
-  document.getElementById('btn-stop').disabled  = !running;
+  const BADGE = {
+    RUNNING:  ['badge badge-running', '▶ RUNNING',  'var(--success)'],
+    STOPPED:  ['badge badge-stopped', '⏹ STOPPED',  'var(--danger)'],
+    STARTING: ['badge badge-stopped', '⏳ STARTING', 'var(--warning, #d98500)'],
+    STOPPING: ['badge badge-stopped', '⏳ STOPPING', 'var(--warning, #d98500)'],
+  }[lc] || ['badge badge-stopped', lc, 'var(--danger)'];
+  badge.className   = BADGE[0];
+  badge.textContent = BADGE[1];
+  sub.style.color   = BADGE[2];
+  sub.textContent   = s.lifecycle_label
+                      || (running ? 'شغّال — ينتظر إشارة DI0' : 'متوقف — اضغط Start');
+  applyButtons(lc);
 
   // Connections
   const conns    = s.connections || {};

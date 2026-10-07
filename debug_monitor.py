@@ -247,12 +247,24 @@ def start(app_ref=None, interval=None, force=False, verbose_console=False):
     return _monitor_thread
 
 
-def stop():
-    """إيقاف المونيتور."""
-    global _monitor_started
+def stop(timeout: float = 3.0):
+    """
+    إيقاف المونيتور — وبينتظر الثريد يخرج فعلاً.
+
+    FIX: الإصدار القديم كان بيظبط الـ event ويرجع فورًا، فالثريد القديم
+    كان ممكن يفضل عايش (ماسك reference للـ App القديم) وقت ما Start
+    جديدة تشغّل مونيتور تاني ⇒ مونيتورين وتسريب للـ App القديم.
+    """
+    global _monitor_started, _monitor_thread
     _monitor_stop.set()
     with _monitor_lock:
+        t = _monitor_thread
         _monitor_started = False
+    if t is not None and t.is_alive():
+        t.join(timeout=timeout)
+    with _monitor_lock:
+        if _monitor_thread is t:
+            _monitor_thread = None
 
 
 def is_enabled():

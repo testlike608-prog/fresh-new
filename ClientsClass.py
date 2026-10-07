@@ -1,9 +1,11 @@
 from cmath import log
+import asyncio
 import json
 import socket
 import threading
 import time
 import queue
+import xmlrpc.client
 try:
     import pyodbc
 except ModuleNotFoundError:
@@ -52,6 +54,33 @@ def _parse_entry(value) -> tuple[str, float | None]:
 
 
 
+def load_session_stats() -> dict:
+    """
+    قراءة إحصائيات آخر جلسة من الـ disk — بدون الحاجة لـ App instance،
+    عشان الداشبورد تعرض الأرقام وإحنا في حالة STOPPED (مفيش App).
+    """
+    try:
+        if os.path.exists(_SESSION_STATS_FILE):
+            with open(_SESSION_STATS_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            stats = {k: int(data.get(k, 0)) for k in ("total", "pass", "fail", "errors")}
+            return {"stats": stats, "last_barcode": data.get("last_barcode")}
+    except Exception:
+        pass
+    return {"stats": {"total": 0, "pass": 0, "fail": 0, "errors": 0}, "last_barcode": None}
+
+
+def clear_session_stats():
+    """مسح ملف إحصائيات الجلسة من الـ disk — بدون الحاجة لـ App instance."""
+    try:
+        if os.path.exists(_SESSION_STATS_FILE):
+            os.remove(_SESSION_STATS_FILE)
+            return True
+    except Exception:
+        pass
+    return False
+
+
 def _to_bytes(message, is_hex=False):
     """
     تحويل أي قيمة لـ bytes جاهزه للإرسال على السوكيت.
@@ -65,6 +94,40 @@ def _to_bytes(message, is_hex=False):
     if is_hex and isinstance(message, str):
         return bytes.fromhex(message)
     return str(message).encode('utf-8')
+
+
+class RobotPoint(list):
+    """
+    نقطة روبوت = list بالزوايا الستة (j1..j6) **وجواها كمان** الـ pose
+    الكارتيزي المعلّم (x,y,z,rx,ry,rz) في `.desc`.
+
+    ليه list؟ عشان تفضل تشتغل مع MoveJ بالظبط زي الأول من غير أي تعديل
+    (الـ SDK بيعمل list(map(float, joint_pos)) وخلاص)، وفي نفس الوقت
+    MoveL تلاقي الـ desc_pos اللي هي محتاجاه جاهز.
+    """
+    __slots__ = ("desc", "name")
+
+    def __new__(cls, joints, desc=None, name=None):
+        obj = super().__new__(cls, joints)
+        return obj
+
+    def __init__(self, joints, desc=None, name=None):
+        super().__init__(joints)
+        self.desc = desc
+        self.name = name
+
+    def has_desc(self) -> bool:
+        """True لو فيه pose كارتيزي حقيقي (مش أصفار)."""
+        return bool(self.desc) and any(abs(float(v)) > 1e-9 for v in self.desc)
+
+
+class StopRequested(Exception):
+    """
+    بيتم رفعه من أي نقطة توقف (checkpoint) جوه السيكوانس لما المستخدم يدوس Stop.
+    مش error — ده الطريق الطبيعي للخروج من سيكوانس نصّها، فبيتم التقاطه
+    في run_async() من غير ما يتسجل كـ ERROR.
+    """
+    pass
 
 
 class AppStage:
@@ -149,25 +212,24 @@ class App():
         self._stats         = {"total": 0, "pass": 0, "fail": 0, "errors": 0}
         self._last_event_time = None
         self._start_time    = None
-        self._main_thread   = None
         self._state_lock    = threading.Lock()
+
+        # ── Stop/teardown lifecycle ────────────────────────────────────
+        # _stop_app  : Event عشان الكود اللي بيشتغل جوه thread (to_thread)
+        #              يقدر يشوف إن فيه stop مطلوب — asyncio مش بيقدر
+        #              يقتل thread، فالخروج لازم يكون تعاوني.
+        # _task      : الـ asyncio.Task بتاع اللوب الرئيسي (بدل الـ thread)
+        # _closed    : teardown اتعمل بالفعل (idempotent)
         self._stop_app      = threading.Event()
+        self._task: "asyncio.Task | None" = None
+        self._closed        = False
+        self._stop_reason   = None
 
     # ── Session stats persistence ──────────────────────────────────────
 
     def _load_session_stats(self) -> dict:
         """تحميل الإحصائيات المحفوظة من الجلسة السابقة (stop/start)."""
-        try:
-            if os.path.exists(_SESSION_STATS_FILE):
-                with open(_SESSION_STATS_FILE, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    # تأكد من صحة الشكل
-                    stats   = {k: int(data.get(k, 0)) for k in ("total", "pass", "fail", "errors")}
-                    barcode = data.get("last_barcode")
-                    return {"stats": stats, "last_barcode": barcode}
-        except Exception:
-            pass
-        return {"stats": {"total": 0, "pass": 0, "fail": 0, "errors": 0}, "last_barcode": None}
+        return load_session_stats()
 
     def _save_session_stats(self):
         """حفظ الإحصائيات الحالية على الـ disk عند الإيقاف."""
@@ -185,11 +247,7 @@ class App():
         with self._state_lock:
             self._stats  = {"total": 0, "pass": 0, "fail": 0, "errors": 0}
             self.barcode = None
-        try:
-            if os.path.exists(_SESSION_STATS_FILE):
-                os.remove(_SESSION_STATS_FILE)
-        except Exception:
-            pass
+        clear_session_stats()
 
     # ── Camera & AI builder ────────────────────────────────────────────
 
@@ -269,6 +327,7 @@ class App():
                 },
                 "last_event_time": self._last_event_time,
                 "uptime":          uptime,
+                "last_images":     list(self._last_images),
                 "connections": {
                     "robot":   robot_ok,
                     "camera":  camera_ok,
@@ -312,27 +371,42 @@ class App():
 
         # ── Scanner / Barcode ──────────────────────────────────────────────
 
-    def get_barcode_from_scanner(self):
+    async def get_barcode_from_scanner(self):
         """
-        ينتظر الباركود من scanner.queue_barcode.
-        يرجع None لو البرنامج وقف (self._stop_app.is_set()).
+        ينتظر الباركود من scanner.queue_barcode — async وقابل للإلغاء فورًا.
+
+        BUG-FIX (سبب "Stop بيقفل بس Start مش بيبدأ"):
+        الإصدار القديم كان بينادي `sc.queue_barcode.get()` **بدون timeout**،
+        فالثريد كان يقف ميت جوه الـ get() للأبد. لما المستخدم يدوس Stop،
+        الـ _stop_app بتتظبط و stop_listener() بيوقف تغذية الكيو — يعني مفيش
+        حاجة هتدخل الكيو تاني ⇒ الثريد عمره ما يموت ⇒ start() بعد كده كان
+        بيلاقي الثريد القديم لسه عايش ويرجع False (503) للأبد.
+
+        الحل: polling بـ get_nowait() + await asyncio.sleep() — فالتاسك بتخرج
+        فورًا لو اتعمل cancel أو لو _stop_app اتظبطت.
         """
         log = _get_thread_logger()
-        log.info("Getting barcode")
+        log.info("[Sequence] في انتظار الباركود...")
         while not self._stop_app.is_set():
             try:
-                log.info("Try to get barcode")
-                barcode = sc.queue_barcode.get()
+                barcode = sc.queue_barcode.get_nowait()
                 sc.queue_barcode.task_done()
-                log.info(f"the barcode{barcode}")
+                log.info(f"[Sequence] الباركود: {barcode}")
                 return barcode
             except queue.Empty:
-                continue
+                await asyncio.sleep(0.1)   # ← نقطة إلغاء (cancellation point)
         return None
 
     # ── Robot helpers ─────────────────────────────────────────────────
 
-    def get_points_from_db(self, point_name: str):
+    def get_points_from_db(self, point_name: str) -> RobotPoint:
+        """
+        يرجع RobotPoint: الزوايا الستة + الـ pose الكارتيزي المعلّم.
+
+        الجدول فيه العمودين (j1..j6 و x,y,z,rx,ry,rz) لكل نقطة، فبناخد
+        الاتنين: MoveJ تستخدم الزوايا زي الأول، و MoveL تستخدم الـ
+        desc_pos المعلّم بدل ما ترفع TypeError (كانت ناقصة desc_pos).
+        """
         import sqlite3
         # BUG-003: إصلاح SQL Injection — استخدام parameterized query
         # Docker: web_point.db جوه DATA_DIR (Volume) عشان يتحفظ بين restarts
@@ -340,28 +414,173 @@ class App():
         conn   = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT j1, j2, j3, j4, j5, j6 FROM points WHERE name = ?",
+            "SELECT j1, j2, j3, j4, j5, j6, x, y, z, rx, ry, rz "
+            "FROM points WHERE name = ?",
             (point_name,)
         )
         result = cursor.fetchone()
         conn.close()
-        if result:
-            joint_angles = [float(x) for x in result]
-            print("Joint Angles as Floats:", joint_angles)
-            return joint_angles
-        else:
+
+        if not result:
             print(f"النقطة '{point_name}' مش موجودة في الداتا بيز.")
-            return [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            # من غير desc → MoveL هترفع رسالة واضحة بدل ما تتحرك لأصفار
+            return RobotPoint([0.0] * 6, desc=None, name=point_name)
+
+        def _f(v):
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return 0.0
+
+        joints = [_f(v) for v in result[:6]]
+        desc   = [_f(v) for v in result[6:12]]
+        print(f"[Point] {point_name}  j={joints}  desc={desc}")
+        return RobotPoint(joints, desc=desc, name=point_name)
 
     def switch_camera(self):
-        """BUG-010/011: كانت async وبتتنادى بـ asyncio.run() → RuntimeError تحت uvicorn."""
+        """نسخة sync — متبقية للاستخدام من سكربتات/CLI برّه الـ event loop."""
         self.robot.SetDO(self._cfg.get(key="Switch_camera"), 1)
         time.sleep(3)
         self.robot.SetDO(self._cfg.get(key="Switch_camera"), 0)
 
+    # ══════════════════════════════════════════════════════════════════
+    #  نقط التوقف التعاونية + أغلفة الهاردوير (async)
+    # ══════════════════════════════════════════════════════════════════
+    # ليه كل نداء هاردوير بيمر من هنا؟
+    #   fairino RPC و OpenCV/pyusb و torch كلهم سينكروني بالكامل،
+    #   و asyncio **مش بيقدر** يلغي نداء بلوكينج جوه thread. فالخروج من
+    #   سيكوانس نصّها لازم يكون "تعاوني": بنتشيّك على _stop_app قبل وبعد
+    #   كل نداء، ولو اتظبطت نرفع StopRequested ونخرج من السيكوانس.
+
+    def _raise_if_stopping(self):
+        """نقطة توقف — بترفع StopRequested لو Stop اتدوس."""
+        if self._stop_app.is_set():
+            raise StopRequested(self._stop_reason or "stop requested")
+
+    async def _call(self, fn, *args, **kwargs):
+        """
+        ينفّذ نداء هاردوير بلوكينج في thread executor، مع نقطة توقف
+        قبله وبعده. بيرجع نتيجة النداء زي ما هي.
+        """
+        self._raise_if_stopping()
+        result = await asyncio.to_thread(fn, *args, **kwargs)
+        self._raise_if_stopping()
+        return result
+
+    async def _sleep(self, seconds: float):
+        """
+        بديل time.sleep — بيتشيّك على Stop كل 50ms، فالاستجابة شبه فورية
+        بدل ما ننتظر الـ sleep كله يخلص. ومابياخدش thread من الـ executor.
+        """
+        self._raise_if_stopping()
+        deadline = time.monotonic() + float(seconds)
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                break
+            await asyncio.sleep(min(0.05, remaining))
+            self._raise_if_stopping()
+
+    async def _pulse_do(self, port, seconds: float):
+        """
+        نبضة DO (1 → انتظار → 0) **مضمونة الرجوع لصفر** حتى لو Stop
+        اتدوس في نص النبضة.
+
+        قبل كده: لو Stop اتدوس بين SetDO(1) و SetDO(0)، خط الـ
+        pass/fail كان بيفضل مرفوع (1) بعد الإيقاف.
+        """
+        await self._set_do(port, 1)
+        try:
+            await self._sleep(seconds)
+        finally:
+            if self.robot is not None:
+                try:
+                    await asyncio.to_thread(self.robot.SetDO, port, 0)
+                except Exception:
+                    pass
+
+    # ⚠️ الأغلفة التالية بتمرّر الـ arguments **بالحرف** زي ما البرامج
+    #    بتبعتها بالظبط — عمداً. مفيش ولا argument بيتضاف أو يتغير، عشان
+    #    أوامر الحركة المرسلة للكوبوت تبقى مطابقة ١٠٠% للكود القديم.
+    #    اللي بيتضاف هو نقطة التوقف قبل وبعد النداء فقط.
+
+    async def _move_j(self, *args, **kwargs):
+        """MoveJ مع نقطة توقف.
+        NOTE: الحركة نفسها مش قابلة للقطع من asyncio (نداء بلوكينج جوه thread) —
+        القطع الفوري بيحصل عن طريق StopMotion() في request_stop()."""
+        return await self._call(self.robot.MoveJ, *args, **kwargs)
+
+    async def _move_l(self, *args, **kwargs):
+        """
+        MoveL مع نقطة توقف + حل الـ desc_pos تلقائيًا.
+
+        الخلفية: توقيع الـ SDK هو MoveL(desc_pos, tool, user, joint_pos=...)
+        و desc_pos **مطلوب**، لكن كل النداءات في البرامج كانت بتبعت
+        joint_pos بس ⇒ TypeError عند أول MoveL في أي برنامج.
+
+        الحل: كل نقطة جاية من get_points_from_db() شايلة معاها الـ pose
+        الكارتيزي المعلّم (x,y,z,rx,ry,rz) من نفس صف الـ DB، فبناخده
+        كـ desc_pos. مش بنحسب ولا بنخمّن حاجة — ده الـ pose اللي اتعلّم
+        من الـ teach pendant بنفسه.
+        """
+        if "desc_pos" not in kwargs and len(args) == 0:
+            pt = kwargs.get("joint_pos")
+            if isinstance(pt, RobotPoint) and pt.has_desc():
+                kwargs["desc_pos"] = list(pt.desc)
+            else:
+                name = getattr(pt, "name", None) or "<unknown>"
+                raise RuntimeError(
+                    f"MoveL للنقطة '{name}': مفيش pose كارتيزي (desc_pos) "
+                    f"في الـ DB — اتأكد إن أعمدة x,y,z,rx,ry,rz للنقطة دي "
+                    f"متعلّمة ومش أصفار."
+                )
+        return await self._call(self.robot.MoveL, *args, **kwargs)
+
+    async def _set_do(self, *args, **kwargs):
+        """SetDO مع نقطة توقف — بيتخطى بهدوء لو الروبوت اتقفل بالفعل."""
+        if self.robot is None:
+            return None
+        return await self._call(self.robot.SetDO, *args, **kwargs)
+
+    async def _switch_camera(self):
+        """تبديل الكاميرا: DO=1 → استنى 3 ثواني (قابلة للإلغاء) → DO=0."""
+        port = self._cfg.get(key="Switch_camera")
+        await self._set_do(port, 1)
+        try:
+            await self._sleep(3)
+        finally:
+            # حتى لو Stop اتدوس في النص، لازم نرجّع الـ DO لـ 0
+            if self.robot is not None:
+                try:
+                    await asyncio.to_thread(self.robot.SetDO, port, 0)
+                except Exception:
+                    pass
+
+    async def _capture(self, save_path: str = None, name: str = "capture"):
+        """
+        التقاط صورة في thread (cv2.imwrite بلوكينج) + تسجيل المسار
+        في self._last_images عشان يبان في الـ debug snapshot.
+        """
+        path = await self._call(ct.trigger, save_path, name)
+        if path:
+            with self._state_lock:
+                self._last_images.append(path)
+        return path
+
+    async def _ai_run(self, image_list):
+        """
+        نداء الـ AI في thread — الـ providers كلها سينكروني
+        (HTTP مع retries، أو torch inference على الـ GPU).
+        ملحوظة: مش بنعمل raise بعد النداء عشان نتيجة الفحص متتوهش لو
+        المستخدم دوس Stop وهو بيحلل — بنسيب الـ reporting يكمّل.
+        """
+        self._raise_if_stopping()
+        return await asyncio.to_thread(self._ai_provider.run, image_paths=image_list)
+
+
     # ── Programs ──────────────────────────────────────────────────────
 
-    def program_1(self):
+    async def program_1(self):
         log = _get_thread_logger()
         homing  = self.get_points_from_db("Homming")
         cam_parq= self.get_points_from_db("cam_parq")
@@ -378,42 +597,42 @@ class App():
         
 
         # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
-        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=model1_prepoint1, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # await self._move_j(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # await self._move_j(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=model1_prepoint1, tool=0, user=1, vel=100, acc=100)
         # Vision test 1
         
         self._set_stage(AppStage.vision_stage(1), step=1)
-        self.robot.MoveL(joint_pos=model1_point1, tool=0, user=1, vel=60, acc=100)
-        #time.sleep(1)
-        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
-        #time.sleep(1)
-        self.switch_camera()
+        await self._move_l(joint_pos=model1_point1, tool=0, user=1, vel=60, acc=100)
+        #await self._sleep(1)
+        img0 = await self._capture(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
+        #await self._sleep(1)
+        await self._switch_camera()
         self._set_stage(AppStage.vision_stage(2), step=2)
-        self.robot.MoveL(joint_pos=model1_point2, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model1_point2, tool=0, user=1, vel=100, acc=100)
 
-        img1 = ct.trigger(name=self.barcode + "_1") 
-        self.switch_camera()
+        img1 = await self._capture(name=self.barcode + "_1") 
+        await self._switch_camera()
 
         self._set_stage(AppStage.vision_stage(3), step=3)
-        self.robot.MoveL(joint_pos= model1_point3, tool=0, user=1, vel=100, acc=100)
-        img2 = ct.trigger(name=self.barcode + "_2")
+        await self._move_l(joint_pos= model1_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = await self._capture(name=self.barcode + "_2")
         self._set_stage(AppStage.vision_stage(4), step=4)
-        self.robot.MoveL(joint_pos=model1_point4, tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_3")
+        await self._move_l(joint_pos=model1_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_3")
    
-        self.switch_camera()                           # BUG-010: sync
+        await self._switch_camera()                           # BUG-010: sync
         self._set_stage(AppStage.vision_stage(5), step=5)
-        self.robot.MoveL(joint_pos=model1_point5,   tool=0, user=1, vel=100, acc=100)
-        img4 = ct.trigger(name=self.barcode + "_4")
-        self.switch_camera() 
-        self.robot.MoveL(joint_pos=model1_point5_re, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model1_point5,   tool=0, user=1, vel=100, acc=100)
+        img4 = await self._capture(name=self.barcode + "_4")
+        await self._switch_camera() 
+        await self._move_l(joint_pos=model1_point5_re, tool=0, user=1, vel=100, acc=100)
        
-        self.robot.MoveL(joint_pos=model1_point5_re2,  tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model1_point5_re2,  tool=0, user=1, vel=100, acc=100)
 
-    #self.robot.MoveL(joint_pos=homming2,  tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+    #await self._move_l(joint_pos=homming2,  tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
         # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
         self._set_stage(AppStage.REPORTING)
@@ -423,10 +642,10 @@ class App():
             res    = "Error: no captured image"
             result = "error"
         else:
-            res    = self._ai_provider.run(image_paths=image_list)
+            res    = await self._ai_run(image_list)
             result = self.check_images_status(res)
         log.info(f"[program_1] Done — model answer — barcode={self.barcode}  result={res}")
-        ex.result_reporting(ID=self.barcode, result=result)
+        await asyncio.to_thread(ex.result_reporting, ID=self.barcode, result=result)
 
         # Update stats
         with self._state_lock:
@@ -438,21 +657,19 @@ class App():
                 self._stats["errors"] += 1
 
         # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
-        self.robot.SetDO(self._cfg.get(key="test_done"),   1)
-        self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
+        await self._set_do(self._cfg.get(key="test_done"),   1)
+        await self._set_do(self._cfg.get(key="yellow_led"),  0)
         if result == "pass":
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
-            time.sleep(self._cfg.get("signal_pass_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
+            await self._pulse_do(self._cfg.get(key="test_pass"),
+                                 self._cfg.get("signal_pass_period", 0.5))
         elif result == "fail":
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
-            time.sleep(self._cfg.get("signal_fail_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
+            await self._pulse_do(self._cfg.get(key="test_fail"),
+                                 self._cfg.get("signal_fail_period", 0.5))
 
         self._set_stage(AppStage.DONE)
         log.info(f"[program_1] Done — barcode={self.barcode}  result={result}")
 
-    def program_2(self):
+    async def program_2(self):
         log = _get_thread_logger()
         homing  = self.get_points_from_db("Homming")
         cam_parq= self.get_points_from_db("cam_parq")
@@ -468,36 +685,36 @@ class App():
         model2_point5_re2   = self.get_points_from_db("model2_point5_re2")
 
         # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
-        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=model2_prepoint1, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # await self._move_j(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # await self._move_j(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=model2_prepoint1, tool=0, user=1, vel=100, acc=100)
         # Vision test 1
         
         self._set_stage(AppStage.vision_stage(1), step=1)
-        self.robot.MoveL(joint_pos=model2_point1, tool=0, user=1, vel=60, acc=100)
-        #time.sleep(1)
-        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
-        #time.sleep(1)
-        self.switch_camera()
+        await self._move_l(joint_pos=model2_point1, tool=0, user=1, vel=60, acc=100)
+        #await self._sleep(1)
+        img0 = await self._capture(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
+        #await self._sleep(1)
+        await self._switch_camera()
 
         self._set_stage(AppStage.vision_stage(2), step=2)
-        self.robot.MoveL(joint_pos=model2_point2, tool=0, user=1, vel=100, acc=100)
-        img1 = ct.trigger(name=self.barcode + "_1") 
+        await self._move_l(joint_pos=model2_point2, tool=0, user=1, vel=100, acc=100)
+        img1 = await self._capture(name=self.barcode + "_1") 
         self._set_stage(AppStage.vision_stage(3), step=3)
-        self.robot.MoveL(joint_pos= model2_point3, tool=0, user=1, vel=100, acc=100)
-        img2 = ct.trigger(name=self.barcode + "_2")
+        await self._move_l(joint_pos= model2_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = await self._capture(name=self.barcode + "_2")
         self._set_stage(AppStage.vision_stage(4), step=4)
-        self.robot.MoveL(joint_pos=model2_point4, tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_3")
-        self.robot.MoveL(joint_pos=model2_point4_res,   tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model2_point4_res2, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model2_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_3")
+        await self._move_l(joint_pos=model2_point4_res,   tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model2_point4_res2, tool=0, user=1, vel=100, acc=100)
         self._set_stage(AppStage.vision_stage(5), step=5)
-        self.robot.MoveL(joint_pos=model2_point5,  tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_4")
-        self.robot.MoveL(joint_pos=model2_point4_res2, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model2_point5_re2, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model2_point5,  tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_4")
+        await self._move_l(joint_pos=model2_point4_res2, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model2_point5_re2, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
         # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
         self._set_stage(AppStage.REPORTING)
@@ -507,10 +724,10 @@ class App():
             res    = "Error: no captured image"
             result = "error"
         else:
-            res    = self._ai_provider.run(image_paths=image_list)
+            res    = await self._ai_run(image_list)
             result = self.check_images_status(res)
         log.info(f"[program_2] Done — model answer — barcode={self.barcode}  result={res}")
-        ex.result_reporting(ID=self.barcode, result=result)
+        await asyncio.to_thread(ex.result_reporting, ID=self.barcode, result=result)
 
         # Update stats
         with self._state_lock:
@@ -522,23 +739,21 @@ class App():
                 self._stats["errors"] += 1
 
         # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
-        self.robot.SetDO(self._cfg.get(key="test_done"),   1)
-        self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
+        await self._set_do(self._cfg.get(key="test_done"),   1)
+        await self._set_do(self._cfg.get(key="yellow_led"),  0)
         if result == "pass":
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
-            time.sleep(self._cfg.get("signal_pass_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
+            await self._pulse_do(self._cfg.get(key="test_pass"),
+                                 self._cfg.get("signal_pass_period", 0.5))
         elif result == "fail":
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
-            time.sleep(self._cfg.get("signal_fail_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
+            await self._pulse_do(self._cfg.get(key="test_fail"),
+                                 self._cfg.get("signal_fail_period", 0.5))
 
         self._set_stage(AppStage.DONE)
         log.info(f"[program_2] Done — barcode={self.barcode}  result={result}")
 
                 
 
-    def program_3(self):
+    async def program_3(self):
         log = _get_thread_logger()
         homing  = self.get_points_from_db("Homming")
         cam_parq= self.get_points_from_db("cam_parq")
@@ -555,40 +770,40 @@ class App():
         model3_point6   = self.get_points_from_db("model3_point6")
 
         # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
-        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=model3_prepoint1, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # await self._move_j(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # await self._move_j(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=model3_prepoint1, tool=0, user=1, vel=100, acc=100)
         # Vision test 1
         
         self._set_stage(AppStage.vision_stage(1), step=1)
-        self.robot.MoveL(joint_pos=model3_point1, tool=0, user=1, vel=60, acc=100)
-        time.sleep(1)
-        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
-        time.sleep(1)
-        self.switch_camera()
+        await self._move_l(joint_pos=model3_point1, tool=0, user=1, vel=60, acc=100)
+        await self._sleep(1)
+        img0 = await self._capture(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
+        await self._sleep(1)
+        await self._switch_camera()
 
         self._set_stage(AppStage.vision_stage(2), step=2)
-        self.robot.MoveL(joint_pos=model3_point2, tool=0, user=1, vel=100, acc=100)
-        img1 = ct.trigger(name=self.barcode + "_1") 
+        await self._move_l(joint_pos=model3_point2, tool=0, user=1, vel=100, acc=100)
+        img1 = await self._capture(name=self.barcode + "_1") 
         self._set_stage(AppStage.vision_stage(3), step=3)
-        self.robot.MoveL(joint_pos= model3_point3, tool=0, user=1, vel=100, acc=100)
-        img2 = ct.trigger(name=self.barcode + "_2")
+        await self._move_l(joint_pos= model3_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = await self._capture(name=self.barcode + "_2")
         self._set_stage(AppStage.vision_stage(4), step=4)
-        self.robot.MoveL(joint_pos=model3_point4, tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_3")
-        self.robot.MoveL(joint_pos=model3_point4_res,   tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model3_point4_res2, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model3_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_3")
+        await self._move_l(joint_pos=model3_point4_res,   tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model3_point4_res2, tool=0, user=1, vel=100, acc=100)
         self._set_stage(AppStage.vision_stage(5), step=5)
-        self.robot.MoveL(joint_pos=model3_point5,  tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_4")
+        await self._move_l(joint_pos=model3_point5,  tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_4")
         self._set_stage(AppStage.vision_stage(6), step=6)
-        self.robot.MoveL(joint_pos=model3_point6, tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_5")
-        self.robot.MoveL(joint_pos=model3_point5, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model3_point4_res2, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model3_point5_res, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model3_point6, tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_5")
+        await self._move_l(joint_pos=model3_point5, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model3_point4_res2, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model3_point5_res, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
         # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
         self._set_stage(AppStage.REPORTING)
@@ -598,10 +813,10 @@ class App():
             res    = "Error: no captured image"
             result = "error"
         else:
-            res    = self._ai_provider.run(image_paths=image_list)
+            res    = await self._ai_run(image_list)
             result = self.check_images_status(res)
         log.info(f"[program_3] Done — model answer — barcode={self.barcode}  result={res}")
-        ex.result_reporting(ID=self.barcode, result=result)
+        await asyncio.to_thread(ex.result_reporting, ID=self.barcode, result=result)
 
         # Update stats
         with self._state_lock:
@@ -613,22 +828,20 @@ class App():
                 self._stats["errors"] += 1
 
         # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
-        self.robot.SetDO(self._cfg.get(key="test_done"),   1)
-        self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
+        await self._set_do(self._cfg.get(key="test_done"),   1)
+        await self._set_do(self._cfg.get(key="yellow_led"),  0)
         if result == "pass":
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
-            time.sleep(self._cfg.get("signal_pass_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
+            await self._pulse_do(self._cfg.get(key="test_pass"),
+                                 self._cfg.get("signal_pass_period", 0.5))
         elif result == "fail":
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
-            time.sleep(self._cfg.get("signal_fail_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
+            await self._pulse_do(self._cfg.get(key="test_fail"),
+                                 self._cfg.get("signal_fail_period", 0.5))
 
         self._set_stage(AppStage.DONE)
         log.info(f"[program_3] Done — barcode={self.barcode}  result={result}")
         
 
-    def program_4(self):
+    async def program_4(self):
         log = _get_thread_logger()
         homing  = self.get_points_from_db("Homming")
         cam_parq= self.get_points_from_db("cam_parq")
@@ -645,38 +858,38 @@ class App():
         model4_point5   = self.get_points_from_db("model4_point5")
 
         # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
-        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=model4_prepoint1, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # await self._move_j(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # await self._move_j(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=model4_prepoint1, tool=0, user=1, vel=100, acc=100)
         # Vision test 1
         
         self._set_stage(AppStage.vision_stage(1), step=1)
-        self.robot.MoveL(joint_pos=model4_point1, tool=0, user=1, vel=60, acc=100)
-        time.sleep(1)
-        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
+        await self._move_l(joint_pos=model4_point1, tool=0, user=1, vel=60, acc=100)
+        await self._sleep(1)
+        img0 = await self._capture(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
         self._set_stage(AppStage.vision_stage(2), step=2)
-        self.robot.MoveL(joint_pos=model4_point2, tool=0, user=1, vel=100, acc=100)
-        img1 = ct.trigger(name=self.barcode + "_1") 
+        await self._move_l(joint_pos=model4_point2, tool=0, user=1, vel=100, acc=100)
+        img1 = await self._capture(name=self.barcode + "_1") 
         self._set_stage(AppStage.vision_stage(3), step=3)
-        self.robot.MoveL(joint_pos= model4_point3, tool=0, user=1, vel=100, acc=100)
-        img2 = ct.trigger(name=self.barcode + "_2")
+        await self._move_l(joint_pos= model4_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = await self._capture(name=self.barcode + "_2")
         self._set_stage(AppStage.vision_stage(4), step=4)
-        self.robot.MoveL(joint_pos=model4_point4, tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_3")
-        self.robot.MoveL(joint_pos=model4_point4_res,   tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model4_point4_res2, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model4_point4_res3, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model4_point4_res4, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model4_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_3")
+        await self._move_l(joint_pos=model4_point4_res,   tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model4_point4_res2, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model4_point4_res3, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model4_point4_res4, tool=0, user=1, vel=100, acc=100)
         self._set_stage(AppStage.vision_stage(5), step=5)
-        self.robot.MoveL(joint_pos=model4_point5,  tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_4")
-        self.robot.MoveL(joint_pos=model4_point4_res4, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model4_point4_res3, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model4_point4_res2, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=model4_prepoint1, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model4_point5,  tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_4")
+        await self._move_l(joint_pos=model4_point4_res4, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model4_point4_res3, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model4_point4_res2, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=model4_prepoint1, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
         # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
         self._set_stage(AppStage.REPORTING)
@@ -686,10 +899,10 @@ class App():
             res    = "Error: no captured image"
             result = "error"
         else:
-            res    = self._ai_provider.run(image_paths=image_list)
+            res    = await self._ai_run(image_list)
             result = self.check_images_status(res)
         log.info(f"[program_4] Done — model answer — barcode={self.barcode}  result={res}")
-        ex.result_reporting(ID=self.barcode, result=result)
+        await asyncio.to_thread(ex.result_reporting, ID=self.barcode, result=result)
 
         # Update stats
         with self._state_lock:
@@ -701,21 +914,19 @@ class App():
                 self._stats["errors"] += 1
 
         # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
-        self.robot.SetDO(self._cfg.get(key="test_done"),   1)
-        self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
+        await self._set_do(self._cfg.get(key="test_done"),   1)
+        await self._set_do(self._cfg.get(key="yellow_led"),  0)
         if result == "pass":
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
-            time.sleep(self._cfg.get("signal_pass_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
+            await self._pulse_do(self._cfg.get(key="test_pass"),
+                                 self._cfg.get("signal_pass_period", 0.5))
         elif result == "fail":
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
-            time.sleep(self._cfg.get("signal_fail_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
+            await self._pulse_do(self._cfg.get(key="test_fail"),
+                                 self._cfg.get("signal_fail_period", 0.5))
 
         self._set_stage(AppStage.DONE)
         log.info(f"[program_4] Done — barcode={self.barcode}  result={result}")
 
-    def program_5(self):
+    async def program_5(self):
         log = _get_thread_logger()
         homing  = self.get_points_from_db("Homming")
         cam_parq= self.get_points_from_db("cam_parq")
@@ -734,42 +945,42 @@ class App():
 
 
         # BUG-010: asyncio.run() أُزيل — switch_camera أصبحت sync
-        self.robot.MoveJ(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
-        # self.robot.MoveJ(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=model5_prepoint1, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=homing,   tool=0, user=1, vel=60, acc=100)
+        # await self._move_j(joint_pos=cam_parq, tool=0, user=1, vel=100, acc=100)
+        # await self._move_j(joint_pos=cam_relese, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=model5_prepoint1, tool=0, user=1, vel=100, acc=100)
         # Vision test 1
         
         self._set_stage(AppStage.vision_stage(1), step=1)
-        self.robot.MoveL(joint_pos=model5_point1, tool=0, user=1, vel=60, acc=100)
-        time.sleep(1)
-        img0 = ct.trigger(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
+        await self._move_l(joint_pos=model5_point1, tool=0, user=1, vel=60, acc=100)
+        await self._sleep(1)
+        img0 = await self._capture(name=self.barcode + "_0")   # BUG-012: نحفظ المسار الفعلي
         self._set_stage(AppStage.vision_stage(2), step=2)
-        self.robot.MoveL(joint_pos=model5_point2, tool=0, user=1, vel=100, acc=100)
-        img1 = ct.trigger(name=self.barcode + "_1") 
-        self.robot.MoveL(joint_pos=model5_point2_res, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model5_point2, tool=0, user=1, vel=100, acc=100)
+        img1 = await self._capture(name=self.barcode + "_1") 
+        await self._move_l(joint_pos=model5_point2_res, tool=0, user=1, vel=100, acc=100)
         self._set_stage(AppStage.vision_stage(3), step=3)
-        self.robot.MoveL(joint_pos= model5_point3, tool=0, user=1, vel=100, acc=100)
-        img2 = ct.trigger(name=self.barcode + "_2")
+        await self._move_l(joint_pos= model5_point3, tool=0, user=1, vel=100, acc=100)
+        img2 = await self._capture(name=self.barcode + "_2")
         self._set_stage(AppStage.vision_stage(4), step=4)
-        self.robot.MoveL(joint_pos=model5_point4, tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_3")
-        self.robot.MoveL(joint_pos=model5_point4_res,   tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model5_point4_res2, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model5_point4, tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_3")
+        await self._move_l(joint_pos=model5_point4_res,   tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model5_point4_res2, tool=0, user=1, vel=100, acc=100)
         self._set_stage(AppStage.vision_stage(5), step=5)
-        self.robot.MoveL(joint_pos=model5_point5,  tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_4")
+        await self._move_l(joint_pos=model5_point5,  tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_4")
         self._set_stage(AppStage.vision_stage(6), step=6)
-        self.robot.MoveL(joint_pos=model5_point6, tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_5")
+        await self._move_l(joint_pos=model5_point6, tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_5")
         self._set_stage(AppStage.vision_stage(7), step=6)
-        self.robot.MoveL(joint_pos=model5_point7, tool=0, user=1, vel=100, acc=100)
-        img3 = ct.trigger(name=self.barcode + "_6")
-        self.robot.MoveL(joint_pos=model5_point5, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveL(joint_pos=model5_point4_res2, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=model5_point4_res, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=model5_prepoint1, tool=0, user=1, vel=100, acc=100)
-        self.robot.MoveJ(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model5_point7, tool=0, user=1, vel=100, acc=100)
+        img3 = await self._capture(name=self.barcode + "_6")
+        await self._move_l(joint_pos=model5_point5, tool=0, user=1, vel=100, acc=100)
+        await self._move_l(joint_pos=model5_point4_res2, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=model5_point4_res, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=model5_prepoint1, tool=0, user=1, vel=100, acc=100)
+        await self._move_j(joint_pos=homing,  tool=0, user=1, vel=100, acc=100)
 
         # Reporting — FIX: استخدام الصورة الملتقطة فعلياً (img0) بدل مسار hardcoded
         self._set_stage(AppStage.REPORTING)
@@ -779,10 +990,10 @@ class App():
             res    = "Error: no captured image"
             result = "error"
         else:
-            res    = self._ai_provider.run(image_paths=image_list)
+            res    = await self._ai_run(image_list)
             result = self.check_images_status(res)
         log.info(f"[program_5] Done — model answer — barcode={self.barcode}  result={res}")
-        ex.result_reporting(ID=self.barcode, result=result)
+        await asyncio.to_thread(ex.result_reporting, ID=self.barcode, result=result)
 
         # Update stats
         with self._state_lock:
@@ -794,16 +1005,14 @@ class App():
                 self._stats["errors"] += 1
 
         # Signal robot — BUG-033: مفاتيح config صُحّحت (period بدل preriod)
-        self.robot.SetDO(self._cfg.get(key="test_done"),   1)
-        self.robot.SetDO(self._cfg.get(key="yellow_led"),  0)
+        await self._set_do(self._cfg.get(key="test_done"),   1)
+        await self._set_do(self._cfg.get(key="yellow_led"),  0)
         if result == "pass":
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 1)
-            time.sleep(self._cfg.get("signal_pass_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_pass"), 0)
+            await self._pulse_do(self._cfg.get(key="test_pass"),
+                                 self._cfg.get("signal_pass_period", 0.5))
         elif result == "fail":
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 1)
-            time.sleep(self._cfg.get("signal_fail_period", 0.5))
-            self.robot.SetDO(self._cfg.get(key="test_fail"), 0)
+            await self._pulse_do(self._cfg.get(key="test_fail"),
+                                 self._cfg.get("signal_fail_period", 0.5))
 
         self._set_stage(AppStage.DONE)
         log.info(f"[program_5] Done — barcode={self.barcode}  result={result}")
@@ -811,9 +1020,11 @@ class App():
 
     # ── Sequence ──────────────────────────────────────────────────────
 
-    def start_sequence(self):
+    async def start_sequence(self):
         log = _get_thread_logger()
         log.info("enter the equance ")
+        with self._state_lock:
+            self._last_images = []   # صور الدورة الحالية
         # اتحرك لنقطة المسح — BUG-013: "CamScan" → "cam" (اسم موجود فعلاً في DB)
         # barcode_point = self.get_points_from_db("CamScan")
         # self.robot.MoveJ(barcode_point, 0, 1, vel=100, acc=100)
@@ -829,7 +1040,7 @@ class App():
         log.info(f"scanner is started")
         # انتظر الباركود
         self._set_stage(AppStage.IDLE)
-        self.barcode = self.get_barcode_from_scanner()
+        self.barcode = await self.get_barcode_from_scanner()
 
         if self._stop_app.is_set() or self.barcode is None:
             return   # البرنامج وقف
@@ -861,15 +1072,15 @@ class App():
         log.info(f"[Sequence] Program: {program}")
 
         if program == 1:
-            self.program_1()
+            await self.program_1()
         elif program == 3:
-            self.program_2()
+            await self.program_2()
         elif program == 2:
-            self.program_3()
+            await self.program_3()
         elif program == 4:
-            self.program_4()
+            await self.program_4()
         elif program == 5:
-            self.program_5()
+            await self.program_5()
         else:
             # BUG-014: programs 2-5 فارغة → ERROR مع رسالة واضحة
             log.warning(f"[Sequence] Program {program} has no implementation (programs 2-5 are empty stubs)")
@@ -933,41 +1144,61 @@ class App():
             log.exception(f"[Program] Unexpected error: {e}")
             return None
 
-    # ── Main loop (runs in background thread) ─────────────────────────
+    # ══════════════════════════════════════════════════════════════════
+    #  اللوب الرئيسي (asyncio task — مش thread)
+    # ══════════════════════════════════════════════════════════════════
 
-    def _run_main(self):
-        """اللوب الرئيسي — بيشتغل في ثريد خلفي لما start() يتنادى."""
+    async def _connect_hardware(self):
+        """تشغيل الكاميرا + الاتصال بالروبوت. بيرفع Exception لو فشل."""
         log = _get_thread_logger()
-        log.info("[App] _run_main started")
+
+        # ── الكاميرا ───────────────────────────────────────────────────
+        await asyncio.to_thread(self._camera.start)
+        ok = await asyncio.to_thread(self._camera.wait_for_frame, 5.0)
+        if not ok:
+            raise RuntimeError("الكاميرا مش بتبعت فريمات — اتأكد من التوصيل والـ index")
+        await asyncio.to_thread(ct.start, 0, ct.DEFAULT_SAVE_DIR, 8.0, self._camera)
+
+        # ── الروبوت ────────────────────────────────────────────────────
+        self.robot = await asyncio.to_thread(RPC, self.robot_ip)
+        log.info(f"[App] RPC connected → {self.robot_ip}")
+
+        homing = await asyncio.to_thread(self.get_points_from_db, "Homming")
+        await self._move_j(joint_pos=homing, tool=0, user=1, vel=100, acc=100)
+        await self._set_do(self._cfg.get(key="test_done"), 1)
+
+    async def _read_di(self, default=0) -> int:
+        """قراءة DI الترجر وتطبيع الشكل (int أو list/tuple)."""
+        ret = await self._call(self.robot.GetDI, self._cfg.get(key="input_trigger"), 0)
+        if isinstance(ret, (list, tuple)):
+            return int(ret[1]) if len(ret) > 1 else int(ret[0])
+        return int(ret) if ret is not None else default
+
+    async def run_async(self):
+        """
+        اللوب الرئيسي — بيشتغل كـ asyncio.Task جوه نفس الـ event loop
+        بتاع uvicorn. كل نداء هاردوير بلوكينج بيروح thread executor عن
+        طريق self._call() اللي بيحط نقطة توقف قبله وبعده.
+
+        الخروج بيحصل بواحد من تلاتة:
+          1. _stop_app اتظبطت  → StopRequested من أقرب نقطة توقف
+          2. الـ task اتعمله cancel → CancelledError
+          3. Exception حقيقي    → stage = ERROR
+        التنضيف مش هنا — هو في aclose() عشان يبقى مضمون ومرة واحدة.
+        """
+        log = _get_thread_logger()
+        log.info("[App] run_async started")
         try:
-            # تشغيل الكاميرا — BUG-037: تحقق من نجاح التشغيل
-            self._camera.start()
-            if not self._camera.wait_for_frame(timeout=5.0):
-                log.error("[App] Camera failed to produce frames — aborting")
-                self._set_stage(AppStage.ERROR)
-                return
-            ct.start(camera=self._camera)
+            # الهاردوير اتوصل بالفعل في start() قبل ما التاسك دي تتعمل،
+            # فلو وصلنا هنا يبقى الكاميرا والروبوت جاهزين.
 
-            # اتصل بالروبوت
-            self.robot = RPC(self.robot_ip)
-            homing = self.get_points_from_db("Homming")
-            self.robot.MoveJ(joint_pos=homing, tool=0, user=1, vel=100, acc=100)
-            self.robot.SetDO(self._cfg.get(key="test_done"), 1)
-
-            # BUG-FIX: كنا بنعمل last = 0 ثابت هنا، فلو DI0 كانت أصلاً 1 وقت
-            # الـ Start (مش ترانزيشن حقيقي، هي كانت طالعة من الأساس)، أول
-            # قراءة في اللوب تحت كانت بتتفسّر غلط إنها positive edge (0→1)
-            # وتشغّل السيكوانس فورًا من غير أي إشارة حقيقية جديدة.
-            # الحل: ناخد قراءة أولية حقيقية من DI0 هنا ونخلي last = القيمة
-            # دي (مش صفر ثابت) — فبعد كده منطق الـ positive edge (DI0==1 and
-            # last==0) هيفضل شغال صح زي ما هو تمامًا، وهيبدأ بس لما فعلاً
-            # تحصل نقلة من 0 لـ 1 بعد اللحظة دي.
+            # BUG-FIX: ناخد قراءة أولية حقيقية من DI0 بدل last = 0 ثابت،
+            # عشان لو DI0 كانت أصلاً 1 وقت الـ Start ماتتفسرش غلط كأنها
+            # positive edge (0→1) وتشغّل السيكوانس فورًا بدون إشارة حقيقية.
             try:
-                ret = self.robot.GetDI(self._cfg.get(key="input_trigger"), 0)
-                if isinstance(ret, (list, tuple)):
-                    last = int(ret[1]) if len(ret) > 1 else int(ret[0])
-                else:
-                    last = int(ret) if ret is not None else 0
+                last = await self._read_di()
+            except StopRequested:
+                raise
             except Exception as e:
                 log.warning(f"[App] Initial GetDI read failed: {e} — defaulting last=0")
                 last = 0
@@ -978,72 +1209,71 @@ class App():
 
             while not self._stop_app.is_set():
                 try:
-                    ret = self.robot.GetDI(self._cfg.get(key="input_trigger"), 0)
-                    log.info(f"input is {ret}")
-                    if isinstance(ret, (list, tuple)):
-                        DI0 = int(ret[1]) if len(ret) > 1 else int(ret[0])
-                    else:
-                        DI0 = int(ret) if ret is not None else 0
+                    DI0 = await self._read_di()
+                except StopRequested:
+                    raise
                 except Exception as e:
                     log.warning(f"[App] GetDI error: {e} — retrying...")
-                    time.sleep(1.0)
+                    await self._sleep(1.0)
                     continue
 
                 if DI0 == 1 and last == 0:
                     log.info("[App] DI0 HIGH — starting sequence")
-                    self.robot.SetDO(self._cfg.get(key="test_done"), 0)
-                    self.robot.SetDO(self._cfg.get(key="yellow_led"), 1)
-                    self.start_sequence()
-                    # رجع لحالة الانتظار بعد انتهاء الـ sequence
+                    await self._set_do(self._cfg.get(key="test_done"), 0)
+                    await self._set_do(self._cfg.get(key="yellow_led"), 1)
+                    await self.start_sequence()
                     if not self._stop_app.is_set():
                         self._set_stage(AppStage.IDLE)
-                        self.robot.SetDO(self._cfg.get(key="test_done"), 1)
+                        await self._set_do(self._cfg.get(key="test_done"), 1)
 
                 last = DI0
-                time.sleep(0.1)
+                await self._sleep(0.1)
 
+        except StopRequested as e:
+            # خروج طبيعي — المستخدم دوس Stop
+            log.info(f"[App] run_async stopped by request ({e})")
+        except asyncio.CancelledError:
+            log.info("[App] run_async cancelled")
+            raise
         except Exception as e:
-            log.exception(f"[App] _run_main error: {e}")
+            log.exception(f"[App] run_async error: {e}")
             self._set_stage(AppStage.ERROR)
         finally:
             self._running = False
-            self._save_session_stats()   # حفظ الإحصائيات عند الخروج
-            self.robot    = None
-            try:
-                self._camera.stop()
-            except Exception:
-                pass
-            try:
-                camera_barcode.stop()
-            except Exception:
-                pass
-            log.info("[App] _run_main finished")
+            self._save_session_stats()
+            log.info("[App] run_async finished")
 
-    # ── start / stop ──────────────────────────────────────────────────
+    # ══════════════════════════════════════════════════════════════════
+    #  start / stop / teardown
+    # ══════════════════════════════════════════════════════════════════
 
-    def start(self, camera_index=None):
+    async def start(self, camera_index=None) -> bool:
         """
-        يشغّل البرنامج في ثريد خلفي ويرجع True/False فوراً (non-blocking).
-        الإحصائيات بتتحمل من الجلسة السابقة (stop/start تحافظ على الأرقام).
+        يوصّل الهاردوير (كاميرا + روبوت + homing) **ثم** يشغّل اللوب
+        الرئيسي كـ asyncio.Task.
+
+        مهم: التهيئة بتحصل قبل الرجوع، فلو الدالة رجعت True يبقى
+        الكاميرا والروبوت شغالين بجد — ولو الكاميرا مش بتبعت فريمات أو
+        الروبوت مش راد، بترفع Exception والـ Start بتفشل برسالة واضحة
+        بدل ما تنجح شكليًا والبرنامج يروح على ERROR بعدها.
+        الإحصائيات بتتحمل من الجلسة السابقة.
+
+        ملحوظة: الـ App ده بيتعمل مرة واحدة ويتستخدم مرة واحدة —
+        الـ lifecycle manager (lifecycle.py) بيبني App جديد كل Start،
+        فمفيش حالة "ثريد قديم لسه بيوقف" من الأساس.
         """
         if self._running:
             return True
-
-        # ── انتظر الـ thread القديم يخلص تماماً قبل ما نبدأ واحد جديد ──
-        # (الـ thread ممكن يكون لسه بيوقف الكاميرا/الروبوت في finally)
-        if self._main_thread is not None and self._main_thread.is_alive():
-            self._main_thread.join(timeout=8.0)
-            if self._main_thread.is_alive():
-                # الـ thread عالق — مش آمن نبدأ من جديد
-                return False
+        if self._closed:
+            raise RuntimeError("App instance already closed — اعمل instance جديد")
 
         if camera_index is not None:
             self._camera._cam_index = camera_index
 
-        # ── تحميل إحصائيات الجلسة السابقة ──────────────────────────
         saved = self._load_session_stats()
 
         self._stop_app.clear()
+        self._stop_reason = None
         self._start_time = time.time()
         with self._state_lock:
             self._stage   = AppStage.IDLE
@@ -1052,43 +1282,165 @@ class App():
             self.barcode  = saved["last_barcode"]
             self._program = None
             self._step    = 0
+            self._last_images = []
 
         # BUG-050: مسح queue الباركودات القديمة
         sc.reset_queue()
         sc.start_listener()
-        self._main_thread = threading.Thread(
-            target=self._run_main,
-            name="app-main",
-            daemon=True,
-        )
-        self._main_thread.start()
-        # BUG-028: _running = True بعد start() وليس قبلها
+
         self._running = True
+        try:
+            # التهيئة هنا (مش جوه التاسك) عشان فشلها يبان كـ فشل Start
+            await self._connect_hardware()
+        except BaseException:
+            self._running = False
+            raise
+
+        self._task = asyncio.create_task(self.run_async(), name="app-main")
         return True
+
+    def request_stop(self, reason: str = "user stop"):
+        """
+        إيقاف فوري وغير بلوكينج (آمن للنداء من أي thread أو من الـ event loop).
+
+        خطوتين مهمتين:
+          1. _stop_app.set()  → أقرب نقطة توقف هتخرج من السيكوانس
+          2. StopMotion()     → بتقطع الحركة الحالية فورًا. ضروري لأن
+             MoveJ/MoveL نداء xmlrpc بلوكينج بيستنى الحركة تخلص، وأسيو
+             مش بيقدر يلغي thread — فلازم نقول للكنترولر نفسه "قف".
+        """
+        self._stop_reason = reason
+        self._running = False     # فورًا عشان الـ UI/الـ snapshot يبانوا صح
+        self._stop_app.set()
+        self._emergency_stop_motion()
+
+    def _emergency_stop_motion(self):
+        """
+        StopMotion على **ServerProxy منفصل** — مش self.robot.
+
+        ليه منفصل؟ xmlrpc.client.ServerProxy بيكاش connection واحدة
+        وهي **مش thread-safe**. لو الـ MoveL لسه في الهوا على نفس الـ
+        proxy وبعتنا StopMotion عليه من thread تاني، الـ HTTP connection
+        بتتلخبط. proxy جديد = connection جديدة = آمن.
+        """
+        log = _get_thread_logger()
+        if self.robot is None:
+            return
+        try:
+            proxy = xmlrpc.client.ServerProxy(
+                f"http://{self.robot_ip}:20003", allow_none=True
+            )
+            socket.setdefaulttimeout(3)
+            try:
+                proxy.StopMotion()
+                log.info("[App] StopMotion أُرسل — الحركة اتقطعت")
+            finally:
+                socket.setdefaulttimeout(None)
+        except Exception as e:
+            log.warning(f"[App] StopMotion فشل: {e}")
+
+    async def aclose(self, timeout: float = 12.0):
+        """
+        التنضيف الكامل — بعده الـ instance ده مابيتستخدمش تاني.
+
+        بيقفل كل حاجة بالترتيب الصح، وكل خطوة في try خاصة بيها عشان
+        فشل خطوة ماتمنعش اللي بعدها:
+          1. إيقاف اللوب + StopMotion
+          2. انتظار التاسك (بـ timeout) ثم cancel لو عندت
+          3. capture_trigger → camera_barcode → الكاميرا نفسها
+          4. سكانر الباركود
+          5. robot.CloseRPC()  ← ده اللي كان ناقص خالص قبل كده
+        """
+        log = _get_thread_logger()
+        if self._closed:
+            return
+        self._closed = True
+
+        # 1) اطلب الإيقاف
+        self.request_stop("aclose")
+
+        # 2) استنى اللوب يخرج، وبعدين اقطعه بالعافية
+        task, self._task = self._task, None
+        if task is not None and not task.done():
+            try:
+                await asyncio.wait_for(asyncio.shield(task), timeout=timeout)
+            except asyncio.TimeoutError:
+                log.warning(f"[App] اللوب مخلصش في {timeout}s — cancel")
+                task.cancel()
+                try:
+                    await asyncio.wait_for(task, timeout=5.0)
+                except (asyncio.TimeoutError, asyncio.CancelledError):
+                    log.warning("[App] اللوب لسه معلّق في نداء هاردوير — بنكمّل التنضيف")
+                except Exception:
+                    pass
+            except asyncio.CancelledError:
+                pass
+            except Exception as e:
+                log.warning(f"[App] اللوب خرج بـ exception: {e}")
+
+        # 3) الكاميرا وكل اللي معتمد عليها
+        for label, fn in (
+            ("capture_trigger", ct.stop),
+            ("camera_barcode",  camera_barcode.stop),
+            ("camera",          self._camera.stop),
+        ):
+            try:
+                await asyncio.to_thread(fn)
+                log.info(f"[App] {label} اتقفل")
+            except Exception as e:
+                log.warning(f"[App] إيقاف {label} فشل: {e}")
+
+        # 4) سكانر الباركود
+        try:
+            await asyncio.to_thread(sc.stop_listener)
+            log.info("[App] scanner listener اتقفل")
+        except Exception as e:
+            log.warning(f"[App] إيقاف الـ scanner فشل: {e}")
+
+        # 5) الروبوت — CloseRPC بيقفل سوكيت 20004 وبيوقف
+        #    robot_state_routine_thread. من غيره كل Start كانت بتسيب
+        #    ثريد + سوكيت شغالين للأبد.
+        robot, self.robot = self.robot, None
+        if robot is not None:
+            try:
+                await asyncio.to_thread(robot.CloseRPC)
+                log.info("[App] robot CloseRPC تم")
+            except Exception as e:
+                log.warning(f"[App] CloseRPC فشل: {e}")
+
+        # 6) حالة نهائية نظيفة
+        self._running = False
+        self._save_session_stats()
+        self._set_stage(AppStage.IDLE)
+        log.info("[App] aclose — التنضيف خلص، كل الهاردوير اتقفل")
+
+    # ── توافق مع الكود القديم ─────────────────────────────────────────
+
+    def stop(self, wait: bool = False, timeout: float = 10.0):
+        """
+        DEPRECATED — متبقية للتوافق مع أي كود قديم (سكربتات/tests).
+        الإيقاف الكامل الصح هو: await app.aclose().
+        """
+        self.request_stop("legacy stop()")
 
     def run(self):
         return self.start()
 
-    def stop(self, wait: bool = False, timeout: float = 10.0):
-        """
-        يوقف البرنامج.
-        BUG-049: ضيفنا wait=True لانتظار انتهاء الـ thread (للـ shutdown).
-        FIX-START: _running = False فوراً عشان start() تشتغل صح بعد stop().
-        """
-        self._save_session_stats()   # حفظ الإحصائيات قبل الإيقاف
-        self._running = False        # فوراً — مش نستنى الـ thread finally
-        self._stop_app.set()
-        sc.stop_listener()
-        if wait and self._main_thread is not None:
-            self._main_thread.join(timeout=timeout)
-
 
 if __name__ == "__main__":
-    app = App()
-    app.start()
-    # في وضع CLI نستنى لحد ما يتوقف
+    # وضع CLI — بيشغّل نفس اللوب جوه event loop صغير
+    async def _main():
+        app = App()
+        await app.start()
+        try:
+            while app.is_running:
+                await asyncio.sleep(0.5)
+        except (KeyboardInterrupt, asyncio.CancelledError):
+            pass
+        finally:
+            await app.aclose()
+
     try:
-        while app.is_running:
-            time.sleep(0.5)
+        asyncio.run(_main())
     except KeyboardInterrupt:
-        app.stop()
+        pass

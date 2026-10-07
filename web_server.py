@@ -40,6 +40,7 @@ import debug_monitor
 from config import config
 import ClientsClass as cc
 import scanner
+from lifecycle import lifecycle, LifecycleState
 
 
 # ════════════════════════════════════════════════════════════════════
@@ -134,12 +135,11 @@ sio = socketio.AsyncServer(
 @sio.event
 async def connect(sid, environ):
     """لما client يتصل نبعتله snapshot فوري."""
-    if app_ref is not None:
-        try:
-            state = await asyncio.to_thread(app_ref.get_state_snapshot)
-            await sio.emit("state_update", state, to=sid)
-        except Exception:
-            pass
+    try:
+        state = await asyncio.to_thread(lifecycle.snapshot)
+        await sio.emit("state_update", state, to=sid)
+    except Exception:
+        pass
 
 
 @sio.event
@@ -153,11 +153,15 @@ async def ping(sid):
 
 
 # ════════════════════════════════════════════════════════════════════
-#                    App state (globals)
+#                    App state
 # ════════════════════════════════════════════════════════════════════
-app_ref: Optional[cc.App] = None
-app_init_error: Optional[str] = None
-_app_init_task: Optional[asyncio.Task] = None   # background camera+AI init task (see lifespan)
+# مفيش app_ref عالمي بعد كده — الـ lifecycle هو المالك الوحيد للـ App،
+# وبيرجع None وإحنا في حالة STOPPED (معناها: مفيش هاردوير شغال خالص).
+
+
+def current_app() -> Optional[cc.App]:
+    """الـ App الحالي أو None لو البرنامج متوقف."""
+    return lifecycle.app
 
 
 # ════════════════════════════════════════════════════════════════════
@@ -168,9 +172,8 @@ async def _state_broadcaster():
     while True:
         try:
             await asyncio.sleep(0.5)
-            if app_ref is not None:
-                state = await asyncio.to_thread(app_ref.get_state_snapshot)
-                await sio.emit("state_update", state)
+            state = await asyncio.to_thread(lifecycle.snapshot)
+            await sio.emit("state_update", state)
         except asyncio.CancelledError:
             break
         except Exception:
@@ -196,7 +199,7 @@ async def _log_broadcaster():
 # ════════════════════════════════════════════════════════════════════
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global app_ref, app_init_error, _log_queue
+    global _log_queue
 
     # 1. Setup thread logger + log bridge
     loop = asyncio.get_event_loop()
@@ -223,49 +226,31 @@ async def lifespan(app: FastAPI):
     sys.stdout = _StreamToLogger(logging.getLogger("stdout"), logging.INFO)
     sys.stderr = _StreamToLogger(logging.getLogger("stderr"), logging.WARNING)
 
-    # 3. Create App instance in the background (BUG-FIX: camera + AI-model
-    #    loading (cv2.VideoCapture / torch+CUDA+CLIP weights) can take several
-    #    seconds. Doing this before `yield` blocked the whole HTTP server from
-    #    accepting connections, which made the dashboard feel stuck/slow to
-    #    open. We now let uvicorn start accepting requests immediately and
-    #    finish the heavy init in a background task; app_ref stays None (the
-    #    dashboard already handles that state) until it's ready.
-    async def _init_app_ref():
-        global app_ref, app_init_error
-        try:
-            t0 = time.time()
-            log.info("=== web_server: initializing camera + AI model (كاميرا/موديل الـ AI بيتحمّلوا — قد ياخد كذا ثانية) ===")
-            new_app = await asyncio.to_thread(cc.App)
-            app_ref = new_app
-            debug_monitor.start(app_ref=app_ref, interval=2.0, force=True, verbose_console=False)
-            log.info(f"=== web_server: App created (STOPPED) in {time.time() - t0:.1f}s — جاهز، اضغط Start ===")
-        except Exception as e:
-            app_init_error = str(e)
-            log.exception(f"Could not create App: {e}")
-
-    global _app_init_task
-    _app_init_task = asyncio.create_task(_init_app_ref(), name="app-init")
-    init_task = _app_init_task
+    # 3. مفيش App بيتعمل عند الـ boot.
+    #    كل Start بيبني App جديد بالكامل (كاميرا + موديل AI + RPC) وكل
+    #    Stop بيقفل كل حاجة ويتخلص منه — فحالة البداية هي STOPPED نظيفة،
+    #    زي ما البرنامج يكون مقفول. التهيئة بتحصل جوه /api/start.
 
     # 4. Start background async tasks
     state_task = asyncio.create_task(_state_broadcaster(), name="state-broadcaster")
     log_task   = asyncio.create_task(_log_broadcaster(),   name="log-broadcaster")
 
-    log.info("=== web_server: listening on http://0.0.0.0:8000 (dashboard ready; camera/AI loading in background) ===")
+    log.info("=== web_server: listening on http://0.0.0.0:8000 — جاهز، اضغط Start ===")
 
     yield  # ← server runs here ←
 
-    # 5. Graceful shutdown
+    # 5. Graceful shutdown — teardown كامل للهاردوير
     state_task.cancel()
     log_task.cancel()
-    init_task.cancel()
     try:
-        await asyncio.gather(state_task, log_task, init_task, return_exceptions=True)
+        await asyncio.gather(state_task, log_task, return_exceptions=True)
     except Exception:
         pass
 
-    if app_ref is not None and app_ref.is_running:
-        await asyncio.to_thread(app_ref.stop, True, 8.0)  # BUG-049: انتظار الـ thread
+    try:
+        await lifecycle.shutdown()
+    except Exception as e:
+        log.warning(f"lifecycle shutdown: {e}")
 
     if hasattr(sys, "_original_stdout"):
         sys.stdout = sys._original_stdout
@@ -302,42 +287,36 @@ async def index():
 
 @app.get("/api/state")
 async def get_state():
-    """Snapshot of current app state."""
-    if app_ref is None:
-        return {"error": app_init_error or "App not initialised", "is_running": False}
-    return await asyncio.to_thread(app_ref.get_state_snapshot)
+    """Snapshot of current app state (بيشتغل حتى لو البرنامج متوقف)."""
+    return await asyncio.to_thread(lifecycle.snapshot)
 
 
 @app.post("/api/start")
 async def start_app():
-    """يشغّل البرنامج (non-blocking — App.start() يرجع فوراً).
-    start() هي اللي بتتحكم في race conditions — مش محتاجين نعمل check هنا.
+    """
+    يشغّل البرنامج: App جديد بالكامل (كاميرا + موديل AI + RPC) ثم اللوب.
 
-    BUG-FIX: لو المستخدم دوس Start بدري قبل ما الكاميرا/موديل الـ AI
-    يخلصوا تحميل (بيحصل في background عند تشغيل السيرفر)، كان بيرجع
-    error فورًا. دلوقتي بننتظر نفس الـ init task يخلص (لو لسه شغال)
-    بدل ما نرمي error، فالمستخدم مضطرش "يصبر شوية" يدوي قبل الضغط."""
-    global app_ref
-    if app_ref is None:
-        if _app_init_task is not None and not _app_init_task.done():
-            await _app_init_task   # ينتظر التهيئة تخلص بدل ما يرمي error فورًا
-        if app_ref is None:
-            raise HTTPException(500, app_init_error or "App not initialised")
-    ok = await asyncio.to_thread(app_ref.start)
-    if ok is False:
-        raise HTTPException(503, "Previous run thread is still stopping — try again in a moment")
-    return {"ok": bool(ok)}
+    بيرجع بعد ما التهيئة تخلص فعلاً، فلو رجع ok=True يبقى الهاردوير
+    شغال بجد. تحميل موديل الـ CLIP على الـ GPU ممكن ياخد كذا ثانية في
+    أول Start بعد كل Stop — ده متوقع (الاختيار إن كل Start تبقى تهيئة
+    نظيفة من الأول).
+    """
+    result = await lifecycle.start()
+    if not result.get("ok"):
+        raise HTTPException(503, result.get("msg") or "فشل التشغيل — راجع الـ logs")
+    return result
 
 
 @app.post("/api/stop")
 async def stop_app():
-    """يوقف البرنامج."""
-    if app_ref is None:
-        raise HTTPException(500, "App not initialised")
-    if not app_ref.is_running:
-        return {"ok": True, "msg": "already stopped"}
-    app_ref.stop()
-    return {"ok": True}
+    """
+    يوقف البرنامج **بالكامل**: StopMotion فورًا، ثم غلق الكاميرا
+    والسكانر والـ RPC، ثم التخلص من الـ App instance.
+
+    بيرجع بعد ما كل حاجة تتقفل فعلاً (الإصدار القديم كان بيرجع فورًا
+    والهاردوير يفضل شغال، فالداشبورد كانت بتقول STOPPED وهي كدابة).
+    """
+    return await lifecycle.stop()
 
 
 # ════════════════════════════════════════════════════════════════════
@@ -368,6 +347,7 @@ async def download_report():
 async def inject_barcode(body: dict):
     """حقن باركود يدوي من الـ dashboard."""
     # BUG-029: تحقق إن البرنامج شغّال قبل حقن الباركود
+    app_ref = current_app()
     if app_ref is None or not app_ref.is_running:
         raise HTTPException(400, "App is not running — press Start first")
 
@@ -401,8 +381,9 @@ async def camera_frame_jpg():
     آخر فريم من كاميرا الـ App كـ JPEG.
     Frontend بيستخدمه في <img src="...?t=timestamp"> للتحديث المستمر.
     """
+    app_ref = current_app()
     if app_ref is None:
-        raise HTTPException(503, "App not initialised")
+        raise HTTPException(503, "البرنامج متوقف — اضغط Start")
     try:
         frame = app_ref._camera.get_frame()
         if frame is None:
@@ -421,6 +402,7 @@ async def camera_frame_jpg():
 
 @app.get("/api/camera/status")
 async def camera_status():
+    app_ref = current_app()
     if app_ref is None:
         return {"running": False, "has_frame": False}
     try:
@@ -486,6 +468,7 @@ async def update_config(body: dict):
     changed = await asyncio.to_thread(config.update_many, body)
 
     # لو camera_index أو camera_type اتغير → restart camera
+    app_ref = current_app()
     if ("camera_index" in body or "camera_type" in body) and app_ref is not None:
         try:
             new_idx = int(body.get("camera_index", config.get("camera_index", 0)))
@@ -526,9 +509,12 @@ async def reset_config(body: dict):
 @app.post("/api/stats/reset")
 async def reset_stats():
     """إعادة تعيين الإحصائيات المتراكمة (total/pass/fail/errors/last_barcode)."""
-    if app_ref is None:
-        raise HTTPException(500, "App not initialised")
-    await asyncio.to_thread(app_ref.reset_session_stats)
+    app_ref = current_app()
+    if app_ref is not None:
+        await asyncio.to_thread(app_ref.reset_session_stats)
+    else:
+        # البرنامج متوقف — نمسح الملف المحفوظ على الـ disk مباشرة
+        await asyncio.to_thread(cc.clear_session_stats)
     return {"ok": True}
 
 
@@ -549,7 +535,12 @@ async def list_threads():
         {"name": t.name, "alive": t.is_alive(), "daemon": t.daemon}
         for t in threading.enumerate()
     ]
-    return {"count": len(threads), "threads": threads}
+    return {
+        "count":   len(threads),
+        "threads": threads,
+        "lifecycle_state": lifecycle.state,
+        "app_alive":       lifecycle.app is not None,
+    }
 
 
 # ════════════════════════════════════════════════════════════════════
