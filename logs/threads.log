@@ -20990,3 +20990,259 @@ FileNotFoundError: [Errno 2] No such file or directory: 'c:\\Users\\Hisham Elbad
 2026-10-05 11:38:54.693 [DEBUG   ] [ThreadWatchdog tid=281473045360928] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadPoolExecutor-0_1', 'ThreadWatchdog']
 2026-10-05 11:38:56.695 [DEBUG   ] [ThreadWatchdog tid=281473045360928] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadPoolExecutor-0_1', 'ThreadWatchdog']
 2026-10-05 11:38:58.697 [DEBUG   ] [ThreadWatchdog tid=281473045360928] Watchdog snapshot: 5 alive — ['DebugMonitor', 'MainThread', 'ThreadPoolExecutor-0_0', 'ThreadPoolExecutor-0_1', 'ThreadWatchdog']
+2026-10-06 13:28:30.817 [INFO    ] [MainThread tid=131497167540224] ======================================================================
+2026-10-06 13:28:30.819 [INFO    ] [MainThread tid=131497167540224] Logger initialised — log file: /sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/logs/threads.log
+2026-10-06 13:28:30.821 [INFO    ] [MainThread tid=131497167540224] Python 3.10.12 on linux
+2026-10-06 13:28:30.823 [INFO    ] [MainThread tid=131497167540224] ======================================================================
+2026-10-06 13:28:30.829 [INFO    ] [MainThread tid=131497167540224] [App] RPC connected → 192.168.57.2
+2026-10-06 13:28:30.840 [INFO    ] [MainThread tid=131497167540224] [App] run_async started
+2026-10-06 13:28:30.843 [INFO    ] [MainThread tid=131497167540224] [App] Initial DI0 state = 0 (last synced to avoid false trigger on start)
+2026-10-06 13:28:30.846 [INFO    ] [MainThread tid=131497167540224] [App] Ready — waiting for trigger DI0
+2026-10-06 13:28:30.850 [INFO    ] [MainThread tid=131497167540224] [App] DI0 HIGH — starting sequence
+2026-10-06 13:28:30.853 [INFO    ] [MainThread tid=131497167540224] enter the equance 
+2026-10-06 13:28:30.856 [INFO    ] [MainThread tid=131497167540224] scanner is started
+2026-10-06 13:28:30.858 [INFO    ] [MainThread tid=131497167540224] [Sequence] في انتظار الباركود...
+2026-10-06 13:28:30.861 [INFO    ] [MainThread tid=131497167540224] [Sequence] الباركود: 1234567890123
+2026-10-06 13:28:30.863 [INFO    ] [MainThread tid=131497167540224] [Sequence] Barcode: 1234567890123
+2026-10-06 13:28:30.866 [ERROR   ] [MainThread tid=131497167540224] [App] run_async error: <lambda>() got an unexpected keyword argument 'barcode'
+Traceback (most recent call last):
+  File "/sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/ClientsClass.py", line 1224, in run_async
+    await self.start_sequence()
+  File "/sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/ClientsClass.py", line 1059, in start_sequence
+    program = self.determine_program_from_barcode(barcode=self.barcode)
+TypeError: <lambda>() got an unexpected keyword argument 'barcode'
+2026-10-06 13:28:30.880 [INFO    ] [MainThread tid=131497167540224] [App] run_async finished
+2026-10-06 13:28:43.093 [INFO    ] [MainThread tid=128326355423232] ======================================================================
+2026-10-06 13:28:43.095 [INFO    ] [MainThread tid=128326355423232] Logger initialised — log file: /sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/logs/threads.log
+2026-10-06 13:28:43.097 [INFO    ] [MainThread tid=128326355423232] Python 3.10.12 on linux
+2026-10-06 13:28:43.099 [INFO    ] [MainThread tid=128326355423232] ======================================================================
+2026-10-06 13:28:43.103 [INFO    ] [MainThread tid=128326355423232] [App] RPC connected → 192.168.57.2
+2026-10-06 13:28:43.114 [INFO    ] [MainThread tid=128326355423232] [App] run_async started
+2026-10-06 13:28:43.116 [INFO    ] [MainThread tid=128326355423232] [App] Initial DI0 state = 0 (last synced to avoid false trigger on start)
+2026-10-06 13:28:43.118 [INFO    ] [MainThread tid=128326355423232] [App] Ready — waiting for trigger DI0
+2026-10-06 13:28:43.120 [INFO    ] [MainThread tid=128326355423232] [App] DI0 HIGH — starting sequence
+2026-10-06 13:28:43.123 [INFO    ] [MainThread tid=128326355423232] enter the equance 
+2026-10-06 13:28:43.125 [INFO    ] [MainThread tid=128326355423232] scanner is started
+2026-10-06 13:28:43.128 [INFO    ] [MainThread tid=128326355423232] [Sequence] في انتظار الباركود...
+2026-10-06 13:28:43.130 [INFO    ] [MainThread tid=128326355423232] [Sequence] الباركود: 1234567890123
+2026-10-06 13:28:43.132 [INFO    ] [MainThread tid=128326355423232] [Sequence] Barcode: 1234567890123
+2026-10-06 13:28:43.134 [ERROR   ] [MainThread tid=128326355423232] [App] run_async error: <lambda>() got an unexpected keyword argument 'barcode'
+Traceback (most recent call last):
+  File "/sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/ClientsClass.py", line 1224, in run_async
+    await self.start_sequence()
+  File "/sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/ClientsClass.py", line 1059, in start_sequence
+    program = self.determine_program_from_barcode(barcode=self.barcode)
+TypeError: <lambda>() got an unexpected keyword argument 'barcode'
+2026-10-06 13:28:43.148 [INFO    ] [MainThread tid=128326355423232] [App] run_async finished
+2026-10-06 13:28:55.709 [INFO    ] [MainThread tid=127214201159680] ======================================================================
+2026-10-06 13:28:55.710 [INFO    ] [MainThread tid=127214201159680] Logger initialised — log file: /sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/logs/threads.log
+2026-10-06 13:28:55.712 [INFO    ] [MainThread tid=127214201159680] Python 3.10.12 on linux
+2026-10-06 13:28:55.714 [INFO    ] [MainThread tid=127214201159680] ======================================================================
+2026-10-06 13:28:55.716 [INFO    ] [MainThread tid=127214201159680] [App] RPC connected → 192.168.57.2
+2026-10-06 13:28:55.726 [INFO    ] [MainThread tid=127214201159680] [App] run_async started
+2026-10-06 13:28:55.728 [INFO    ] [MainThread tid=127214201159680] [App] Initial DI0 state = 0 (last synced to avoid false trigger on start)
+2026-10-06 13:28:55.729 [INFO    ] [MainThread tid=127214201159680] [App] Ready — waiting for trigger DI0
+2026-10-06 13:28:55.731 [INFO    ] [MainThread tid=127214201159680] [App] DI0 HIGH — starting sequence
+2026-10-06 13:28:55.733 [INFO    ] [MainThread tid=127214201159680] enter the equance 
+2026-10-06 13:28:55.735 [INFO    ] [MainThread tid=127214201159680] scanner is started
+2026-10-06 13:28:55.737 [INFO    ] [MainThread tid=127214201159680] [Sequence] في انتظار الباركود...
+2026-10-06 13:28:55.739 [INFO    ] [MainThread tid=127214201159680] [Sequence] الباركود: 1234567890123
+2026-10-06 13:28:55.741 [INFO    ] [MainThread tid=127214201159680] [Sequence] Barcode: 1234567890123
+2026-10-06 13:28:55.743 [INFO    ] [MainThread tid=127214201159680] [Sequence] Program: 1
+2026-10-06 13:28:59.823 [INFO    ] [MainThread tid=127214201159680] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-06 13:28:59.827 [INFO    ] [MainThread tid=127214201159680] [App] run_async stopped by request (aclose)
+2026-10-06 13:28:59.838 [INFO    ] [MainThread tid=127214201159680] [App] run_async finished
+2026-10-06 13:28:59.842 [INFO    ] [MainThread tid=127214201159680] [App] capture_trigger اتقفل
+2026-10-06 13:28:59.845 [INFO    ] [MainThread tid=127214201159680] [App] camera_barcode اتقفل
+2026-10-06 13:28:59.847 [INFO    ] [MainThread tid=127214201159680] [App] camera اتقفل
+2026-10-06 13:28:59.850 [INFO    ] [MainThread tid=127214201159680] [App] scanner listener اتقفل
+2026-10-06 13:28:59.853 [INFO    ] [MainThread tid=127214201159680] [App] robot CloseRPC تم
+2026-10-06 13:28:59.862 [INFO    ] [MainThread tid=127214201159680] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
+2026-10-06 13:29:08.056 [INFO    ] [MainThread tid=126396282867712] ======================================================================
+2026-10-06 13:29:08.058 [INFO    ] [MainThread tid=126396282867712] Logger initialised — log file: /sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/logs/threads.log
+2026-10-06 13:29:08.060 [INFO    ] [MainThread tid=126396282867712] Python 3.10.12 on linux
+2026-10-06 13:29:08.062 [INFO    ] [MainThread tid=126396282867712] ======================================================================
+2026-10-06 13:29:08.065 [INFO    ] [MainThread tid=126396282867712] [App] RPC connected → 192.168.57.2
+2026-10-06 13:29:08.075 [INFO    ] [MainThread tid=126396282867712] [App] run_async started
+2026-10-06 13:29:08.077 [INFO    ] [MainThread tid=126396282867712] [App] Initial DI0 state = 0 (last synced to avoid false trigger on start)
+2026-10-06 13:29:08.079 [INFO    ] [MainThread tid=126396282867712] [App] Ready — waiting for trigger DI0
+2026-10-06 13:29:08.081 [INFO    ] [MainThread tid=126396282867712] [App] DI0 HIGH — starting sequence
+2026-10-06 13:29:08.085 [INFO    ] [MainThread tid=126396282867712] enter the equance 
+2026-10-06 13:29:08.087 [INFO    ] [MainThread tid=126396282867712] scanner is started
+2026-10-06 13:29:08.089 [INFO    ] [MainThread tid=126396282867712] [Sequence] في انتظار الباركود...
+2026-10-06 13:29:08.091 [INFO    ] [MainThread tid=126396282867712] [Sequence] الباركود: 1234567890123
+2026-10-06 13:29:08.093 [INFO    ] [MainThread tid=126396282867712] [Sequence] Barcode: 1234567890123
+2026-10-06 13:29:08.095 [INFO    ] [MainThread tid=126396282867712] [Sequence] Program: 1
+2026-10-06 13:29:20.177 [INFO    ] [MainThread tid=126396282867712] [program_1] Done — model answer — barcode=1234567890123  result={"image_1": "No"}
+2026-10-06 13:29:20.685 [INFO    ] [MainThread tid=126396282867712] [program_1] Done — barcode=1234567890123  result=pass
+2026-10-06 13:30:09.240 [INFO    ] [MainThread tid=126396282867712] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-06 13:30:09.244 [INFO    ] [MainThread tid=126396282867712] [App] run_async stopped by request (aclose)
+2026-10-06 13:30:09.254 [INFO    ] [MainThread tid=126396282867712] [App] run_async finished
+2026-10-06 13:30:09.257 [INFO    ] [MainThread tid=126396282867712] [App] capture_trigger اتقفل
+2026-10-06 13:30:09.261 [INFO    ] [MainThread tid=126396282867712] [App] camera_barcode اتقفل
+2026-10-06 13:30:09.264 [INFO    ] [MainThread tid=126396282867712] [App] camera اتقفل
+2026-10-06 13:30:09.267 [INFO    ] [MainThread tid=126396282867712] [App] scanner listener اتقفل
+2026-10-06 13:30:09.269 [INFO    ] [MainThread tid=126396282867712] [App] robot CloseRPC تم
+2026-10-06 13:30:09.278 [INFO    ] [MainThread tid=126396282867712] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
+2026-10-06 13:30:21.857 [INFO    ] [MainThread tid=133758159626240] ======================================================================
+2026-10-06 13:30:21.859 [INFO    ] [MainThread tid=133758159626240] Logger initialised — log file: /sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/logs/threads.log
+2026-10-06 13:30:21.861 [INFO    ] [MainThread tid=133758159626240] Python 3.10.12 on linux
+2026-10-06 13:30:21.863 [INFO    ] [MainThread tid=133758159626240] ======================================================================
+2026-10-06 13:30:21.867 [INFO    ] [MainThread tid=133758159626240] [App] RPC connected → 192.168.57.2
+2026-10-06 13:30:21.879 [INFO    ] [MainThread tid=133758159626240] [App] run_async started
+2026-10-06 13:30:21.882 [INFO    ] [MainThread tid=133758159626240] [App] Initial DI0 state = 0 (last synced to avoid false trigger on start)
+2026-10-06 13:30:21.884 [INFO    ] [MainThread tid=133758159626240] [App] Ready — waiting for trigger DI0
+2026-10-06 13:30:21.887 [INFO    ] [MainThread tid=133758159626240] [App] DI0 HIGH — starting sequence
+2026-10-06 13:30:21.890 [INFO    ] [MainThread tid=133758159626240] enter the equance 
+2026-10-06 13:30:21.892 [INFO    ] [MainThread tid=133758159626240] scanner is started
+2026-10-06 13:30:21.894 [INFO    ] [MainThread tid=133758159626240] [Sequence] في انتظار الباركود...
+2026-10-06 13:30:21.896 [INFO    ] [MainThread tid=133758159626240] [Sequence] الباركود: 1234567890123
+2026-10-06 13:30:21.898 [INFO    ] [MainThread tid=133758159626240] [Sequence] Barcode: 1234567890123
+2026-10-06 13:30:21.900 [INFO    ] [MainThread tid=133758159626240] [Sequence] Program: 1
+2026-10-06 13:30:33.991 [INFO    ] [MainThread tid=133758159626240] [program_1] Done — model answer — barcode=1234567890123  result={"image_1": "No"}
+2026-10-06 13:30:34.497 [INFO    ] [MainThread tid=133758159626240] [program_1] Done — barcode=1234567890123  result=pass
+2026-10-06 13:31:22.988 [INFO    ] [MainThread tid=133758159626240] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-06 13:31:22.990 [INFO    ] [MainThread tid=133758159626240] [App] run_async stopped by request (aclose)
+2026-10-06 13:31:22.997 [INFO    ] [MainThread tid=133758159626240] [App] run_async finished
+2026-10-06 13:31:23.001 [INFO    ] [MainThread tid=133758159626240] [App] capture_trigger اتقفل
+2026-10-06 13:31:23.004 [INFO    ] [MainThread tid=133758159626240] [App] camera_barcode اتقفل
+2026-10-06 13:31:23.006 [INFO    ] [MainThread tid=133758159626240] [App] camera اتقفل
+2026-10-06 13:31:23.008 [INFO    ] [MainThread tid=133758159626240] [App] scanner listener اتقفل
+2026-10-06 13:31:23.011 [INFO    ] [MainThread tid=133758159626240] [App] robot CloseRPC تم
+2026-10-06 13:31:23.019 [INFO    ] [MainThread tid=133758159626240] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
+2026-10-06 13:31:41.086 [INFO    ] [MainThread tid=137129552261120] ======================================================================
+2026-10-06 13:31:41.088 [INFO    ] [MainThread tid=137129552261120] Logger initialised — log file: /sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/logs/threads.log
+2026-10-06 13:31:41.089 [INFO    ] [MainThread tid=137129552261120] Python 3.10.12 on linux
+2026-10-06 13:31:41.091 [INFO    ] [MainThread tid=137129552261120] ======================================================================
+2026-10-06 13:31:41.095 [INFO    ] [MainThread tid=137129552261120] [App] RPC connected → 192.168.57.2
+2026-10-06 13:31:41.104 [INFO    ] [MainThread tid=137129552261120] [App] run_async started
+2026-10-06 13:31:41.106 [INFO    ] [MainThread tid=137129552261120] [App] Initial DI0 state = 0 (last synced to avoid false trigger on start)
+2026-10-06 13:31:41.108 [INFO    ] [MainThread tid=137129552261120] [App] Ready — waiting for trigger DI0
+2026-10-06 13:31:41.111 [INFO    ] [MainThread tid=137129552261120] [App] DI0 HIGH — starting sequence
+2026-10-06 13:31:41.113 [INFO    ] [MainThread tid=137129552261120] enter the equance 
+2026-10-06 13:31:41.115 [INFO    ] [MainThread tid=137129552261120] scanner is started
+2026-10-06 13:31:41.116 [INFO    ] [MainThread tid=137129552261120] [Sequence] في انتظار الباركود...
+2026-10-06 13:31:41.118 [INFO    ] [MainThread tid=137129552261120] [Sequence] الباركود: 1234567890123
+2026-10-06 13:31:41.120 [INFO    ] [MainThread tid=137129552261120] [Sequence] Barcode: 1234567890123
+2026-10-06 13:31:41.122 [INFO    ] [MainThread tid=137129552261120] [Sequence] Program: 1
+2026-10-06 13:31:53.209 [INFO    ] [MainThread tid=137129552261120] [program_1] Done — model answer — barcode=1234567890123  result={"image_1": "No"}
+2026-10-06 13:31:53.237 [INFO    ] [MainThread tid=137129552261120] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-06 13:31:53.265 [INFO    ] [MainThread tid=137129552261120] [App] run_async stopped by request (aclose)
+2026-10-06 13:31:53.274 [INFO    ] [MainThread tid=137129552261120] [App] run_async finished
+2026-10-06 13:31:53.277 [INFO    ] [MainThread tid=137129552261120] [App] capture_trigger اتقفل
+2026-10-06 13:31:53.280 [INFO    ] [MainThread tid=137129552261120] [App] camera_barcode اتقفل
+2026-10-06 13:31:53.282 [INFO    ] [MainThread tid=137129552261120] [App] camera اتقفل
+2026-10-06 13:31:53.285 [INFO    ] [MainThread tid=137129552261120] [App] scanner listener اتقفل
+2026-10-06 13:31:53.289 [INFO    ] [MainThread tid=137129552261120] [App] robot CloseRPC تم
+2026-10-06 13:31:53.296 [INFO    ] [MainThread tid=137129552261120] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
+2026-10-07 06:04:31.208 [INFO    ] [MainThread tid=139534288924672] ======================================================================
+2026-10-07 06:04:31.210 [INFO    ] [MainThread tid=139534288924672] Logger initialised — log file: /sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/logs/threads.log
+2026-10-07 06:04:31.213 [INFO    ] [MainThread tid=139534288924672] Python 3.10.12 on linux
+2026-10-07 06:04:31.218 [INFO    ] [MainThread tid=139534288924672] ======================================================================
+2026-10-07 06:04:31.222 [INFO    ] [MainThread tid=139534288924672] === lifecycle: بناء App جديد (كاميرا + موديل AI)... ===
+2026-10-07 06:04:31.238 [INFO    ] [MainThread tid=139534288924672] [App] RPC connected → 192.168.57.2
+2026-10-07 06:04:31.259 [INFO    ] [MainThread tid=139534288924672] === lifecycle: RUNNING في 0.0s ===
+2026-10-07 06:04:31.268 [INFO    ] [MainThread tid=139534288924672] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:04:31.280 [INFO    ] [MainThread tid=139534288924672] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:04:31.286 [INFO    ] [MainThread tid=139534288924672] [App] run_async started
+2026-10-07 06:04:31.292 [INFO    ] [MainThread tid=139534288924672] [App] run_async stopped by request (aclose)
+2026-10-07 06:04:31.312 [INFO    ] [MainThread tid=139534288924672] [App] run_async finished
+2026-10-07 06:04:31.320 [INFO    ] [MainThread tid=139534288924672] [App] capture_trigger اتقفل
+2026-10-07 06:04:31.325 [INFO    ] [MainThread tid=139534288924672] [App] camera_barcode اتقفل
+2026-10-07 06:04:31.329 [INFO    ] [MainThread tid=139534288924672] [App] camera اتقفل
+2026-10-07 06:04:31.336 [INFO    ] [MainThread tid=139534288924672] [App] scanner listener اتقفل
+2026-10-07 06:04:31.340 [INFO    ] [MainThread tid=139534288924672] [App] robot CloseRPC تم
+2026-10-07 06:04:31.428 [INFO    ] [MainThread tid=139534288924672] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
+2026-10-07 06:04:31.435 [INFO    ] [MainThread tid=139534288924672] === lifecycle: STOPPED في 0.2s — كل الهاردوير اتقفل ===
+2026-10-07 06:04:31.441 [INFO    ] [MainThread tid=139534288924672] === lifecycle: بناء App جديد (كاميرا + موديل AI)... ===
+2026-10-07 06:04:31.456 [INFO    ] [MainThread tid=139534288924672] [App] RPC connected → 192.168.57.2
+2026-10-07 06:04:31.477 [INFO    ] [MainThread tid=139534288924672] === lifecycle: RUNNING في 0.0s ===
+2026-10-07 06:04:31.484 [INFO    ] [MainThread tid=139534288924672] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:04:31.491 [INFO    ] [MainThread tid=139534288924672] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:04:31.495 [INFO    ] [MainThread tid=139534288924672] [App] run_async started
+2026-10-07 06:04:31.501 [INFO    ] [MainThread tid=139534288924672] [App] run_async stopped by request (aclose)
+2026-10-07 06:04:31.519 [INFO    ] [MainThread tid=139534288924672] [App] run_async finished
+2026-10-07 06:04:31.526 [INFO    ] [MainThread tid=139534288924672] [App] capture_trigger اتقفل
+2026-10-07 06:04:31.531 [INFO    ] [MainThread tid=139534288924672] [App] camera_barcode اتقفل
+2026-10-07 06:04:31.536 [INFO    ] [MainThread tid=139534288924672] [App] camera اتقفل
+2026-10-07 06:04:31.542 [INFO    ] [MainThread tid=139534288924672] [App] scanner listener اتقفل
+2026-10-07 06:04:31.546 [INFO    ] [MainThread tid=139534288924672] [App] robot CloseRPC تم
+2026-10-07 06:04:31.628 [INFO    ] [MainThread tid=139534288924672] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
+2026-10-07 06:04:31.635 [INFO    ] [MainThread tid=139534288924672] === lifecycle: STOPPED في 0.1s — كل الهاردوير اتقفل ===
+2026-10-07 06:05:00.501 [INFO    ] [MainThread tid=124910094405632] ======================================================================
+2026-10-07 06:05:00.504 [INFO    ] [MainThread tid=124910094405632] Logger initialised — log file: /sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/logs/threads.log
+2026-10-07 06:05:00.509 [INFO    ] [MainThread tid=124910094405632] Python 3.10.12 on linux
+2026-10-07 06:05:00.513 [INFO    ] [MainThread tid=124910094405632] ======================================================================
+2026-10-07 06:05:00.516 [INFO    ] [MainThread tid=124910094405632] === lifecycle: بناء App جديد (كاميرا + موديل AI)... ===
+2026-10-07 06:05:00.530 [ERROR   ] [MainThread tid=124910094405632] lifecycle.start فشل: مفيش اتصال بالكوبوت على 192.168.57.2 — اتأكد من الباور والشبكة والـ IP في الإعدادات. (الـ SDK ظبط is_conect=False)
+Traceback (most recent call last):
+  File "/sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/lifecycle.py", line 158, in start
+    await app.start()
+  File "/sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/ClientsClass.py", line 1335, in start
+    await self._connect_hardware()
+  File "/sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/ClientsClass.py", line 1201, in _connect_hardware
+    raise RuntimeError(
+RuntimeError: مفيش اتصال بالكوبوت على 192.168.57.2 — اتأكد من الباور والشبكة والـ IP في الإعدادات. (الـ SDK ظبط is_conect=False)
+2026-10-07 06:05:00.548 [INFO    ] [MainThread tid=124910094405632] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:05:00.552 [INFO    ] [MainThread tid=124910094405632] [App] capture_trigger اتقفل
+2026-10-07 06:05:00.558 [INFO    ] [MainThread tid=124910094405632] [App] camera_barcode اتقفل
+2026-10-07 06:05:00.562 [INFO    ] [MainThread tid=124910094405632] [App] camera اتقفل
+2026-10-07 06:05:00.566 [INFO    ] [MainThread tid=124910094405632] [App] scanner listener اتقفل
+2026-10-07 06:05:00.570 [INFO    ] [MainThread tid=124910094405632] [App] robot CloseRPC تم
+2026-10-07 06:05:00.667 [INFO    ] [MainThread tid=124910094405632] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
+2026-10-07 06:05:00.674 [INFO    ] [MainThread tid=124910094405632] === lifecycle: بناء App جديد (كاميرا + موديل AI)... ===
+2026-10-07 06:05:00.684 [WARNING ] [MainThread tid=124910094405632] [App] RPC.is_conect كانت False من محاولة سابقة — اترجعت True
+2026-10-07 06:05:00.688 [INFO    ] [MainThread tid=124910094405632] [App] RPC connected → 192.168.57.2
+2026-10-07 06:05:00.711 [INFO    ] [MainThread tid=124910094405632] === lifecycle: RUNNING في 0.0s ===
+2026-10-07 06:05:00.719 [INFO    ] [MainThread tid=124910094405632] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:05:00.727 [INFO    ] [MainThread tid=124910094405632] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:05:00.731 [INFO    ] [MainThread tid=124910094405632] [App] run_async started
+2026-10-07 06:05:00.734 [INFO    ] [MainThread tid=124910094405632] [App] run_async stopped by request (aclose)
+2026-10-07 06:05:00.749 [INFO    ] [MainThread tid=124910094405632] [App] run_async finished
+2026-10-07 06:05:00.757 [INFO    ] [MainThread tid=124910094405632] [App] capture_trigger اتقفل
+2026-10-07 06:05:00.762 [INFO    ] [MainThread tid=124910094405632] [App] camera_barcode اتقفل
+2026-10-07 06:05:00.766 [INFO    ] [MainThread tid=124910094405632] [App] camera اتقفل
+2026-10-07 06:05:00.772 [INFO    ] [MainThread tid=124910094405632] [App] scanner listener اتقفل
+2026-10-07 06:05:00.777 [INFO    ] [MainThread tid=124910094405632] [App] robot CloseRPC تم
+2026-10-07 06:05:00.869 [INFO    ] [MainThread tid=124910094405632] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
+2026-10-07 06:05:00.876 [INFO    ] [MainThread tid=124910094405632] === lifecycle: STOPPED في 0.1s — كل الهاردوير اتقفل ===
+2026-10-07 06:05:00.881 [INFO    ] [MainThread tid=124910094405632] === lifecycle: بناء App جديد (كاميرا + موديل AI)... ===
+2026-10-07 06:05:00.895 [INFO    ] [MainThread tid=124910094405632] [App] RPC connected → 192.168.57.2
+2026-10-07 06:05:00.916 [INFO    ] [MainThread tid=124910094405632] === lifecycle: RUNNING في 0.0s ===
+2026-10-07 06:05:00.925 [INFO    ] [MainThread tid=124910094405632] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:05:00.930 [INFO    ] [MainThread tid=124910094405632] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:05:00.934 [INFO    ] [MainThread tid=124910094405632] [App] run_async started
+2026-10-07 06:05:00.939 [INFO    ] [MainThread tid=124910094405632] [App] run_async stopped by request (aclose)
+2026-10-07 06:05:00.960 [INFO    ] [MainThread tid=124910094405632] [App] run_async finished
+2026-10-07 06:05:00.967 [INFO    ] [MainThread tid=124910094405632] [App] capture_trigger اتقفل
+2026-10-07 06:05:00.973 [INFO    ] [MainThread tid=124910094405632] [App] camera_barcode اتقفل
+2026-10-07 06:05:00.978 [INFO    ] [MainThread tid=124910094405632] [App] camera اتقفل
+2026-10-07 06:05:00.982 [INFO    ] [MainThread tid=124910094405632] [App] scanner listener اتقفل
+2026-10-07 06:05:00.987 [INFO    ] [MainThread tid=124910094405632] [App] robot CloseRPC تم
+2026-10-07 06:05:01.080 [INFO    ] [MainThread tid=124910094405632] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
+2026-10-07 06:05:01.085 [INFO    ] [MainThread tid=124910094405632] === lifecycle: STOPPED في 0.2s — كل الهاردوير اتقفل ===
+2026-10-07 06:05:24.769 [INFO    ] [MainThread tid=133614083284992] ======================================================================
+2026-10-07 06:05:24.771 [INFO    ] [MainThread tid=133614083284992] Logger initialised — log file: /sessions/rcw-01mvnnczkw5pwuks1mr3spsd/mnt/fresh-new/logs/threads.log
+2026-10-07 06:05:24.776 [INFO    ] [MainThread tid=133614083284992] Python 3.10.12 on linux
+2026-10-07 06:05:24.782 [INFO    ] [MainThread tid=133614083284992] ======================================================================
+2026-10-07 06:05:24.791 [INFO    ] [MainThread tid=133614083284992] [App] RPC connected → 192.168.57.2
+2026-10-07 06:05:24.809 [INFO    ] [MainThread tid=133614083284992] [App] run_async started
+2026-10-07 06:05:24.815 [INFO    ] [MainThread tid=133614083284992] [App] Initial DI0 state = 0 (last synced to avoid false trigger on start)
+2026-10-07 06:05:24.818 [INFO    ] [MainThread tid=133614083284992] [App] Ready — waiting for trigger DI0
+2026-10-07 06:05:24.823 [INFO    ] [MainThread tid=133614083284992] [App] DI0 HIGH — starting sequence
+2026-10-07 06:05:24.827 [INFO    ] [MainThread tid=133614083284992] enter the equance 
+2026-10-07 06:05:24.831 [INFO    ] [MainThread tid=133614083284992] scanner is started
+2026-10-07 06:05:24.834 [INFO    ] [MainThread tid=133614083284992] [Sequence] في انتظار الباركود...
+2026-10-07 06:05:24.838 [INFO    ] [MainThread tid=133614083284992] [Sequence] الباركود: 1234567890123
+2026-10-07 06:05:24.841 [INFO    ] [MainThread tid=133614083284992] [Sequence] Barcode: 1234567890123
+2026-10-07 06:05:24.845 [INFO    ] [MainThread tid=133614083284992] [Sequence] Program: 1
+2026-10-07 06:05:36.977 [INFO    ] [MainThread tid=133614083284992] [program_1] Done — model answer — barcode=1234567890123  result={"image_1": "No"}
+2026-10-07 06:05:37.035 [INFO    ] [MainThread tid=133614083284992] [App] StopMotion أُرسل — الحركة اتقطعت
+2026-10-07 06:05:37.042 [INFO    ] [MainThread tid=133614083284992] [App] run_async stopped by request (aclose)
+2026-10-07 06:05:37.063 [INFO    ] [MainThread tid=133614083284992] [App] run_async finished
+2026-10-07 06:05:37.069 [INFO    ] [MainThread tid=133614083284992] [App] capture_trigger اتقفل
+2026-10-07 06:05:37.076 [INFO    ] [MainThread tid=133614083284992] [App] camera_barcode اتقفل
+2026-10-07 06:05:37.081 [INFO    ] [MainThread tid=133614083284992] [App] camera اتقفل
+2026-10-07 06:05:37.086 [INFO    ] [MainThread tid=133614083284992] [App] scanner listener اتقفل
+2026-10-07 06:05:37.093 [INFO    ] [MainThread tid=133614083284992] [App] robot CloseRPC تم
+2026-10-07 06:05:37.168 [INFO    ] [MainThread tid=133614083284992] [App] aclose — التنضيف خلص، كل الهاردوير اتقفل
